@@ -1,5 +1,9 @@
 package frc.robot;
 
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PowerDistribution;
@@ -13,6 +17,9 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.subsystems.Swerve;
+import frc.robot.util.Constants;
+import frc.robot.util.Log;
+import frc.robot.util.Util;
 
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
@@ -90,4 +97,36 @@ public class Robot extends TimedRobot {
 
   @Override
   public void simulationPeriodic() {}
+
+  static {
+		List<byte[]> macAddresses;
+		try {
+			macAddresses = Util.getMacAddresses();
+		} catch (IOException e) {
+      Log.fatalException("Robot", "Mac Address Attempt Unsuccessful", e);
+			macAddresses = List.of();
+		}
+
+		for (byte[] macAddress : macAddresses) {
+			// first check if we are comp
+			if (Arrays.compare(Constants.Robot.COMP_MAC, macAddress) == 0) {
+				Constants.Robot.detected = Constants.Robot.Robots.COMP;
+        Log.info("Robot", "Comp Bot Connected");
+				break;
+			}
+			// next check if we are beta
+			else if (Arrays.compare(Constants.Robot.BETA_MAC, macAddress) == 0) {
+				Constants.Robot.detected = Constants.Robot.Robots.BETA;
+        Log.info("Robot", "Beta Bot Connected");
+				break;
+			}
+		}
+
+		if (Constants.Robot.detected == Constants.Robot.Robots.UNKNOWN) {
+      Log.info("Robot", "Unknown MAC address!");
+      for (byte[] macAddress : macAddresses) {
+        Log.info("    ", Util.macToString(macAddress));
+      }
+		}
+	}
 }
