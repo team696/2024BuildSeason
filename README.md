@@ -1,1 +1,3 @@
-# WHERE'S THE COMMS
+# Why Are Comms Down?
+
+# no soda.
