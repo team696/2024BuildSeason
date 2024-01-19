@@ -7,6 +7,7 @@ import java.util.List;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PowerDistribution;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
@@ -44,6 +45,12 @@ public class Robot extends TimedRobot {
     DriverStation.silenceJoystickConnectionWarning(true);
     
     LiveWindow.disableAllTelemetry();
+
+    RobotController.setEnabled3V3(false);
+    RobotController.setEnabled5V(false);
+    RobotController.setEnabled6V(false);
+
+    m_PDH.setSwitchableChannel(true);
 
     Auto.Initialize();
 

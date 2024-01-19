@@ -58,7 +58,6 @@ public class Configs {
         swerveDriveFXConfig.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.1;
 
         /** Individual Swerve Module Configurations */
-
         Mod0.CANcoderId = 0;
         Mod0.DriveMotorId = 1;
         Mod0.SteerMotorId = 2;
