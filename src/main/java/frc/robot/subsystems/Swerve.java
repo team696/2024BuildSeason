@@ -118,6 +118,7 @@ public class Swerve extends SubsystemBase {
     for (int i = 0; i < 4; ++i) {
       m_swervePositions[i] = Constants.Swerve.swerveMods[i].getPosition();
     }
+
     m_poseEstimator.update(getYaw(), m_swervePositions);
 
     Constants.Swerve.field.setRobotPose(getPose());

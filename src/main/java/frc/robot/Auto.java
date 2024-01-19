@@ -9,7 +9,6 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.commands.Exmaple;
 import frc.robot.subsystems.Swerve;
 import frc.robot.util.Constants;
 
@@ -37,7 +36,7 @@ public class Auto {
             m_swerve
         );
 
-        NamedCommands.registerCommand("Example Command", new Exmaple());
+        //NamedCommands.registerCommand("Example Command", new Exmaple());
     
         autoChooser = AutoBuilder.buildAutoChooser();
         SmartDashboard.putData("Auto Chooser", autoChooser);
