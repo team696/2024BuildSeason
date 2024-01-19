@@ -25,8 +25,8 @@ public class Configs {
 
     public Configs() {
         /** Swerve CANCoder Configuration */
-        swerveCANcoderConfig.MagnetSensor.SensorDirection = SensorDirectionValue.Clockwise_Positive;
-        swerveCANcoderConfig.MagnetSensor.AbsoluteSensorRange = AbsoluteSensorRangeValue.Unsigned_0To1;
+        //swerveCANcoderConfig.MagnetSensor.SensorDirection = SensorDirectionValue.Clockwise_Positive;
+        //swerveCANcoderConfig.MagnetSensor.AbsoluteSensorRange = AbsoluteSensorRangeValue.Signed_PlusMinusHalf;
 
         /** Swerve Angle Motor Configuration */
         swerveAngleFXConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
@@ -37,9 +37,9 @@ public class Configs {
         swerveAngleFXConfig.CurrentLimits.SupplyCurrentLimit = 25;
         swerveAngleFXConfig.CurrentLimits.SupplyCurrentThreshold = 40;
         swerveAngleFXConfig.CurrentLimits.SupplyTimeThreshold = 0.1;
-        swerveAngleFXConfig.Slot0.kP = Constants.Swerve.anglekP;
-        swerveAngleFXConfig.Slot0.kI = Constants.Swerve.anglekI;
-        swerveAngleFXConfig.Slot0.kD = Constants.Swerve.anglekD;
+        swerveAngleFXConfig.Slot0.kP = 128.0;
+        swerveAngleFXConfig.Slot0.kI = 0.0;
+        swerveAngleFXConfig.Slot0.kD = 6.0;
 
         /** Swerve Drive Motor Configuration */
         swerveDriveFXConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
@@ -49,9 +49,9 @@ public class Configs {
         swerveDriveFXConfig.CurrentLimits.SupplyCurrentLimit = 35;
         swerveDriveFXConfig.CurrentLimits.SupplyCurrentThreshold = 60;
         swerveDriveFXConfig.CurrentLimits.SupplyTimeThreshold = 0.1;
-        swerveDriveFXConfig.Slot0.kP = Constants.Swerve.drivekP;
-        swerveDriveFXConfig.Slot0.kI = Constants.Swerve.drivekI;
-        swerveDriveFXConfig.Slot0.kD = Constants.Swerve.drivekD;
+        swerveDriveFXConfig.Slot0.kP = 2.;
+        swerveDriveFXConfig.Slot0.kI = 0.0;
+        swerveDriveFXConfig.Slot0.kD = 0.0;
         swerveDriveFXConfig.OpenLoopRamps.DutyCycleOpenLoopRampPeriod = 0.15;
         swerveDriveFXConfig.OpenLoopRamps.VoltageOpenLoopRampPeriod = 0.15;
         swerveDriveFXConfig.ClosedLoopRamps.DutyCycleClosedLoopRampPeriod = 0.1;
@@ -59,25 +59,25 @@ public class Configs {
 
         /** Individual Swerve Module Configurations */
 
-        Mod0.CANcoderId = 5; //TODO: UPDATE ME TOO!!! :3
-        Mod0.DriveMotorId = 6;
-        Mod0.SteerMotorId = 7;
-        Mod0.CANcoderOffset = 8;
+        Mod0.CANcoderId = 0;
+        Mod0.DriveMotorId = 1;
+        Mod0.SteerMotorId = 2;
+        Mod0.CANcoderOffset = -0.2539;
 
-        Mod1.CANcoderId = 9;
-        Mod1.DriveMotorId = 10;
-        Mod1.SteerMotorId = 11;
-        Mod1.CANcoderOffset = 12;
+        Mod1.CANcoderId = 2;
+        Mod1.DriveMotorId = 3;
+        Mod1.SteerMotorId = 4;
+        Mod1.CANcoderOffset = -0.433;
 
-        Mod2.CANcoderId = 13;
-        Mod2.DriveMotorId = 14;
-        Mod2.SteerMotorId = 15;
-        Mod2.CANcoderOffset = 16;
+        Mod2.CANcoderId = 01;
+        Mod2.DriveMotorId = 5;
+        Mod2.SteerMotorId = 6;
+        Mod2.CANcoderOffset = 0.3265;
 
-        Mod3.CANcoderId = 17;
-        Mod3.DriveMotorId = 18;
-        Mod3.SteerMotorId = 19;
-        Mod3.CANcoderOffset = 20;
+        Mod3.CANcoderId = 3;
+        Mod3.DriveMotorId = 7;
+        Mod3.SteerMotorId = 8;
+        Mod3.CANcoderOffset = -0.15845;
 
         /** Auto Drive Config */
         FollowConfig = new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should likely live in your Constants class

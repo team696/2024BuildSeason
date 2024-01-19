@@ -15,15 +15,8 @@ public final class Constants {
     public static final double drivekV = (2.44 / 12);
     public static final double drivekA = (0.27 / 12);
 
-    public static final double drivekP = 0.1; 
-    public static final double drivekI = 0.;
-    public static final double drivekD = 0.;
-    public static final double anglekP = 0.6; 
-    public static final double anglekI = 0.;
-    public static final double anglekD = 12.;
-
     public static final double driveGearRatio = (6.12 / 1.0); // L3
-    public static final double angleGearRatio = (12.8 / 1.0); 
+    public static final double angleGearRatio = (150.0/7.0 / 1.0); 
 
     public static final double maxSpeed = 5.16; //MPS
     public static final double maxAngularVelocity = 8; //MPS^2
@@ -57,7 +50,7 @@ public final class Constants {
 
       public static Robots detected = Robots.UNKNOWN;
 
-      public static final byte[] COMP_MAC = new byte[]{ (byte) 0x00, (byte) 0x80, (byte) 0x2f, (byte) 0x35, (byte) 0xb8, (byte) 0xca };
+      public static final byte[] COMP_MAC = new byte[]{ (byte) 0x00, (byte) 0x80, (byte) 0x2F, (byte) 0x38, (byte) 0x5F, (byte) 0x75 };
       public static final byte[] BETA_MAC = new byte[]{ (byte) 0x00, (byte) 0x80, (byte) 0x2f, (byte) 0x35, (byte) 0xb8, (byte) 0xca };
   }
 }

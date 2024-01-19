@@ -11,7 +11,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.util.sendable.SendableBuilder;
-import edu.wpi.first.wpilibj.SerialPort;
+import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.util.Constants;
@@ -33,7 +33,9 @@ public class Swerve extends SubsystemBase {
   }
   
   private Swerve() {
-    m_Gyro = new AHRS(SerialPort.Port.kMXP);
+    m_Gyro = new AHRS(SPI.Port.kMXP);
+
+    zeroYaw();
 
    for (int i = 0; i < 4; ++i) {
       m_swervePositions[i] = Constants.Swerve.swerveMods[i].getPosition();
@@ -42,8 +44,9 @@ public class Swerve extends SubsystemBase {
     m_poseEstimator = new SwerveDrivePoseEstimator(Constants.Swerve.swerveKinematics, getYaw(), m_swervePositions, new Pose2d(0,0,new Rotation2d(0)));
   }
 
+  /**  -180 , 180 */
   public Rotation2d getYaw() {
-    return new Rotation2d(m_Gyro.getAngle());
+    return Rotation2d.fromDegrees(-1 * m_Gyro.getYaw()); 
   }
 
   public Pose2d getPose() {
@@ -81,7 +84,7 @@ public class Swerve extends SubsystemBase {
                                 translation.getX(), 
                                 translation.getY(), 
                                 rotation, 
-                                getPose().getRotation()
+                                getYaw()
                             ) : new ChassisSpeeds(
                                 translation.getX(), 
                                 translation.getY(), 
@@ -124,6 +127,7 @@ public class Swerve extends SubsystemBase {
   public void initSendable(SendableBuilder builder) {
     for(SwerveModule mod : Constants.Swerve.swerveMods){
       builder.addDoubleProperty("Mod " + mod.moduleNumber + " Cancoder", ()->mod.getCANcoder().getRotations(), null);
+      builder.addDoubleProperty("Mod " + mod.moduleNumber + " Internal Encoder", ()->mod.getState().angle.getRotations(),null);
     }
     builder.addDoubleProperty("Gyro", ()->getYaw().getDegrees(), null);
     SmartDashboard.putData("Field", Constants.Swerve.field);

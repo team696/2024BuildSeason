@@ -33,7 +33,7 @@ public class Robot extends TimedRobot {
   //private final JoystickButton rightJoy = new JoystickButton(joystickPanel, 2);
 
   private void configureBinds() {
-    Swerve.get().setDefaultCommand(new TeleopSwerve(joystickPanel, 1, 0, 2, false, true));
+    Swerve.get().setDefaultCommand(new TeleopSwerve(joystickPanel, 1, 0, 2, true, true));
     leftJoy.onTrue(new InstantCommand(()->Swerve.get().zeroYaw()));
   }
 
@@ -47,6 +47,8 @@ public class Robot extends TimedRobot {
     Auto.Initialize();
 
     configureBinds();
+
+    SmartDashboard.putData(Swerve.get());
   }
 
   @Override
