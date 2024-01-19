@@ -16,6 +16,9 @@ public class Configs {
     public TalonFXConfiguration swerveDriveFXConfig = new TalonFXConfiguration();
     public CANcoderConfiguration swerveCANcoderConfig = new CANcoderConfiguration();
 
+    public TalonFXConfiguration shooterMasterFXConfig = new TalonFXConfiguration();
+    public TalonFXConfiguration shooterFollowerFXConfig = new TalonFXConfiguration();
+
     public SwerveModuleConstants Mod0 = new SwerveModuleConstants();
     public SwerveModuleConstants Mod1 = new SwerveModuleConstants();
     public SwerveModuleConstants Mod2 = new SwerveModuleConstants();
@@ -86,5 +89,10 @@ public class Configs {
                         Math.sqrt(Math.pow(Constants.Swerve.wheelX / 2, 2) + Math.pow(Constants.Swerve.wheelY / 2, 2)), // Drive base radius in meters. Distance from robot center to furthest module.
                         new ReplanningConfig() // Default path replanning config. See the API for the options here
                 );
+
+        /** Shooter Motor Configuration */
+        shooterMasterFXConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+    
+        shooterFollowerFXConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
     }
 }
