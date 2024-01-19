@@ -42,6 +42,7 @@ public class Robot extends TimedRobot {
     m_PDH = new PowerDistribution(1, ModuleType.kRev);
 
     DriverStation.silenceJoystickConnectionWarning(true);
+    
     LiveWindow.disableAllTelemetry();
 
     Auto.Initialize();

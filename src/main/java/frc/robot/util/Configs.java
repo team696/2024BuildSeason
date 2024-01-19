@@ -25,8 +25,8 @@ public class Configs {
 
     public Configs() {
         /** Swerve CANCoder Configuration */
-        //swerveCANcoderConfig.MagnetSensor.SensorDirection = SensorDirectionValue.Clockwise_Positive;
-        //swerveCANcoderConfig.MagnetSensor.AbsoluteSensorRange = AbsoluteSensorRangeValue.Signed_PlusMinusHalf;
+        swerveCANcoderConfig.MagnetSensor.SensorDirection = SensorDirectionValue.CounterClockwise_Positive;
+        swerveCANcoderConfig.MagnetSensor.AbsoluteSensorRange = AbsoluteSensorRangeValue.Signed_PlusMinusHalf;
 
         /** Swerve Angle Motor Configuration */
         swerveAngleFXConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
@@ -52,8 +52,8 @@ public class Configs {
         swerveDriveFXConfig.Slot0.kP = 2.;
         swerveDriveFXConfig.Slot0.kI = 0.0;
         swerveDriveFXConfig.Slot0.kD = 0.0;
-        swerveDriveFXConfig.OpenLoopRamps.DutyCycleOpenLoopRampPeriod = 0.15;
-        swerveDriveFXConfig.OpenLoopRamps.VoltageOpenLoopRampPeriod = 0.15;
+        swerveDriveFXConfig.OpenLoopRamps.DutyCycleOpenLoopRampPeriod = 0.3;
+        swerveDriveFXConfig.OpenLoopRamps.VoltageOpenLoopRampPeriod = 0.3;
         swerveDriveFXConfig.ClosedLoopRamps.DutyCycleClosedLoopRampPeriod = 0.1;
         swerveDriveFXConfig.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.1;
 
