@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.TeleopSwerve;
+import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Swerve;
 import frc.robot.util.Constants;
 import frc.robot.util.Log;
@@ -47,7 +48,7 @@ public class Robot extends TimedRobot {
     LiveWindow.disableAllTelemetry();
 
     RobotController.setEnabled3V3(false);
-    RobotController.setEnabled5V(false);
+    RobotController.setEnabled5V(true);
     RobotController.setEnabled6V(false);
 
     m_PDH.setSwitchableChannel(true);
@@ -57,6 +58,7 @@ public class Robot extends TimedRobot {
     configureBinds();
 
     SmartDashboard.putData(Swerve.get());
+    SmartDashboard.putData(Shooter.get());
   }
 
   @Override

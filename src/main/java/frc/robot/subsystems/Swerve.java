@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import com.ctre.phoenix6.hardware.Pigeon2;
 import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
@@ -14,6 +15,7 @@ import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.util.Camera;
 import frc.robot.util.Constants;
 import frc.robot.util.SwerveModule;
 
@@ -21,6 +23,7 @@ public class Swerve extends SubsystemBase {
   
   private static Swerve m_Swerve;
   private AHRS m_Gyro;
+  private Pigeon2 m_Pigeon;
 
   private SwerveModulePosition[] m_swervePositions = new SwerveModulePosition[4];
   private SwerveDrivePoseEstimator m_poseEstimator;
@@ -34,8 +37,10 @@ public class Swerve extends SubsystemBase {
   
   private Swerve() {
     m_Gyro = new AHRS(SPI.Port.kMXP);
-
     zeroYaw();
+
+    m_Pigeon = new Pigeon2(0);
+    m_Pigeon.getConfigurator().apply(Constants.CONFIGS.swervePigeon2Configuration);
 
    for (int i = 0; i < 4; ++i) {
       m_swervePositions[i] = Constants.Swerve.swerveMods[i].getPosition();
@@ -121,6 +126,8 @@ public class Swerve extends SubsystemBase {
 
     m_poseEstimator.update(getYaw(), m_swervePositions);
 
+    Camera.get().updatePose(m_poseEstimator);
+
     Constants.Swerve.field.setRobotPose(getPose());
   }
 
@@ -131,6 +138,8 @@ public class Swerve extends SubsystemBase {
       builder.addDoubleProperty("Mod " + mod.moduleNumber + " Internal Encoder", ()->mod.getState().angle.getRotations(),null);
     }
     builder.addDoubleProperty("Gyro", ()->getYaw().getDegrees(), null);
+    
+    builder.addDoubleProperty("Pigeon", ()->m_Pigeon.getYaw().getValueAsDouble(), null);
     SmartDashboard.putData("Field", Constants.Swerve.field);
   }
 }

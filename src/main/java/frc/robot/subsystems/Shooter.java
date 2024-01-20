@@ -5,6 +5,8 @@ import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.math.controller.BangBangController;
+import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.util.Constants;
 
@@ -13,6 +15,8 @@ public class Shooter extends SubsystemBase {
 
   private TalonFX m_Master;
   private TalonFX m_Follower;
+
+  private DutyCycleEncoder m_Encoder;
 
   private BangBangController m_shooterController = new BangBangController();
 
@@ -33,6 +37,8 @@ public class Shooter extends SubsystemBase {
     m_Follower.getConfigurator().apply(Constants.CONFIGS.shooterFollowerFXConfig);
 
     m_Follower.setControl(new Follower(m_Master.getDeviceID(), false));
+
+    m_Encoder = new DutyCycleEncoder(0);
   }
 
   /** RPM */
@@ -47,5 +53,10 @@ public class Shooter extends SubsystemBase {
   @Override
   public void periodic() {
     
+  }
+
+  @Override
+  public void initSendable(SendableBuilder builder) {
+    builder.addDoubleProperty("Encoder", ()->m_Encoder.getAbsolutePosition(), null);
   }
 }

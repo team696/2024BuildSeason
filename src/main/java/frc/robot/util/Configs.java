@@ -1,6 +1,7 @@
 package frc.robot.util;
 
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
+import com.ctre.phoenix6.configs.Pigeon2Configuration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.signals.AbsoluteSensorRangeValue;
@@ -18,6 +19,8 @@ public class Configs {
 
     public TalonFXConfiguration shooterMasterFXConfig = new TalonFXConfiguration();
     public TalonFXConfiguration shooterFollowerFXConfig = new TalonFXConfiguration();
+
+    public Pigeon2Configuration swervePigeon2Configuration = new Pigeon2Configuration();
 
     public SwerveModuleConstants Mod0 = new SwerveModuleConstants();
     public SwerveModuleConstants Mod1 = new SwerveModuleConstants();

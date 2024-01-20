@@ -19,7 +19,6 @@ public class Camera {
     private AprilTagFieldLayout m_atLayout; 
     private PhotonCamera m_PCamera;
     private PhotonPoseEstimator m_Estimator;
-    private EstimatedRobotPose m_EstimatedPose;
 
     public static synchronized Camera get() {
         if (m_Camera == null) {
@@ -40,21 +39,10 @@ public class Camera {
         m_Estimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
     }
 
-    private void update() {
+    public void updatePose(SwerveDrivePoseEstimator estimator) {
         Optional<EstimatedRobotPose> estimation = m_Estimator.update();
         if (estimation.isPresent()) {
-            m_EstimatedPose = estimation.get();
+            estimator.addVisionMeasurement(estimation.get().estimatedPose.toPose2d(), estimation.get().timestampSeconds);
         }
     }
-
-    public Optional<EstimatedRobotPose> getNewestPosition() {
-        update();
-        return Optional.of(m_EstimatedPose);
-    }
-
-    public void updatePose(SwerveDrivePoseEstimator estimator) {
-        update();
-        estimator.addVisionMeasurement(m_EstimatedPose.estimatedPose.toPose2d(), m_EstimatedPose.timestampSeconds);
-    }
-
 }
