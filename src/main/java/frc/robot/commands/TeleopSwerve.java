@@ -29,7 +29,7 @@ public class TeleopSwerve extends Command {
 
     PIDController pidController = new PIDController(0.02  , 0.00, 0);
 
-    private Trigger leftJoy;
+    private Trigger rightJoy;
     /**
      * Driver control
      */
@@ -45,7 +45,7 @@ public class TeleopSwerve extends Command {
 
         pidController.setTolerance(1);
         pidController.enableContinuousInput(-180, 180);
-        leftJoy = new JoystickButton(controller, 1);
+        rightJoy = new JoystickButton(controller, 2);
     }
 
     @Override
@@ -53,7 +53,7 @@ public class TeleopSwerve extends Command {
         double yAxis = -controller.getRawAxis(translationAxis);
         double xAxis = controller.getRawAxis(strafeAxis);
         double rAxis = controller.getRawAxis(rotationAxis);
-        if (leftJoy.getAsBoolean() != true){
+        if (rightJoy.getAsBoolean() != true){
             if (Math.abs(rAxis) > Constants.deadBand) {
                 if (rAxis > 0)
                     rAxis = mapdouble(rAxis, Constants.deadBand, 1, 0, 1);
@@ -64,7 +64,7 @@ public class TeleopSwerve extends Command {
                 rAxis = 0;
             }
         } else {
-            rAxis = pidController.calculate(Swerve.get().getYaw().getDegrees(), Math.abs(Swerve.get().getYaw().getDegrees()) < 90 ? 0 : 180);
+            rAxis = pidController.calculate(Swerve.get().getYaw().getDegrees(), Swerve.get().getAngleForSpeaker(Swerve.get().getPose()).getDegrees());
         }
 
         Rotation2d theta = new Rotation2d(yAxis, xAxis);

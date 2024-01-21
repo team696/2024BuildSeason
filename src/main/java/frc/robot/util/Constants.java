@@ -1,5 +1,7 @@
 package frc.robot.util;
 
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.util.Units;
@@ -9,7 +11,13 @@ public final class Constants {
   public static final Configs CONFIGS = new Configs();
 
   public static final double deadBand = 0.03;
-  
+
+  public static final Field2d field = new Field2d();
+
+  public static class Cameras {
+    public static final String name = "Cam_3";
+    public static final Transform3d position =  new Transform3d(0, 0, 0, new Rotation3d(0, 0, 0));
+  }
   public static class Swerve {
     public static final double drivekS = (0.667 / 12); 
     public static final double drivekV = (2.44 / 12);
@@ -36,9 +44,7 @@ public final class Constants {
         new Translation2d(wheelX / 2.0, wheelY / 2.0), // FL
         new Translation2d(wheelX / 2.0, -wheelY / 2.0), // FR
         new Translation2d(-wheelX / 2.0, wheelY / 2.0), // BL
-        new Translation2d(-wheelX / 2.0, -wheelY / 2.0)); // BR
-    
-    public static final Field2d field = new Field2d();
+        new Translation2d(-wheelX / 2.0, -wheelY / 2.0)); // BR    
   }
   public static class Robot {
       public enum Robots {

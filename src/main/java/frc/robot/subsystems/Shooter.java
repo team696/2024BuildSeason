@@ -46,6 +46,8 @@ public class Shooter extends SubsystemBase {
     m_Master.setControl(m_Request.withOutput(m_shooterController.calculate(m_Master.getVelocity().getValueAsDouble() * 60.0, speed)));
   }
 
+  
+
   public void stop() {
     m_Master.stopMotor();
   }

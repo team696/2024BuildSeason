@@ -4,11 +4,13 @@ import java.util.Optional;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.util.PathPlannerLogging;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.subsystems.Swerve;
 import frc.robot.util.Constants;
 
@@ -36,6 +38,14 @@ public class Auto {
             m_swerve
         );
 
+        PathPlannerLogging.setLogTargetPoseCallback((pose) -> {
+            Constants.field.getObject("Target").setPose(pose);
+        });
+
+        PathPlannerLogging.setLogActivePathCallback((poses) -> {
+            Constants.field.getObject("Path").setPoses(poses);
+        });
+
         //NamedCommands.registerCommand("Example Command", new Exmaple());
     
         autoChooser = AutoBuilder.buildAutoChooser();
@@ -54,7 +64,9 @@ public class Auto {
         return m_instance;
     }
 
-    public Command Selected() {
-        return autoChooser.getSelected();
+    public static Command Selected() {
+        if (m_instance == null) return new WaitCommand(0);
+
+        return m_instance.autoChooser.getSelected();
     }
 }

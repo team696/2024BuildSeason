@@ -23,7 +23,7 @@ public class Swerve extends SubsystemBase {
   
   private static Swerve m_Swerve;
   private AHRS m_Gyro;
-  private Pigeon2 m_Pigeon;
+  //private Pigeon2 m_Pigeon;
 
   private SwerveModulePosition[] m_swervePositions = new SwerveModulePosition[4];
   private SwerveDrivePoseEstimator m_poseEstimator;
@@ -39,8 +39,8 @@ public class Swerve extends SubsystemBase {
     m_Gyro = new AHRS(SPI.Port.kMXP);
     zeroYaw();
 
-    m_Pigeon = new Pigeon2(0);
-    m_Pigeon.getConfigurator().apply(Constants.CONFIGS.swervePigeon2Configuration);
+    //m_Pigeon = new Pigeon2(0);
+    //m_Pigeon.getConfigurator().apply(Constants.CONFIGS.swervePigeon2Configuration);
 
    for (int i = 0; i < 4; ++i) {
       m_swervePositions[i] = Constants.Swerve.swerveMods[i].getPosition();
@@ -118,6 +118,10 @@ public class Swerve extends SubsystemBase {
     }
   } 
 
+  public Rotation2d getAngleForSpeaker(Pose2d  pose) {
+    return Rotation2d.fromRadians(Math.PI + (Math.atan2(pose.getY() - 5.6, pose.getX() - 1.1)));
+  }
+
   @Override
   public void periodic() {
     for (int i = 0; i < 4; ++i) {
@@ -128,7 +132,7 @@ public class Swerve extends SubsystemBase {
 
     Camera.get().updatePose(m_poseEstimator);
 
-    Constants.Swerve.field.setRobotPose(getPose());
+    Constants.field.setRobotPose(getPose());
   }
 
   @Override
@@ -139,7 +143,7 @@ public class Swerve extends SubsystemBase {
     }
     builder.addDoubleProperty("Gyro", ()->getYaw().getDegrees(), null);
     
-    builder.addDoubleProperty("Pigeon", ()->m_Pigeon.getYaw().getValueAsDouble(), null);
-    SmartDashboard.putData("Field", Constants.Swerve.field);
+    //builder.addDoubleProperty("Pigeon", ()->m_Pigeon.getYaw().getValueAsDouble(), null);
+    SmartDashboard.putData("Field", Constants.field);
   }
 }

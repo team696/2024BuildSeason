@@ -4,6 +4,10 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
+import org.photonvision.simulation.PhotonCameraSim;
+import org.photonvision.simulation.SimVisionSystem;
+import org.photonvision.simulation.VisionSystemSim;
+
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PowerDistribution;
@@ -19,6 +23,7 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Swerve;
+import frc.robot.util.Camera;
 import frc.robot.util.Constants;
 import frc.robot.util.Log;
 import frc.robot.util.Util;
@@ -75,7 +80,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousInit() {
-    m_autonomousCommand = Auto.get().Selected();
+    m_autonomousCommand = Auto.Selected();
 
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
@@ -105,10 +110,14 @@ public class Robot extends TimedRobot {
   public void testPeriodic() {}
 
   @Override
-  public void simulationInit() {}
+  public void simulationInit() {
+    Camera.get().simInit();
+  }
 
   @Override
-  public void simulationPeriodic() {}
+  public void simulationPeriodic() {
+    Camera.get().simPeriodic();
+  }
 
   static {
 		List<byte[]> macAddresses;

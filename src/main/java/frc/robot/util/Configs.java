@@ -97,5 +97,8 @@ public class Configs {
         shooterMasterFXConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
     
         shooterFollowerFXConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+
+        /** Pigeon Configuration */ 
+        swervePigeon2Configuration.MountPose.MountPoseYaw = 0;
     }
 }

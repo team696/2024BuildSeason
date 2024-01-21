@@ -24,7 +24,9 @@
               "_showGlyph": false,
               "Game/Game": "k2024Crescendo",
               "Visuals/Robot Icon Size": 50.0,
-              "Visuals/Show Outside Circles": false
+              "Visuals/Show Outside Circles": false,
+              "Colors/Path": "#FFFFFFFF",
+              "Colors/Target": "#B31A1AFF"
             }
           },
           "14,0": {
@@ -56,7 +58,7 @@
           "14,2": {
             "size": [
               6,
-              2
+              1
             ],
             "content": {
               "_type": "ComboBox Chooser",
@@ -78,6 +80,32 @@
               "_glyph": 148,
               "_showGlyph": false,
               "Visuals/Show voltage and current values": true
+            }
+          },
+          "14,3": {
+            "size": [
+              6,
+              2
+            ],
+            "content": {
+              "_type": "Network Table Tree",
+              "_source0": "network_table:///SmartDashboard/Shooter",
+              "_title": "/SmartDashboard/Shooter",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "0,7": {
+            "size": [
+              9,
+              4
+            ],
+            "content": {
+              "_type": "Network Table Tree",
+              "_source0": "network_table:///PathPlanner",
+              "_title": "/PathPlanner",
+              "_glyph": 148,
+              "_showGlyph": false
             }
           }
         }

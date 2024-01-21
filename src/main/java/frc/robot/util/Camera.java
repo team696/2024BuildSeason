@@ -6,12 +6,13 @@ import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
+import org.photonvision.simulation.PhotonCameraSim;
+import org.photonvision.simulation.VisionSystemSim;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
-import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Transform3d;
+import frc.robot.subsystems.Swerve;
 
 public class Camera {
     private static Camera m_Camera;
@@ -19,6 +20,9 @@ public class Camera {
     private AprilTagFieldLayout m_atLayout; 
     private PhotonCamera m_PCamera;
     private PhotonPoseEstimator m_Estimator;
+
+    private VisionSystemSim m_simVision;
+    private PhotonCameraSim m_SCamera;
 
     public static synchronized Camera get() {
         if (m_Camera == null) {
@@ -34,9 +38,20 @@ public class Camera {
             Log.fatalException("Camera", "Failed to load april tag layout.", e);
         }
 
-        m_PCamera = new PhotonCamera("Cam 1");
-        m_Estimator = new PhotonPoseEstimator(m_atLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, m_PCamera, new Transform3d(0, 0, 0, new Rotation3d(0, 0, 0)));
+        m_PCamera = new PhotonCamera(Constants.Cameras.name);
+        m_Estimator = new PhotonPoseEstimator(m_atLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, m_PCamera, Constants.Cameras.position);
         m_Estimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
+    }
+
+    public void simInit() {
+        m_simVision = new VisionSystemSim("photonvision");
+        m_SCamera = new PhotonCameraSim(m_PCamera);
+        m_simVision.addCamera(m_SCamera, Constants.Cameras.position);
+        m_simVision.addAprilTags(m_atLayout);
+    }
+
+    public void simPeriodic() {
+        m_simVision.update(Swerve.get().getPose());
     }
 
     public void updatePose(SwerveDrivePoseEstimator estimator) {
