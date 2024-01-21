@@ -23,7 +23,7 @@ public class Swerve extends SubsystemBase {
   
   private static Swerve m_Swerve;
   private AHRS m_Gyro;
-  //private Pigeon2 m_Pigeon;
+  private Pigeon2 m_Pigeon;
 
   private SwerveModulePosition[] m_swervePositions = new SwerveModulePosition[4];
   private SwerveDrivePoseEstimator m_poseEstimator;
@@ -36,17 +36,17 @@ public class Swerve extends SubsystemBase {
   }
   
   private Swerve() {
-    m_Gyro = new AHRS(SPI.Port.kMXP);
-    zeroYaw();
-
-    //m_Pigeon = new Pigeon2(0);
-    //m_Pigeon.getConfigurator().apply(Constants.CONFIGS.swervePigeon2Configuration);
-
-   for (int i = 0; i < 4; ++i) {
+    for (int i = 0; i < 4; ++i) {
       m_swervePositions[i] = Constants.Swerve.swerveMods[i].getPosition();
     }
 
-    m_poseEstimator = new SwerveDrivePoseEstimator(Constants.Swerve.swerveKinematics, getYaw(), m_swervePositions, new Pose2d(0,0,new Rotation2d(0)));
+    m_Gyro = new AHRS(SPI.Port.kMXP);
+    zeroYaw();
+
+    m_Pigeon = new Pigeon2(0);
+    m_Pigeon.getConfigurator().apply(Constants.CONFIGS.swervePigeon2Configuration);
+
+    m_poseEstimator = new SwerveDrivePoseEstimator(Constants.Swerve.swerveKinematics, getYaw(), m_swervePositions, new Pose2d(0,0,new Rotation2d(0))); 
   }
 
   /**  -180 , 180 */

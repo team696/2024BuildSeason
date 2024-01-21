@@ -4,10 +4,6 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
-import org.photonvision.simulation.PhotonCameraSim;
-import org.photonvision.simulation.SimVisionSystem;
-import org.photonvision.simulation.VisionSystemSim;
-
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PowerDistribution;
