@@ -20,6 +20,8 @@ public class Configs {
     public TalonFXConfiguration shooterMasterFXConfig = new TalonFXConfiguration();
     public TalonFXConfiguration shooterFollowerFXConfig = new TalonFXConfiguration();
 
+    public TalonFXConfiguration shooterAngleFXConfig = new TalonFXConfiguration();
+
     public Pigeon2Configuration swervePigeon2Configuration = new Pigeon2Configuration();
 
     public SwerveModuleConstants Mod0 = new SwerveModuleConstants();

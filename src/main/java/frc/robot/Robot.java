@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Swerve;
+import frc.robot.util.Camera;
 import frc.robot.util.Constants;
 import frc.robot.util.Dashboard;
 import frc.robot.util.Log;

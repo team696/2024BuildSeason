@@ -13,6 +13,8 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
 
 public class Dashboard extends WebSocketServer {
+    private static final int UpdateRate = 100; // Every 100 ms
+
     private Dashboard(int port) throws UnknownHostException   {
         super(new InetSocketAddress(port));
     }
@@ -32,14 +34,21 @@ public class Dashboard extends WebSocketServer {
         }
     }
 
+    private void dataReceived(String key, String value) {
+        switch (key) { 
+            default: 
+                break;
+        }
+    }
+
     @SuppressWarnings("unchecked")
     private String dataToSend() {
         JSONObject obj = new JSONObject();
+
         obj.put("selected_auto", "test");
         obj.put("auto", new String[] {"auto 1", "auto 2"});
         obj.put("voltage", RobotController.getBatteryVoltage());
         obj.put("time", Timer.getMatchTime());
-
         obj.put("debug", new JSONArray());
 
         return obj.toJSONString();
@@ -55,7 +64,7 @@ public class Dashboard extends WebSocketServer {
                 conn.send(dataToSend());
 
                 try {
-                    Thread.sleep(100);
+                    Thread.sleep(UpdateRate);
                 } catch (InterruptedException e) {
                     Log.fatalException("Dashboard", "Thread Interrupted", e);
                 }
@@ -71,16 +80,9 @@ public class Dashboard extends WebSocketServer {
     @Override
     public void onMessage(WebSocket conn, String message) {
         String[] parts = message.split(":"); // Message Comes in "Key:Value pair"
-        String value = parts[1];
+        dataReceived(parts[0], parts[1]);
 
-        switch (parts[0]) { 
-            case "selectauto":
-                Log.info("Dashboard", "Set Auto to " + value);
-                break;
-            default: 
-                Log.info("Dashboard: " + conn.getRemoteSocketAddress().getHostName(), "Message: " + message);
-                break;
-        }
+        Log.info("Dashboard: " + conn.getRemoteSocketAddress().getHostName(), "Message: " + message);
     }
 
     @Override

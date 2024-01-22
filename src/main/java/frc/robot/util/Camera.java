@@ -45,6 +45,7 @@ public class Camera {
         m_Estimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
 
         PortForwarder.add(5800, "photonvision.local", 5800);
+        Log.info("Photonvision", "Initialized: Dashboard open at photonvision.local:5800.");
     }
 
     public void simInit() {
