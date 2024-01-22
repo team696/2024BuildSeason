@@ -19,8 +19,8 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Swerve;
-import frc.robot.util.Camera;
 import frc.robot.util.Constants;
+import frc.robot.util.Dashboard;
 import frc.robot.util.Log;
 import frc.robot.util.Util;
 
@@ -53,6 +53,8 @@ public class Robot extends TimedRobot {
     RobotController.setEnabled6V(false);
 
     m_PDH.setSwitchableChannel(true);
+
+    Dashboard.startServer();
 
     Auto.Initialize();
 
@@ -107,12 +109,10 @@ public class Robot extends TimedRobot {
 
   @Override
   public void simulationInit() {
-    Camera.get().simInit();
   }
 
   @Override
   public void simulationPeriodic() {
-    Camera.get().simPeriodic();
   }
 
   static {

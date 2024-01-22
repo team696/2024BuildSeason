@@ -139,7 +139,6 @@ public class Swerve extends SubsystemBase {
   public void initSendable(SendableBuilder builder) {
     for(SwerveModule mod : Constants.Swerve.swerveMods){
       builder.addDoubleProperty("Mod " + mod.moduleNumber + " Cancoder", ()->mod.getCANcoder().getRotations(), null);
-      builder.addDoubleProperty("Mod " + mod.moduleNumber + " Internal Encoder", ()->mod.getState().angle.getRotations(),null);
     }
     builder.addDoubleProperty("Gyro", ()->getYaw().getDegrees(), null);
     

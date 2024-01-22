@@ -12,6 +12,8 @@ import org.photonvision.simulation.VisionSystemSim;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
+import edu.wpi.first.net.PortForwarder;
+import edu.wpi.first.wpilibj.RobotBase;
 import frc.robot.subsystems.Swerve;
 
 public class Camera {
@@ -41,6 +43,8 @@ public class Camera {
         m_PCamera = new PhotonCamera(Constants.Cameras.name);
         m_Estimator = new PhotonPoseEstimator(m_atLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, m_PCamera, Constants.Cameras.position);
         m_Estimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
+
+        PortForwarder.add(5800, "photonvision.local", 5800);
     }
 
     public void simInit() {
@@ -55,6 +59,8 @@ public class Camera {
     }
 
     public void updatePose(SwerveDrivePoseEstimator estimator) {
+        if (RobotBase.isSimulation()) return;
+
         Optional<EstimatedRobotPose> estimation = m_Estimator.update();
         if (estimation.isPresent()) {
             estimator.addVisionMeasurement(estimation.get().estimatedPose.toPose2d(), estimation.get().timestampSeconds);
