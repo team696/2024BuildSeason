@@ -11,7 +11,11 @@ import org.photonvision.simulation.VisionSystemSim;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.wpilibj.RobotBase;
 import frc.robot.subsystems.Swerve;
@@ -64,6 +68,9 @@ public class Camera {
 
         Optional<EstimatedRobotPose> estimation = m_Estimator.update();
         if (estimation.isPresent()) {
+            double deviationRatio = estimation.get().targetsUsed.get(0).getBestCameraToTarget().getTranslation().getNorm() * 2;
+            Matrix<N3, N1> deviation = VecBuilder.fill(0.3 * deviationRatio, 0.3 * deviationRatio, 0.6 * deviationRatio);
+            estimator.setVisionMeasurementStdDevs(deviation);
             estimator.addVisionMeasurement(estimation.get().estimatedPose.toPose2d(), estimation.get().timestampSeconds);
         }
     }

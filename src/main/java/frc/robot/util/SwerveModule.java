@@ -37,16 +37,16 @@ public class SwerveModule {
         this.angleOffset = moduleConstants.CANcoderOffset; 
         /* Angle Encoder Config */
         angleEncoder = new CANcoder(moduleConstants.CANcoderId);
-        angleEncoder.getConfigurator().apply(Constants.CONFIGS.swerveCANcoderConfig);
+        angleEncoder.getConfigurator().apply(Constants.CONFIGS.swerve_CANCoder);
 
         /* Angle Motor Config */
         mAngleMotor = new TalonFX(moduleConstants.SteerMotorId);
-        mAngleMotor.getConfigurator().apply(Constants.CONFIGS.swerveAngleFXConfig);
+        mAngleMotor.getConfigurator().apply(Constants.CONFIGS.swerve_Angle);
         resetToAbsolute();
 
         /* Drive Motor Config */
         mDriveMotor = new TalonFX(moduleConstants.DriveMotorId);
-        mDriveMotor.getConfigurator().apply(Constants.CONFIGS.swerveDriveFXConfig);
+        mDriveMotor.getConfigurator().apply(Constants.CONFIGS.swerve_Drive);
         mDriveMotor.getConfigurator().setPosition(0.0);
 
         m_lastAngle = getState().angle.getRotations();

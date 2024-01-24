@@ -22,12 +22,12 @@ public class Shooter extends SubsystemBase {
 
   private DutyCycleEncoder m_Encoder;
 
-  private BangBangController m_shooterController = new BangBangController();
+  private BangBangController m_shooterController;
 
-  private DutyCycleOut m_Request = new DutyCycleOut(0);
-  private PositionDutyCycle m_PositionRequest = new PositionDutyCycle(0);
+  private DutyCycleOut m_Request;
+  private PositionDutyCycle m_PositionRequest;
 
-  private PIDController m_AnglePID = new PIDController(1, 0, 0);
+  private PIDController m_AnglePID;
 
   private final double m_AngleOffset = 0;
 
@@ -43,13 +43,20 @@ public class Shooter extends SubsystemBase {
     m_Follower = new TalonFX(11);
     m_AngleMotor = new TalonFX(12);
 
-    m_Master.getConfigurator().apply(Constants.CONFIGS.shooterMasterFXConfig);
-    m_Follower.getConfigurator().apply(Constants.CONFIGS.shooterFollowerFXConfig);
-    m_AngleMotor.getConfigurator().apply(Constants.CONFIGS.shooterAngleFXConfig);
+    m_Master.getConfigurator().apply(Constants.CONFIGS.shooter_Master);
+    m_Follower.getConfigurator().apply(Constants.CONFIGS.shooter_Follower);
+    m_AngleMotor.getConfigurator().apply(Constants.CONFIGS.shooter_Angle);
 
     m_Follower.setControl(new Follower(m_Master.getDeviceID(), true));
 
     m_Encoder = new DutyCycleEncoder(0);
+
+    m_shooterController = new BangBangController();
+
+    m_Request = new DutyCycleOut(0);
+    m_PositionRequest = new PositionDutyCycle(0);
+
+    m_AnglePID = new PIDController(1, 0, 0);
   }
 
   /** RPM */

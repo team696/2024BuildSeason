@@ -15,7 +15,7 @@ public final class Constants {
   public static final Field2d field = new Field2d();
 
   public static class Cameras {
-    public static final String name = "Cam_3";
+    public static final String name = "C";
     public static final Transform3d position =  new Transform3d(0, 0, 0, new Rotation3d(0, 0, 0));
   }
   public static class Swerve {

@@ -3,6 +3,7 @@ package frc.robot.subsystems;
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.kauailabs.navx.frc.AHRS;
 
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -44,9 +45,9 @@ public class Swerve extends SubsystemBase {
     zeroYaw();
 
     m_Pigeon = new Pigeon2(0);
-    m_Pigeon.getConfigurator().apply(Constants.CONFIGS.swervePigeon2Configuration);
+    m_Pigeon.getConfigurator().apply(Constants.CONFIGS.swerve_Pigeon);
 
-    m_poseEstimator = new SwerveDrivePoseEstimator(Constants.Swerve.swerveKinematics, getYaw(), m_swervePositions, new Pose2d(0,0,new Rotation2d(0))); 
+    m_poseEstimator = new SwerveDrivePoseEstimator(Constants.Swerve.swerveKinematics, getYaw(), m_swervePositions, new Pose2d(0,0,new Rotation2d(0)), VecBuilder.fill(0.1, 0.1, 0.05), VecBuilder.fill(0.3, 0.3, 0.6)); 
   }
 
   /**  -180 , 180 */

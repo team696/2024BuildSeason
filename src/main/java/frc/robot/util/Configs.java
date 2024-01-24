@@ -13,57 +13,63 @@ import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
 
 public class Configs {
-    public TalonFXConfiguration swerveAngleFXConfig = new TalonFXConfiguration();
-    public TalonFXConfiguration swerveDriveFXConfig = new TalonFXConfiguration();
-    public CANcoderConfiguration swerveCANcoderConfig = new CANcoderConfiguration();
 
-    public TalonFXConfiguration shooterMasterFXConfig = new TalonFXConfiguration();
-    public TalonFXConfiguration shooterFollowerFXConfig = new TalonFXConfiguration();
-
-    public TalonFXConfiguration shooterAngleFXConfig = new TalonFXConfiguration();
-
-    public Pigeon2Configuration swervePigeon2Configuration = new Pigeon2Configuration();
-
+    public TalonFXConfiguration swerve_Angle = new TalonFXConfiguration();
+    public TalonFXConfiguration swerve_Drive = new TalonFXConfiguration();
+    public CANcoderConfiguration swerve_CANCoder = new CANcoderConfiguration();
+    public Pigeon2Configuration swerve_Pigeon = new Pigeon2Configuration();
     public SwerveModuleConstants Mod0 = new SwerveModuleConstants();
     public SwerveModuleConstants Mod1 = new SwerveModuleConstants();
     public SwerveModuleConstants Mod2 = new SwerveModuleConstants();
     public SwerveModuleConstants Mod3 = new SwerveModuleConstants();
+    
+    public TalonFXConfiguration shooter_Master = new TalonFXConfiguration();
+    public TalonFXConfiguration shooter_Follower = new TalonFXConfiguration();
+    public TalonFXConfiguration shooter_Angle = new TalonFXConfiguration();
+    public TalonFXConfiguration shooter_Serializer = new TalonFXConfiguration();
+
+    public TalonFXConfiguration intake_Angle = new TalonFXConfiguration();
+    public TalonFXConfiguration intake_Linear = new TalonFXConfiguration();
+    public TalonFXConfiguration intake_Rollers = new TalonFXConfiguration();
+
+    public TalonFXConfiguration climber_Master = new TalonFXConfiguration();
+    public TalonFXConfiguration climber_Follower = new TalonFXConfiguration();
 
     public HolonomicPathFollowerConfig FollowConfig;
 
     public Configs() {
         /** Swerve CANCoder Configuration */
-        swerveCANcoderConfig.MagnetSensor.SensorDirection = SensorDirectionValue.CounterClockwise_Positive;
-        swerveCANcoderConfig.MagnetSensor.AbsoluteSensorRange = AbsoluteSensorRangeValue.Signed_PlusMinusHalf;
+        swerve_CANCoder.MagnetSensor.SensorDirection = SensorDirectionValue.CounterClockwise_Positive;
+        swerve_CANCoder.MagnetSensor.AbsoluteSensorRange = AbsoluteSensorRangeValue.Signed_PlusMinusHalf;
 
         /** Swerve Angle Motor Configuration */
-        swerveAngleFXConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
-        swerveAngleFXConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
-        swerveAngleFXConfig.Feedback.SensorToMechanismRatio = Constants.Swerve.angleGearRatio;
-        swerveAngleFXConfig.ClosedLoopGeneral.ContinuousWrap = true;
-        swerveAngleFXConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
-        swerveAngleFXConfig.CurrentLimits.SupplyCurrentLimit = 25;
-        swerveAngleFXConfig.CurrentLimits.SupplyCurrentThreshold = 40;
-        swerveAngleFXConfig.CurrentLimits.SupplyTimeThreshold = 0.1;
-        swerveAngleFXConfig.Slot0.kP = 128.0;
-        swerveAngleFXConfig.Slot0.kI = 0.0;
-        swerveAngleFXConfig.Slot0.kD = 6.0;
+        swerve_Angle.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+        swerve_Angle.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+        swerve_Angle.Feedback.SensorToMechanismRatio = Constants.Swerve.angleGearRatio;
+        swerve_Angle.ClosedLoopGeneral.ContinuousWrap = true;
+        swerve_Angle.CurrentLimits.SupplyCurrentLimitEnable = true;
+        swerve_Angle.CurrentLimits.SupplyCurrentLimit = 25;
+        swerve_Angle.CurrentLimits.SupplyCurrentThreshold = 40;
+        swerve_Angle.CurrentLimits.SupplyTimeThreshold = 0.1;
+        swerve_Angle.Slot0.kP = 128.0;
+        swerve_Angle.Slot0.kI = 0.0;
+        swerve_Angle.Slot0.kD = 6.0;
 
         /** Swerve Drive Motor Configuration */
-        swerveDriveFXConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
-        swerveDriveFXConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-        swerveDriveFXConfig.Feedback.SensorToMechanismRatio = Constants.Swerve.driveGearRatio;
-        swerveDriveFXConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
-        swerveDriveFXConfig.CurrentLimits.SupplyCurrentLimit = 35;
-        swerveDriveFXConfig.CurrentLimits.SupplyCurrentThreshold = 60;
-        swerveDriveFXConfig.CurrentLimits.SupplyTimeThreshold = 0.1;
-        swerveDriveFXConfig.Slot0.kP = 2.;
-        swerveDriveFXConfig.Slot0.kI = 0.0;
-        swerveDriveFXConfig.Slot0.kD = 0.0;
-        swerveDriveFXConfig.OpenLoopRamps.DutyCycleOpenLoopRampPeriod = 0.3;
-        swerveDriveFXConfig.OpenLoopRamps.VoltageOpenLoopRampPeriod = 0.3;
-        swerveDriveFXConfig.ClosedLoopRamps.DutyCycleClosedLoopRampPeriod = 0.1;
-        swerveDriveFXConfig.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.1;
+        swerve_Drive.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+        swerve_Drive.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+        swerve_Drive.Feedback.SensorToMechanismRatio = Constants.Swerve.driveGearRatio;
+        swerve_Drive.CurrentLimits.SupplyCurrentLimitEnable = true;
+        swerve_Drive.CurrentLimits.SupplyCurrentLimit = 35;
+        swerve_Drive.CurrentLimits.SupplyCurrentThreshold = 60;
+        swerve_Drive.CurrentLimits.SupplyTimeThreshold = 0.1;
+        swerve_Drive.Slot0.kP = 2.;
+        swerve_Drive.Slot0.kI = 0.0;
+        swerve_Drive.Slot0.kD = 0.0;
+        swerve_Drive.OpenLoopRamps.DutyCycleOpenLoopRampPeriod = 0.3;
+        swerve_Drive.OpenLoopRamps.VoltageOpenLoopRampPeriod = 0.3;
+        swerve_Drive.ClosedLoopRamps.DutyCycleClosedLoopRampPeriod = 0.1;
+        swerve_Drive.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.1;
 
         /** Individual Swerve Module Configurations */
         Mod0.CANcoderId = 0;
@@ -96,11 +102,19 @@ public class Configs {
                 );
 
         /** Shooter Motor Configuration */
-        shooterMasterFXConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+        shooter_Master.MotorOutput.NeutralMode = NeutralModeValue.Coast;
     
-        shooterFollowerFXConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+        shooter_Follower.MotorOutput.NeutralMode = NeutralModeValue.Coast;
 
         /** Pigeon Configuration */ 
-        swervePigeon2Configuration.MountPose.MountPoseYaw = 0;
+        swerve_Pigeon.MountPose.MountPoseYaw = 0;
+
+        /** Climber Motor Configuration */
+        climber_Master.Slot0.kP = 1;
+        climber_Master.Feedback.SensorToMechanismRatio = 27;
+
+        /** Intake Motor Configuaration */
+        intake_Linear.Slot0.kP = 1;
+        intake_Linear.Feedback.SensorToMechanismRatio = 26;
     }
 }

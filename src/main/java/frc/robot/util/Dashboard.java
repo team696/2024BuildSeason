@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
 
 public class Dashboard extends WebSocketServer {
-    private static final int UpdateRate = 100; // Every 100 ms
+    private final int UpdateRate = 100; // Every 100 ms
 
     private Dashboard(int port) throws UnknownHostException   {
         super(new InetSocketAddress(port));

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PowerDistribution;
@@ -62,13 +63,16 @@ public class Robot extends TimedRobot {
     configureBinds();
 
     SmartDashboard.putData(Swerve.get());
-    SmartDashboard.putData(Shooter.get());
+    //SmartDashboard.putData(Shooter.get());
   }
 
   @Override
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
     SmartDashboard.putData(m_PDH);
+
+    /** Used to update network tables faster (causes lag!) */
+    //NetworkTableInstance.getDefault().flush();
   }
 
   @Override
