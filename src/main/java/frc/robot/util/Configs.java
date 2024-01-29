@@ -31,6 +31,8 @@ public class Configs {
     public TalonFXConfiguration intake_Angle = new TalonFXConfiguration();
     public TalonFXConfiguration intake_Linear = new TalonFXConfiguration();
     public TalonFXConfiguration intake_Rollers = new TalonFXConfiguration();
+    public TalonFXConfiguration intake_SecondAngle = new TalonFXConfiguration();
+
 
     public TalonFXConfiguration climber_Master = new TalonFXConfiguration();
     public TalonFXConfiguration climber_Follower = new TalonFXConfiguration();

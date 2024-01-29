@@ -12,6 +12,7 @@ public class Intake extends SubsystemBase {
   private TalonFX m_Linear;
   private TalonFX m_Angle;
   private TalonFX m_Rollers;
+  private TalonFX m_SecondAngle;
 
   public static synchronized Intake get() {
     if (m_Intake == null) {
@@ -25,12 +26,16 @@ public class Intake extends SubsystemBase {
     m_Linear = new TalonFX(18);
     m_Angle = new TalonFX(19);
     m_Rollers = new TalonFX(20);
+    m_SecondAngle = new TalonFX(21);
 
     m_Linear.getConfigurator().apply(Constants.CONFIGS.intake_Linear);
     m_Angle.getConfigurator().apply(Constants.CONFIGS.intake_Angle);
     m_Rollers.getConfigurator().apply(Constants.CONFIGS.intake_Rollers);
+    m_SecondAngle.getConfigurator().apply(Constants.CONFIGS.intake_SecondAngle);
 
-    
+    m_Linear.setPosition(0);
+    m_Angle.setPosition(0);
+    m_SecondAngle.setPosition(0);
   }
 
   @Override

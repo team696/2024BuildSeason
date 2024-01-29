@@ -11,6 +11,7 @@ import org.json.simple.JSONObject;
 
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
+import frc.robot.subsystems.Swerve;
 
 public class Dashboard extends WebSocketServer {
     private final int UpdateRate = 100; // Every 100 ms
@@ -49,6 +50,14 @@ public class Dashboard extends WebSocketServer {
         obj.put("auto", new String[] {"auto 1", "auto 2"});
         obj.put("voltage", RobotController.getBatteryVoltage());
         obj.put("time", Timer.getMatchTime());
+        
+
+        JSONObject pose = new JSONObject();
+        pose.put("X", Swerve.get().getPose().getX());
+        pose.put("Y", Swerve.get().getPose().getY());
+        pose.put("R", Swerve.get().getPose().getRotation().getDegrees());
+        obj.put("pose", pose);
+
         obj.put("debug", new JSONArray());
 
         return obj.toJSONString();

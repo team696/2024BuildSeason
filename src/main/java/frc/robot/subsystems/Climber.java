@@ -39,6 +39,9 @@ public class Climber extends SubsystemBase {
     m_Follower.setControl(new Follower(m_Master.getDeviceID(), true));
 
     m_Controller = (new PositionDutyCycle(0)).withFeedForward(0);
+
+    m_Master.setPosition(0);
+    m_Follower.setPosition(0);
   }
 
   public void position(Position pos) {
