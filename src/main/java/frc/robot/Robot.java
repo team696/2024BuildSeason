@@ -29,6 +29,8 @@ import frc.robot.util.Util;
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
 
+  private String test = "Balls";
+
   private PowerDistribution m_PDH;
   
   private final Joystick joystickPanel = new Joystick(0);

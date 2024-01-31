@@ -3,6 +3,7 @@ package frc.robot.subsystems;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.util.Constants;
 
@@ -13,6 +14,8 @@ public class Intake extends SubsystemBase {
   private TalonFX m_Angle;
   private TalonFX m_Rollers;
   private TalonFX m_SecondAngle;
+
+  private DigitalInput m_BeamBreak;
 
   public static synchronized Intake get() {
     if (m_Intake == null) {
@@ -36,6 +39,12 @@ public class Intake extends SubsystemBase {
     m_Linear.setPosition(0);
     m_Angle.setPosition(0);
     m_SecondAngle.setPosition(0);
+
+    m_BeamBreak = new DigitalInput(1);
+  }
+
+  public boolean getBeamBreak() {
+    return m_BeamBreak.get();
   }
 
   @Override
@@ -46,6 +55,6 @@ public class Intake extends SubsystemBase {
 
   @Override
   public void initSendable(SendableBuilder builder) {
-
+    builder.addBooleanProperty("Beam Break", ()->getBeamBreak(), null);
   }
 }

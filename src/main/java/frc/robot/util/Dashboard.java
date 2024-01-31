@@ -2,6 +2,9 @@ package frc.robot.util;
 
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
+import java.util.HashMap;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 import org.java_websocket.WebSocket;
 import org.java_websocket.handshake.ClientHandshake;
@@ -14,7 +17,39 @@ import edu.wpi.first.wpilibj.Timer;
 import frc.robot.subsystems.Swerve;
 
 public class Dashboard extends WebSocketServer {
-    private final int UpdateRate = 100; // Every 100 ms
+    private class KeyInfo {
+        public boolean pressed;
+        public double timestamp;
+
+        public KeyInfo(boolean p, double t) {
+            pressed = p;
+            timestamp = t;
+        }
+    }
+
+    private final int UpdateRate = 40; // update in ms
+
+    private static HashMap<String, Supplier<Object>> OutgoingValues = new HashMap<String, Supplier<Object>>();
+    private static HashMap<String, KeyInfo> Keys = new HashMap<String, KeyInfo>();
+    private static HashMap<String, Consumer<String>> IncomingValues = new HashMap<String, Consumer<String>>();
+
+    /** Used to add values to send to dashboard. */
+    public static void push(String name, Supplier<Object> value) { 
+        OutgoingValues.put(name, value);
+    }
+
+    /** Register Functions to run based off of incoming values */
+    public static void register(String name, Consumer<String> value) {
+        IncomingValues.put(name, value);
+    }
+
+    public static boolean getKey(String name) {
+        if (!Keys.containsKey(name) || Timer.getFPGATimestamp() - Keys.get(name).timestamp > 0.5) {
+            return false;
+        }
+        
+        return Keys.get(name).pressed;
+    }
 
     private Dashboard(int port) throws UnknownHostException   {
         super(new InetSocketAddress(port));
@@ -36,8 +71,13 @@ public class Dashboard extends WebSocketServer {
     }
 
     private void dataReceived(String key, String value) {
-        switch (key) { 
-            default: 
+        switch (key) {
+            default:           
+                KeyInfo info = new KeyInfo((value.length() > 2) ? true : false, Timer.getFPGATimestamp()); 
+                Keys.put(key, info);
+
+                if (IncomingValues.containsKey(key))
+                    IncomingValues.get(key).accept(value);
                 break;
         }
     }
@@ -59,6 +99,10 @@ public class Dashboard extends WebSocketServer {
         obj.put("pose", pose);
 
         obj.put("debug", new JSONArray());
+
+        for (String key : OutgoingValues.keySet()) {
+            obj.put(key, OutgoingValues.get(key).get());
+        }
 
         return obj.toJSONString();
     }  
@@ -83,7 +127,8 @@ public class Dashboard extends WebSocketServer {
 
     @Override
     public void onClose(WebSocket conn, int code, String reason, boolean remote) {
-        Log.info("Dashboard", conn.getRemoteSocketAddress().getHostName() + " has closed its connection.");
+        Keys.clear();
+        //Log.info("Dashboard", conn.getRemoteSocketAddress().getHostName() + " has closed its connection.");
     }
 
     @Override
@@ -96,6 +141,7 @@ public class Dashboard extends WebSocketServer {
 
     @Override
     public void onError(WebSocket conn, Exception ex) {
+        Keys.clear();
         Log.fatalException("Dashboard", "Error", ex);
     }
 

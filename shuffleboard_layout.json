@@ -105,6 +105,34 @@
               "_glyph": 148,
               "_showGlyph": false
             }
+          },
+          "14,5": {
+            "size": [
+              2,
+              2
+            ],
+            "content": {
+              "_type": "Boolean Box",
+              "_source0": "network_table:///SmartDashboard/a",
+              "_title": "a",
+              "_glyph": 148,
+              "_showGlyph": false,
+              "Colors/Color when true": "#7CFC00FF",
+              "Colors/Color when false": "#8B0000FF"
+            }
+          },
+          "16,5": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/cock and",
+              "_title": "cock and",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
           }
         }
       }

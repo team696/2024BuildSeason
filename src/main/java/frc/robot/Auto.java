@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.subsystems.Swerve;
 import frc.robot.util.Constants;
+import frc.robot.util.Dashboard;
 
 public class Auto {
     public static Auto m_instance;
@@ -50,6 +51,8 @@ public class Auto {
     
         autoChooser = AutoBuilder.buildAutoChooser();
         SmartDashboard.putData("Auto Chooser", autoChooser);
+
+        Dashboard.push("selected_auto", ()->m_instance.autoChooser.getSelected().getName());
     }
 
     public static void Initialize(){
