@@ -40,7 +40,7 @@ public class Intake extends SubsystemBase {
     m_Angle.setPosition(0);
     m_SecondAngle.setPosition(0);
 
-    m_BeamBreak = new DigitalInput(1);
+    m_BeamBreak = new DigitalInput(9);
   }
 
   public boolean getBeamBreak() {

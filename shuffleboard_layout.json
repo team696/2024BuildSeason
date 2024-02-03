@@ -133,6 +133,21 @@
               "_glyph": 148,
               "_showGlyph": false
             }
+          },
+          "17,5": {
+            "size": [
+              2,
+              2
+            ],
+            "content": {
+              "_type": "Boolean Box",
+              "_source0": "network_table:///SmartDashboard/Intake/Beam Break",
+              "_title": "Intake/Beam Break",
+              "_glyph": 148,
+              "_showGlyph": false,
+              "Colors/Color when true": "#7CFC00FF",
+              "Colors/Color when false": "#8B0000FF"
+            }
           }
         }
       }
