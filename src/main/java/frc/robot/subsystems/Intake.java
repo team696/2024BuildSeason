@@ -26,10 +26,10 @@ public class Intake extends SubsystemBase {
 
   /** Creates a new Intake. */
   private Intake() {
-    m_Linear = new TalonFX(18);
-    m_Angle = new TalonFX(19);
-    m_Rollers = new TalonFX(20);
-    m_SecondAngle = new TalonFX(21);
+    m_Linear = new TalonFX(18, Constants.canivoreName);
+    m_Angle = new TalonFX(19, Constants.canivoreName);
+    m_Rollers = new TalonFX(20, Constants.canivoreName);
+    m_SecondAngle = new TalonFX(21, Constants.canivoreName);
 
     m_Linear.getConfigurator().apply(Constants.CONFIGS.intake_Linear);
     m_Angle.getConfigurator().apply(Constants.CONFIGS.intake_Angle);

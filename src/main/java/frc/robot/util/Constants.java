@@ -10,6 +10,8 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 public final class Constants {
   public static final Configs CONFIGS = new Configs();
 
+  public static final String canivoreName = "vore";
+
   public static final double deadBand = 0.03;
 
   public static final Field2d field = new Field2d();

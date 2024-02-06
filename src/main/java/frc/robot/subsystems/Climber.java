@@ -30,8 +30,8 @@ public class Climber extends SubsystemBase {
 
   /** Creates a new Climber. */
   private Climber() {
-    m_Master = new TalonFX(15);
-    m_Follower = new TalonFX(16);
+    m_Master = new TalonFX(15, Constants.canivoreName);
+    m_Follower = new TalonFX(16, Constants.canivoreName);
 
     m_Master.getConfigurator().apply(Constants.CONFIGS.climber_Master);
     m_Follower.getConfigurator().apply(Constants.CONFIGS.climber_Follower);

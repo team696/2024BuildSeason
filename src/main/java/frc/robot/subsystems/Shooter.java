@@ -9,14 +9,18 @@ import edu.wpi.first.math.controller.BangBangController;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.util.Constants;
 
 public class Shooter extends SubsystemBase {
   private static Shooter m_Shooter;
 
-  private TalonFX m_Master;
-  private TalonFX m_Follower;
+  private TalonFX m_Top;
+  private TalonFX m_Bottom;
+
+  private TalonFX m_Serializer;
 
   private TalonFX m_AngleMotor;
 
@@ -24,7 +28,8 @@ public class Shooter extends SubsystemBase {
 
   private BangBangController m_shooterController;
 
-  private DutyCycleOut m_Request;
+  private DutyCycleOut m_TopRequest;
+  private DutyCycleOut m_BottomRequest;
   private PositionDutyCycle m_PositionRequest;
 
   private PIDController m_AnglePID;
@@ -39,37 +44,54 @@ public class Shooter extends SubsystemBase {
   }
   
   public Shooter() {
-    m_Master = new TalonFX(10);
-    m_Follower = new TalonFX(11);
-    m_AngleMotor = new TalonFX(12);
+    m_Top = new TalonFX(10, Constants.canivoreName);
+    m_Bottom = new TalonFX(11, Constants.canivoreName);
+    m_AngleMotor = new TalonFX(12, Constants.canivoreName);
+    m_Serializer = new TalonFX(13, Constants.canivoreName);
 
-    m_Master.getConfigurator().apply(Constants.CONFIGS.shooter_Master);
-    m_Follower.getConfigurator().apply(Constants.CONFIGS.shooter_Follower);
+    m_Top.getConfigurator().apply(Constants.CONFIGS.shooter_Top);
+    m_Bottom.getConfigurator().apply(Constants.CONFIGS.shooter_Bottom);
     m_AngleMotor.getConfigurator().apply(Constants.CONFIGS.shooter_Angle);
-
-    m_Follower.setControl(new Follower(m_Master.getDeviceID(), true));
+    m_Serializer.getConfigurator().apply(Constants.CONFIGS.shooter_Serializer);
 
     m_Encoder = new DutyCycleEncoder(0);
 
     m_shooterController = new BangBangController();
 
-    m_Request = new DutyCycleOut(0);
+    m_TopRequest = new DutyCycleOut(0);
+    m_BottomRequest = new DutyCycleOut(0);
+
     m_PositionRequest = new PositionDutyCycle(0);
 
     m_AnglePID = new PIDController(1, 0, 0);
   }
 
   /** RPM */
-  public void setSpeed(double speed) {
-    m_Master.setControl(m_Request.withOutput(m_shooterController.calculate(m_Master.getVelocity().getValueAsDouble() * 60.0, speed)));
+  public void setSpeed(double top, double bottom) {
+   m_Top.setControl(m_TopRequest.withOutput(m_shooterController.calculate(m_Top.getVelocity().getValueAsDouble() * 60.0, top)));
+   m_Bottom.setControl(m_BottomRequest.withOutput(m_shooterController.calculate(m_Bottom.getVelocity().getValueAsDouble() * 60, bottom)));
+  }
+
+  /** Percent */
+  public void setSerializerSpeedPercent(double output) {
+    m_Serializer.set(output);
   }
 
   public void setAngle(double desired) {
     m_AngleMotor.setControl(m_PositionRequest.withPosition(m_AnglePID.calculate(m_Encoder.getAbsolutePosition() * 360 + m_AngleOffset, desired)));  
   }
 
-  public void stop() {
-    m_Master.stopMotor();
+  public Command setShooterSpeed(double top, double bottom) {
+    return Commands.runEnd(()->setSpeed(top, bottom), ()->stopShooter());
+  }
+  
+  public Command setSerializerSpeed(double speed) {
+    return Commands.runEnd(()->setSerializerSpeedPercent(speed), ()->setSerializerSpeedPercent(0));
+  }
+
+  public void stopShooter() {
+    m_Top.stopMotor();
+    m_Bottom.stopMotor();
   }
 
   @Override

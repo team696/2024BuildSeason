@@ -23,8 +23,8 @@ public class Configs {
     public SwerveModuleConstants Mod2 = new SwerveModuleConstants();
     public SwerveModuleConstants Mod3 = new SwerveModuleConstants();
     
-    public TalonFXConfiguration shooter_Master = new TalonFXConfiguration();
-    public TalonFXConfiguration shooter_Follower = new TalonFXConfiguration();
+    public TalonFXConfiguration shooter_Top = new TalonFXConfiguration();
+    public TalonFXConfiguration shooter_Bottom = new TalonFXConfiguration();
     public TalonFXConfiguration shooter_Angle = new TalonFXConfiguration();
     public TalonFXConfiguration shooter_Serializer = new TalonFXConfiguration();
 
@@ -104,9 +104,11 @@ public class Configs {
                 );
 
         /** Shooter Motor Configuration */
-        shooter_Master.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+        shooter_Top.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+        shooter_Top.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
     
-        shooter_Follower.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+        shooter_Bottom.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+        shooter_Bottom.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
         /** Pigeon Configuration */ 
         swerve_Pigeon.MountPose.MountPoseYaw = 0;
