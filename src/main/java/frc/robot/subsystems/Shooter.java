@@ -81,12 +81,23 @@ public class Shooter extends SubsystemBase {
     m_AngleMotor.setControl(m_PositionRequest.withPosition(m_AnglePID.calculate(m_Encoder.getAbsolutePosition() * 360 + m_AngleOffset, desired)));  
   }
 
-  public Command setShooterSpeed(double top, double bottom) {
-    return Commands.runEnd(()->setSpeed(top, bottom), ()->stopShooter());
-  }
-  
-  public Command setSerializerSpeed(double speed) {
-    return Commands.runEnd(()->setSerializerSpeedPercent(speed), ()->setSerializerSpeedPercent(0));
+  public boolean upToSpeed(double top, double bottom) {
+    if (m_Top.getVelocity().getValueAsDouble() * 60 > top) return false;
+    if (m_Bottom.getVelocity().getValueAsDouble() * 60 < bottom) return false;
+
+    return true;
+   }
+
+  //public Command setShooterSpeed(double top, double bottom) {
+  //  return Commands.runEnd(()->setSpeed(top, bottom), ()->stopShooter());
+ // }
+
+  //public Command setSerializerSpeed(double speed) {
+  //  return Commands.runEnd(()->setSerializerSpeedPercent(speed), ()->setSerializerSpeedPercent(0));
+  //}
+
+  public Command Shoot(double top, double bottom, double in) {
+    return Commands.run(()->setSpeed(top, bottom)).alongWith(Commands.run(()->setSerializerSpeedPercent(in)).onlyIf(()->upToSpeed(top, bottom)));
   }
 
   public void stopShooter() {
