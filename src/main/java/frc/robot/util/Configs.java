@@ -105,10 +105,12 @@ public class Configs {
 
         /** Shooter Motor Configuration */
         shooter_Top.MotorOutput.NeutralMode = NeutralModeValue.Coast;
-        shooter_Top.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+        shooter_Top.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
     
         shooter_Bottom.MotorOutput.NeutralMode = NeutralModeValue.Coast;
-        shooter_Bottom.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+        shooter_Bottom.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+
+        shooter_Serializer.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
         /** Pigeon Configuration */ 
         swerve_Pigeon.MountPose.MountPoseYaw = 0;

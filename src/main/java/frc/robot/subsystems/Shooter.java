@@ -8,6 +8,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.math.controller.BangBangController;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -33,6 +34,8 @@ public class Shooter extends SubsystemBase {
   private PositionDutyCycle m_PositionRequest;
 
   private PIDController m_AnglePID;
+
+  private DigitalInput m_BeamBreak;
 
   private final double m_AngleOffset = 0;
 
@@ -64,6 +67,9 @@ public class Shooter extends SubsystemBase {
     m_PositionRequest = new PositionDutyCycle(0);
 
     m_AnglePID = new PIDController(1, 0, 0);
+
+    m_BeamBreak = new DigitalInput(9);
+
   }
 
   /** RPM */
@@ -82,27 +88,23 @@ public class Shooter extends SubsystemBase {
   }
 
   public boolean upToSpeed(double top, double bottom) {
-    if (m_Top.getVelocity().getValueAsDouble() * 60 > top) return false;
-    if (m_Bottom.getVelocity().getValueAsDouble() * 60 < bottom) return false;
+    if (m_Top.getVelocity().getValueAsDouble() * 60 < top - 100) return false;
+    if (m_Bottom.getVelocity().getValueAsDouble() * 60 < bottom - 100) return false;
 
     return true;
-   }
+  }
 
-  //public Command setShooterSpeed(double top, double bottom) {
-  //  return Commands.runEnd(()->setSpeed(top, bottom), ()->stopShooter());
- // }
-
-  //public Command setSerializerSpeed(double speed) {
-  //  return Commands.runEnd(()->setSerializerSpeedPercent(speed), ()->setSerializerSpeedPercent(0));
-  //}
-
-  public Command Shoot(double top, double bottom, double in) {
-    return Commands.run(()->setSpeed(top, bottom)).alongWith(Commands.run(()->setSerializerSpeedPercent(in)).onlyIf(()->upToSpeed(top, bottom)));
+  public Command Intake() {
+    return this.runEnd(()->setSerializerSpeedPercent(0.25), ()->setSerializerSpeedPercent(0)).onlyWhile(()->getBeamBreak());
   }
 
   public void stopShooter() {
     m_Top.stopMotor();
     m_Bottom.stopMotor();
+  }
+
+  public boolean getBeamBreak() {
+    return m_BeamBreak.get();
   }
 
   @Override
@@ -113,5 +115,11 @@ public class Shooter extends SubsystemBase {
   @Override
   public void initSendable(SendableBuilder builder) {
     builder.addDoubleProperty("Encoder", ()->m_Encoder.getAbsolutePosition() * 360, null);
+    builder.addBooleanProperty("Beam Break", ()->getBeamBreak(), null);
+
+    builder.addDoubleProperty("Top Velocity", ()->m_Top.getVelocity().getValueAsDouble(), null);
+    builder.addDoubleProperty("Bottom Velocity", ()->m_Bottom.getVelocity().getValueAsDouble(), null);
+
+    builder.addBooleanProperty("Up to speed", ()->upToSpeed(3000, 2500), null);
   }
 }

@@ -15,7 +15,6 @@ public class Intake extends SubsystemBase {
   private TalonFX m_Rollers;
   private TalonFX m_SecondAngle;
 
-  private DigitalInput m_BeamBreak;
 
   public static synchronized Intake get() {
     if (m_Intake == null) {
@@ -40,12 +39,9 @@ public class Intake extends SubsystemBase {
     m_Angle.setPosition(0);
     m_SecondAngle.setPosition(0);
 
-    m_BeamBreak = new DigitalInput(9);
   }
 
-  public boolean getBeamBreak() {
-    return m_BeamBreak.get();
-  }
+
 
   @Override
   public void periodic() {
@@ -55,6 +51,5 @@ public class Intake extends SubsystemBase {
 
   @Override
   public void initSendable(SendableBuilder builder) {
-    builder.addBooleanProperty("Beam Break", ()->getBeamBreak(), null);
   }
 }

@@ -16,7 +16,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import frc.robot.commands.Shoot;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
@@ -37,12 +39,19 @@ public class Robot extends TimedRobot {
   private final Joystick joystickPanel = new Joystick(0);
   //private final Joystick operatorPanel = new Joystick(2);
 
+  private final CommandXboxController controller = new CommandXboxController(1);
+
   private final JoystickButton leftJoy = new JoystickButton(joystickPanel, 1);
   //private final JoystickButton rightJoy = new JoystickButton(joystickPanel, 2);
 
   private void configureBinds() {
     Swerve.get().setDefaultCommand(new TeleopSwerve(joystickPanel, 1, 0, 2, true, true));
     leftJoy.onTrue(new InstantCommand(()->Swerve.get().zeroYaw()));
+  }
+
+  private void configureControllerBinds() {
+    controller.a().whileTrue(new Shoot(3000, 2500, 1));
+    controller.b().whileTrue(Shooter.get().Intake());
   }
 
   @Override
@@ -63,7 +72,8 @@ public class Robot extends TimedRobot {
 
     Auto.Initialize();
 
-    configureBinds();
+    //configureBinds();
+    configureControllerBinds();
 
     SmartDashboard.putData(Swerve.get());
     SmartDashboard.putData(Shooter.get());
