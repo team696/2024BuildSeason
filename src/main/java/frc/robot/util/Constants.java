@@ -8,6 +8,8 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 
 public final class Constants {
+  public static final boolean DEBUG = false;
+
   public static final Configs CONFIGS = new Configs();
 
   public static final String canivoreName = "vore";
@@ -18,7 +20,10 @@ public final class Constants {
 
   public static class Cameras {
     public static final String name = "C";
-    public static final Transform3d position =  new Transform3d(0, 0, 0, new Rotation3d(0, 0, 0));
+    public static final Transform3d position =  new Transform3d(0, 0, 0, new Rotation3d(0, 0, -180));
+  }
+  public static class Shooter {
+    public static final double AngleOffset = -67;
   }
   public static class Swerve {
     public static final double drivekS = (0.667 / 12); 

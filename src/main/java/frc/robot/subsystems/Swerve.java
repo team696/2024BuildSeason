@@ -1,6 +1,5 @@
 package frc.robot.subsystems;
 
-import com.ctre.phoenix6.hardware.Pigeon2;
 import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.math.VecBuilder;
@@ -14,18 +13,18 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.SPI;
-import edu.wpi.first.wpilibj.smartdashboard.SendableBuilderImpl;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.util.Camera;
 import frc.robot.util.Constants;
+import frc.robot.util.Log;
 import frc.robot.util.SwerveModule;
 
 public class Swerve extends SubsystemBase {
   
   private static Swerve m_Swerve;
   private AHRS m_Gyro;
-  private Pigeon2 m_Pigeon;
+  //private Pigeon2 m_Pigeon;
 
   private SwerveModulePosition[] m_swervePositions = new SwerveModulePosition[4];
   private SwerveDrivePoseEstimator m_poseEstimator;
@@ -45,8 +44,8 @@ public class Swerve extends SubsystemBase {
     m_Gyro = new AHRS(SPI.Port.kMXP);
     zeroYaw();
 
-    m_Pigeon = new Pigeon2(0);
-    m_Pigeon.getConfigurator().apply(Constants.CONFIGS.swerve_Pigeon);
+    //m_Pigeon = new Pigeon2(0);
+    //m_Pigeon.getConfigurator().apply(Constants.CONFIGS.swerve_Pigeon);
 
     m_poseEstimator = new SwerveDrivePoseEstimator(Constants.Swerve.swerveKinematics, getYaw(), m_swervePositions, new Pose2d(0,0,new Rotation2d(0)), VecBuilder.fill(0.1, 0.1, 0.05), VecBuilder.fill(0.3, 0.3, 0.6)); 
   }
@@ -126,6 +125,9 @@ public class Swerve extends SubsystemBase {
 
   @Override
   public void periodic() {
+    if (!m_Gyro.isConnected())
+      Log.unusual("Swerve", "Gyro Not Found");
+
     for (int i = 0; i < 4; ++i) {
       m_swervePositions[i] = Constants.Swerve.swerveMods[i].getPosition();
     }
@@ -139,12 +141,13 @@ public class Swerve extends SubsystemBase {
 
   @Override
   public void initSendable(SendableBuilder builder) {
-    for(SwerveModule mod : Constants.Swerve.swerveMods){
-      builder.addDoubleProperty("Mod " + mod.moduleNumber + " Cancoder", ()->mod.getCANcoder().getRotations(), null);
+    if ( Constants.DEBUG) {
+      for(SwerveModule mod : Constants.Swerve.swerveMods){
+        builder.addDoubleProperty("Mod " + mod.moduleNumber + " Cancoder", ()->mod.getCANcoder().getRotations(), null);
+      }
+      builder.addDoubleProperty("Gyro", ()->getYaw().getDegrees(), null);
     }
-    builder.addDoubleProperty("Gyro", ()->getYaw().getDegrees(), null);
-    
-    //builder.addDoubleProperty("Pigeon", ()->m_Pigeon.getYaw().getValueAsDouble(), null);
+
     SmartDashboard.putData("Field", Constants.field);
   }
 }

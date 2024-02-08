@@ -73,23 +73,23 @@ public class Configs {
         swerve_Drive.ClosedLoopRamps.DutyCycleClosedLoopRampPeriod = 0.1;
         swerve_Drive.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.1;
 
-        /** Individual Swerve Module Configurations */
-        Mod0.CANcoderId = 0;
-        Mod0.DriveMotorId = 1;
+        /** Individual Swerve Module Configurations -> frontLeft, frontRight, backLeft, backRight */ 
+        Mod0.CANcoderId = 0;  
+        Mod0.DriveMotorId = 1; 
         Mod0.SteerMotorId = 2;
         Mod0.CANcoderOffset = -0.2539;
-
-        Mod1.CANcoderId = 2;
+ 
+        Mod1.CANcoderId = 2; 
         Mod1.DriveMotorId = 3;
         Mod1.SteerMotorId = 4;
         Mod1.CANcoderOffset = -0.433;
 
-        Mod2.CANcoderId = 01;
+        Mod2.CANcoderId = 1; 
         Mod2.DriveMotorId = 5;
         Mod2.SteerMotorId = 6;
         Mod2.CANcoderOffset = 0.3265;
 
-        Mod3.CANcoderId = 3;
+        Mod3.CANcoderId = 3; 
         Mod3.DriveMotorId = 7;
         Mod3.SteerMotorId = 8;
         Mod3.CANcoderOffset = -0.15845;
@@ -111,6 +111,9 @@ public class Configs {
         shooter_Bottom.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
 
         shooter_Serializer.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+
+        shooter_Angle.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+        shooter_Angle.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
         /** Pigeon Configuration */ 
         swerve_Pigeon.MountPose.MountPoseYaw = 0;

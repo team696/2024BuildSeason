@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import frc.robot.commands.Shoot;
 import frc.robot.subsystems.Swerve;
 import frc.robot.util.Constants;
 import frc.robot.util.Dashboard;
@@ -47,8 +48,8 @@ public class Auto {
             Constants.field.getObject("Path").setPoses(poses);
         });
 
-        //NamedCommands.registerCommand("Example Command", new Exmaple());
-    
+        NamedCommands.registerCommand("Shoot", new Shoot(3000,2500,1));
+        
         autoChooser = AutoBuilder.buildAutoChooser();
         SmartDashboard.putData("Auto Chooser", autoChooser);
 

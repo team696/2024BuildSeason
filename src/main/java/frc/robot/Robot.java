@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
-import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PowerDistribution;
@@ -19,11 +18,11 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.Shoot;
+import frc.robot.commands.ShooterIntake;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Swerve;
-import frc.robot.util.Camera;
 import frc.robot.util.Constants;
 import frc.robot.util.Dashboard;
 import frc.robot.util.Log;
@@ -31,8 +30,6 @@ import frc.robot.util.Util;
 
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
-
-  private String test = "Balls";
 
   private PowerDistribution m_PDH;
   
@@ -45,13 +42,16 @@ public class Robot extends TimedRobot {
   //private final JoystickButton rightJoy = new JoystickButton(joystickPanel, 2);
 
   private void configureBinds() {
-    Swerve.get().setDefaultCommand(new TeleopSwerve(joystickPanel, 1, 0, 2, true, true));
+    Swerve.get().setDefaultCommand(new TeleopSwerve(joystickPanel, 1, 0, 2, Constants.deadBand,true, true));
     leftJoy.onTrue(new InstantCommand(()->Swerve.get().zeroYaw()));
   }
 
   private void configureControllerBinds() {
-    controller.a().whileTrue(new Shoot(3000, 2500, 1));
+    controller.a().whileTrue(new Shoot(4500, 4000, 1));
     controller.b().whileTrue(Shooter.get().Intake());
+    controller.y().whileTrue(new ShooterIntake());
+    Swerve.get().setDefaultCommand(new TeleopSwerve(()->-controller.getRawAxis(1), ()->-controller.getRawAxis(0), ()->-controller.getRawAxis(4), 0.08,true, true));
+    controller.button(8).onTrue(new InstantCommand(()->Swerve.get().zeroYaw()));
   }
 
   @Override
@@ -72,8 +72,10 @@ public class Robot extends TimedRobot {
 
     Auto.Initialize();
 
-    //configureBinds();
+    configureBinds();
     configureControllerBinds();
+
+    Shooter.get().setDefaultCommand(Shooter.get().holdAngle());
 
     SmartDashboard.putData(Swerve.get());
     SmartDashboard.putData(Shooter.get());
@@ -83,7 +85,8 @@ public class Robot extends TimedRobot {
   @Override
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
-    SmartDashboard.putData(m_PDH);
+    if (Constants.DEBUG) 
+      SmartDashboard.putData(m_PDH);
 
     /** Used to update network tables faster (causes lag!) */
     //NetworkTableInstance.getDefault().flush();

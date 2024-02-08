@@ -2,7 +2,8 @@ package frc.robot.commands;
 
 import frc.robot.subsystems.Swerve;
 import frc.robot.util.Constants;
-import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.GenericHID;
+import java.util.function.DoubleSupplier;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -10,18 +11,15 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
-
 public class TeleopSwerve extends Command {
 
-    private double rotation;
-    private Translation2d translation;
     private boolean fieldRelative;
     private boolean openLoop;
-  
-    private Joystick controller;
-    private int translationAxis;
-    private int strafeAxis;
-    private int rotationAxis;
+    private DoubleSupplier translation;
+    private DoubleSupplier strafe;
+    private DoubleSupplier rotation;
+    private double deadband;
+
 
     private double mapdouble(double x, double in_min, double in_max, double out_min, double out_max){
         return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
@@ -33,45 +31,56 @@ public class TeleopSwerve extends Command {
     /**
      * Driver control
      */
-    public TeleopSwerve(Joystick controller, int translationAxis, int strafeAxis, int rotationAxis, boolean fieldRelative, boolean openLoop) {
-        addRequirements(Swerve.get());
-
-        this.controller = controller;
-        this.translationAxis = translationAxis;
-        this.strafeAxis = strafeAxis;
-        this.rotationAxis = rotationAxis;
+    public TeleopSwerve(GenericHID controller, int translationAxis, int strafeAxis, int rotationAxis, double deadband,boolean fieldRelative, boolean openLoop) {
         this.fieldRelative = fieldRelative;
         this.openLoop = openLoop;
+
+        translation = ()->-controller.getRawAxis(translationAxis);
+        strafe = ()->controller.getRawAxis(strafeAxis);
+        rotation = ()->controller.getRawAxis(rotationAxis);
+
+        this.deadband = deadband;
 
         pidController.setTolerance(1);
         pidController.enableContinuousInput(-180, 180);
         rightJoy = new JoystickButton(controller, 2);
+
+        addRequirements(Swerve.get());
+    }
+
+    public TeleopSwerve(DoubleSupplier x, DoubleSupplier y, DoubleSupplier r, double deadband ,boolean fieldRelative, boolean openLoop) {
+        translation = x;
+        strafe = y;
+        rotation = r;
+
+        this.fieldRelative = fieldRelative;
+        this.openLoop = openLoop;
+        
+        addRequirements(Swerve.get());
     }
 
     @Override
     public void execute() {
-        double yAxis = -controller.getRawAxis(translationAxis);
-        double xAxis = controller.getRawAxis(strafeAxis);
-        double rAxis = controller.getRawAxis(rotationAxis);
-        if (rightJoy.getAsBoolean() != true){
-            if (Math.abs(rAxis) > Constants.deadBand) {
+        double yAxis = translation.getAsDouble();
+        double xAxis = strafe.getAsDouble();
+        double rAxis = rotation.getAsDouble();
+        if (rightJoy != null && rightJoy.getAsBoolean()){
+            rAxis = pidController.calculate(Swerve.get().getYaw().getDegrees(), Swerve.get().getAngleForSpeaker(Swerve.get().getPose()).getDegrees());
+        } else {
+            if (Math.abs(rAxis) > deadband) {
                 if (rAxis > 0)
-                    rAxis = mapdouble(rAxis, Constants.deadBand, 1, 0, 1);
+                    rAxis = mapdouble(rAxis, deadband, 1, 0, 1);
                 else 
-                    rAxis = mapdouble(rAxis, -Constants.deadBand, -1, 0, -1);
-            }
-            else{
+                    rAxis = mapdouble(rAxis, -deadband, -1, 0, -1);
+            } else {
                 rAxis = 0;
             }
-        } else {
-            rAxis = pidController.calculate(Swerve.get().getYaw().getDegrees(), Swerve.get().getAngleForSpeaker(Swerve.get().getPose()).getDegrees());
         }
-
         Rotation2d theta = new Rotation2d(yAxis, xAxis);
         double magnitude = Math.min(Math.sqrt((xAxis * xAxis) + (yAxis * yAxis)),1);
-        if (magnitude < Constants.deadBand) magnitude = 0;
-        translation = new Translation2d(Math.pow(magnitude, 2), theta).times(Constants.Swerve.maxSpeed);
-        rotation = rAxis * Constants.Swerve.maxAngularVelocity;
+        if (magnitude < deadband) magnitude = 0;
+        Translation2d translation = new Translation2d(Math.pow(magnitude, 2), theta).times(Constants.Swerve.maxSpeed);
+        double rotation = rAxis * Constants.Swerve.maxAngularVelocity;
         Swerve.get().Drive(translation, rotation, fieldRelative, openLoop);
     }
 }
