@@ -67,7 +67,7 @@ public class Shooter extends SubsystemBase {
 
     m_PositionRequest = new DutyCycleOut(0);
 
-    m_AnglePID = new PIDController(1/48.0, 0, 0);
+    m_AnglePID = new PIDController(1/72.0, 0, 0);
 
     m_BeamBreak = new DigitalInput(9);
   }
@@ -114,6 +114,10 @@ public class Shooter extends SubsystemBase {
 
   public void stopAngle() {
     m_AngleMotor.stopMotor();
+  }
+
+  public void stopSerializer() {
+    m_Serializer.stopMotor();
   }
 
   public boolean getBeamBreak() {

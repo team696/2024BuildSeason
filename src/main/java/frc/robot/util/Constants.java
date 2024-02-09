@@ -8,7 +8,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 
 public final class Constants {
-  public static final boolean DEBUG = false;
+  public static final boolean DEBUG = true;
 
   public static final Configs CONFIGS = new Configs();
 
@@ -17,10 +17,10 @@ public final class Constants {
   public static final double deadBand = 0.03;
 
   public static final Field2d field = new Field2d();
-
+  
   public static class Cameras {
     public static final String name = "C";
-    public static final Transform3d position =  new Transform3d(0, 0, 0, new Rotation3d(0, 0, -180));
+    public static final Transform3d position =  new Transform3d(Units.inchesToMeters(-11.441), Units.inchesToMeters(-7.051), Units.inchesToMeters(3.406), new Rotation3d(0, Units.degreesToRadians(27.8), -Math.PI));
   }
   public static class Shooter {
     public static final double AngleOffset = -67;

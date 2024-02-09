@@ -48,7 +48,7 @@ public class Auto {
             Constants.field.getObject("Path").setPoses(poses);
         });
 
-        NamedCommands.registerCommand("Shoot", new Shoot(3000,2500,1));
+        NamedCommands.registerCommand("Shoot", new Shoot(3000,2500,1, ()->30));
         
         autoChooser = AutoBuilder.buildAutoChooser();
         SmartDashboard.putData("Auto Chooser", autoChooser);

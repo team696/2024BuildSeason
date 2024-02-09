@@ -4,16 +4,20 @@
 
 package frc.robot.commands;
 
+import java.util.function.DoubleSupplier;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Shooter;
 
 public class Shoot extends Command {
   double top, bottom, in;
+  DoubleSupplier angle;
   /** Creates a new Shoot. */
-  public Shoot(double top, double bottom, double in) {
+  public Shoot(double top, double bottom, double in, DoubleSupplier angle) {
     this.top = top;
     this.bottom = bottom;
     this.in = in;
+    this.angle = angle;
     addRequirements(Shooter.get());
     // Use addRequirements() here to declare subsystem dependencies.
   }
@@ -25,8 +29,9 @@ public class Shoot extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    Shooter.get().setAngle(angle.getAsDouble());
     Shooter.get().setSpeed(top, bottom);
-    if(Shooter.get().upToSpeed(top, bottom) && !Shooter.get().getBeamBreak()) {
+    if(Shooter.get().upToSpeed(top, bottom) && !Shooter.get().getBeamBreak() && Math.abs(Shooter.get().getAngle() - angle.getAsDouble()) < 2) {
       Shooter.get().setSerializerSpeedPercent(in);
     } else {
       Shooter.get().setSerializerSpeedPercent(0);
@@ -37,7 +42,8 @@ public class Shoot extends Command {
   @Override
   public void end(boolean interrupted) {
     Shooter.get().stopShooter();
-    Shooter.get().setSerializerSpeedPercent(0);
+    Shooter.get().stopSerializer();
+    Shooter.get().stopAngle();
   }
 
   // Returns true when the command should end.

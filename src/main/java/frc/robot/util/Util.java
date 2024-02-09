@@ -7,6 +7,10 @@ import java.util.Enumeration;
 import java.util.List;
 
 public class Util {
+    public static double clamp(double val, double min, double max) {
+        return Math.max(Math.min(max, val), min);
+    }
+
     /**
      * @param wheelRPS Wheel Velocity: (in Rotations per Second)
      * @param circumference Wheel Circumference: (in Meters)

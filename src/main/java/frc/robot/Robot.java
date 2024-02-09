@@ -47,10 +47,12 @@ public class Robot extends TimedRobot {
   }
 
   private void configureControllerBinds() {
-    controller.a().whileTrue(new Shoot(4500, 4000, 1));
+    controller.a().whileTrue(new Shoot(4500, 4000, 1, ()->Shooter.get().AngleGoal * Util.clamp(Swerve.get().getDistToSpeaker(Swerve.get().getPose())/8, 0, 1)));
+    controller.leftBumper().whileTrue(new Shoot(2000,2000,1, ()->60));
     controller.b().whileTrue(Shooter.get().Intake());
     controller.y().whileTrue(new ShooterIntake());
-    Swerve.get().setDefaultCommand(new TeleopSwerve(()->-controller.getRawAxis(1), ()->-controller.getRawAxis(0), ()->-controller.getRawAxis(4), 0.08,true, true));
+    controller.x().whileTrue(new Shoot(550,550,1, ()->57));
+    Swerve.get().setDefaultCommand(new TeleopSwerve(()->-controller.getRawAxis(1), ()->-controller.getRawAxis(0), ()->-controller.getRawAxis(4), controller.rightBumper(), 0.08,true, true));
     controller.button(8).onTrue(new InstantCommand(()->Swerve.get().zeroYaw()));
   }
 

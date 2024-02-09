@@ -120,7 +120,11 @@ public class Swerve extends SubsystemBase {
   } 
 
   public Rotation2d getAngleForSpeaker(Pose2d  pose) {
-    return Rotation2d.fromRadians(Math.PI + (Math.atan2(pose.getY() - 5.6, pose.getX() - 1.1)));
+    return Rotation2d.fromRadians((Math.atan2(pose.getY() - 5.6, pose.getX() - 1.1)));
+  }
+
+  public double getDistToSpeaker(Pose2d pose) {
+    return getPose().getTranslation().getDistance(new Translation2d(1.1, 5.6));
   }
 
   @Override
@@ -147,6 +151,8 @@ public class Swerve extends SubsystemBase {
       }
       builder.addDoubleProperty("Gyro", ()->getYaw().getDegrees(), null);
     }
+
+    builder.addDoubleProperty("Distance To Speaker", ()->getDistToSpeaker(getPose()), null);
 
     SmartDashboard.putData("Field", Constants.field);
   }

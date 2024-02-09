@@ -3,13 +3,14 @@ package frc.robot.commands;
 import frc.robot.subsystems.Swerve;
 import frc.robot.util.Constants;
 import edu.wpi.first.wpilibj.GenericHID;
+
+import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 public class TeleopSwerve extends Command {
 
@@ -25,9 +26,9 @@ public class TeleopSwerve extends Command {
         return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
     }
 
-    PIDController pidController = new PIDController(0.02  , 0.00, 0);
+    PIDController pidController = new PIDController(0.006  , 0.00, 0);
 
-    private Trigger rightJoy;
+    private BooleanSupplier rightJoy;
     /**
      * Driver control
      */
@@ -43,18 +44,22 @@ public class TeleopSwerve extends Command {
 
         pidController.setTolerance(1);
         pidController.enableContinuousInput(-180, 180);
-        rightJoy = new JoystickButton(controller, 2);
+        rightJoy = (new JoystickButton(controller, 2));
 
         addRequirements(Swerve.get());
     }
 
-    public TeleopSwerve(DoubleSupplier x, DoubleSupplier y, DoubleSupplier r, double deadband ,boolean fieldRelative, boolean openLoop) {
+    public TeleopSwerve(DoubleSupplier x, DoubleSupplier y, DoubleSupplier r, BooleanSupplier rightJoy, double deadband ,boolean fieldRelative, boolean openLoop) {
         translation = x;
         strafe = y;
         rotation = r;
 
         this.fieldRelative = fieldRelative;
         this.openLoop = openLoop;
+
+        this.deadband = deadband; 
+
+        this.rightJoy = rightJoy;
         
         addRequirements(Swerve.get());
     }
