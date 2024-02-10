@@ -47,7 +47,7 @@ public class Robot extends TimedRobot {
   }
 
   private void configureControllerBinds() {
-    controller.a().whileTrue(new Shoot(4500, 4000, 1, ()->Shooter.get().AngleGoal * Util.clamp(Swerve.get().getDistToSpeaker(Swerve.get().getPose())/8, 0, 1)));
+    controller.a().whileTrue(new Shoot(3500, 3000, 1, ()->Shooter.get().AngleGoal));
     controller.leftBumper().whileTrue(new Shoot(2000,2000,1, ()->60));
     controller.b().whileTrue(Shooter.get().Intake());
     controller.y().whileTrue(new ShooterIntake());

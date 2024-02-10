@@ -8,6 +8,7 @@ import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 import org.photonvision.simulation.PhotonCameraSim;
 import org.photonvision.simulation.VisionSystemSim;
+import org.photonvision.targeting.PhotonTrackedTarget;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
@@ -68,7 +69,15 @@ public class Camera {
 
         Optional<EstimatedRobotPose> estimation = m_Estimator.update();
         if (estimation.isPresent()) {
-            double deviationRatio = estimation.get().targetsUsed.get(0).getBestCameraToTarget().getTranslation().getNorm() * 2;
+            PhotonTrackedTarget bestTarget = estimation.get().targetsUsed.get(0);//m_PCamera.getLatestResult().getBestTarget(); //
+            if (bestTarget.getPoseAmbiguity() > 0.15) return;
+            if (bestTarget.getBestCameraToTarget().getTranslation().getNorm() > 4) return;
+            double deviationRatio; 
+            if (bestTarget.getPoseAmbiguity() < 0.01) {
+                deviationRatio = 1/100.0;
+            } else {
+                deviationRatio = bestTarget.getBestCameraToTarget().getTranslation().getNorm() * 3;
+            }
             Matrix<N3, N1> deviation = VecBuilder.fill(0.3 * deviationRatio, 0.3 * deviationRatio, 0.6 * deviationRatio);
             estimator.setVisionMeasurementStdDevs(deviation);
             estimator.addVisionMeasurement(estimation.get().estimatedPose.toPose2d(), estimation.get().timestampSeconds);

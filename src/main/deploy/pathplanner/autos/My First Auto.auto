@@ -8,13 +8,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Example Path"
+            "pathName": "New Path"
           }
         },
         {
-          "type": "named",
+          "type": "path",
           "data": {
-            "name": "Exmaple"
+            "pathName": "New New New Path"
           }
         }
       ]
