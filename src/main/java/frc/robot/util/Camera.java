@@ -10,11 +10,16 @@ import org.photonvision.simulation.PhotonCameraSim;
 import org.photonvision.simulation.VisionSystemSim;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
+import edu.wpi.first.apriltag.AprilTag;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.net.PortForwarder;
@@ -69,14 +74,26 @@ public class Camera {
 
         Optional<EstimatedRobotPose> estimation = m_Estimator.update();
         if (estimation.isPresent()) {
+            if (Constants.DEBUG) { 
+                for(AprilTag tag : m_atLayout.getTags()) {
+                    Constants.field.getObject(tag.ID + "Desired").setPose(tag.pose.toPose2d());
+                }
+                for (PhotonTrackedTarget t : estimation.get().targetsUsed) {
+                    Transform3d targetTransform = t.getBestCameraToTarget(); 
+                    Pose2d target = new Pose2d(targetTransform.getTranslation().rotateBy(Constants.Cameras.position.getRotation()).toTranslation2d(), targetTransform.getRotation().toRotation2d());
+                    Transform2d balls = new Transform2d(target.getTranslation(), target.getRotation());
+                    Pose2d tagToCam = Swerve.get().getPose().transformBy(balls);
+                    Constants.field.getObject(String.valueOf(t.getFiducialId())).setPose(tagToCam.plus(new Transform2d(Constants.Cameras.position.getTranslation().toTranslation2d().rotateBy(new Rotation2d(Math.PI)), Constants.Cameras.position.getRotation().toRotation2d())));
+                }
+            }
             PhotonTrackedTarget bestTarget = estimation.get().targetsUsed.get(0);//m_PCamera.getLatestResult().getBestTarget(); //
-            if (bestTarget.getPoseAmbiguity() > 0.15) return;
-            if (bestTarget.getBestCameraToTarget().getTranslation().getNorm() > 4) return;
+            if (bestTarget.getPoseAmbiguity() > 0.13) return;
+            //if (bestTarget.getBestCameraToTarget().getTranslation().getNorm() > 4) return;
             double deviationRatio; 
             if (bestTarget.getPoseAmbiguity() < 1/100.0) {
                 deviationRatio = 1/100.0;
             } else {
-                deviationRatio = bestTarget.getBestCameraToTarget().getTranslation().getNorm() * 3;
+                deviationRatio = Math.pow(bestTarget.getBestCameraToTarget().getTranslation().getNorm(),2) / 18;
             }
             Matrix<N3, N1> deviation = VecBuilder.fill(0.3 * deviationRatio, 0.3 * deviationRatio, 0.6 * deviationRatio);
             estimator.setVisionMeasurementStdDevs(deviation);

@@ -34,7 +34,7 @@ public final class Constants {
   }
   public static class Cameras {
     public static final String name = "C";
-    public static final Transform3d position =  new Transform3d(new Translation3d(Units.inchesToMeters(-11.441), Units.inchesToMeters(-7.051), Units.inchesToMeters(8.5)), new Rotation3d(0, Units.degreesToRadians(27.8), Units.degreesToRadians(180)));
+    public static final Transform3d position =  new Transform3d(new Translation3d(Units.inchesToMeters(-11.441), Units.inchesToMeters(-7.051), Units.inchesToMeters(8.5)), new Rotation3d(0, Units.degreesToRadians(-27.8), Units.degreesToRadians(180)));
   }
   public static class Shooter {
     public static final double AngleOffset = -67;

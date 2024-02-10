@@ -7,6 +7,10 @@ import java.util.Enumeration;
 import java.util.List;
 
 public class Util {
+    public static double lerp(double t, double min, double max) {
+        return (max - min) * t + min;
+    }
+
     public static double clamp(double val, double min, double max) {
         return Math.max(Math.min(max, val), min);
     }

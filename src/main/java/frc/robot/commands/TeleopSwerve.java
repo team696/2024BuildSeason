@@ -26,7 +26,7 @@ public class TeleopSwerve extends Command {
         return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
     }
 
-    PIDController pidController = new PIDController(0.006  , 0.00, 0);
+    PIDController pidController = new PIDController(0.016  , 0.00, 0);
 
     private BooleanSupplier rightJoy;
     /**
@@ -70,7 +70,7 @@ public class TeleopSwerve extends Command {
         double xAxis = strafe.getAsDouble();
         double rAxis = rotation.getAsDouble();
         if (rightJoy != null && rightJoy.getAsBoolean()){
-            rAxis = pidController.calculate(Swerve.get().getYaw().getDegrees(), Swerve.get().getAngleForSpeaker(Swerve.get().getPose()).getDegrees());
+            rAxis = pidController.calculate(Swerve.get().getYaw().getDegrees(), Swerve.get().getAngleForSpeaker(Swerve.get().getPose()).getDegrees() - 180);
         } else {
             if (Math.abs(rAxis) > deadband) {
                 if (rAxis > 0)

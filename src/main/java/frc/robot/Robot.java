@@ -46,8 +46,8 @@ public class Robot extends TimedRobot {
     leftJoy.onTrue(new InstantCommand(()->Swerve.get().zeroYaw()));
   }
 
-  private void configureControllerBinds() {
-    controller.a().whileTrue(new Shoot(3500, 3000, 1, ()->Shooter.get().AngleGoal));
+  private void configureControllerBinds() { 
+    controller.a().whileTrue(new Shoot(3500, 3000, 1, ()-> Util.clamp(Util.lerp( Swerve.get().getDistToSpeaker(Swerve.get().getPose()) / 3.3, 60, 28.0),30.0,60.0)));
     controller.leftBumper().whileTrue(new Shoot(2000,2000,1, ()->60));
     controller.b().whileTrue(Shooter.get().Intake());
     controller.y().whileTrue(new ShooterIntake());
