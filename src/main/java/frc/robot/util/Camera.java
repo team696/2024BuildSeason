@@ -73,7 +73,7 @@ public class Camera {
             if (bestTarget.getPoseAmbiguity() > 0.15) return;
             if (bestTarget.getBestCameraToTarget().getTranslation().getNorm() > 4) return;
             double deviationRatio; 
-            if (bestTarget.getPoseAmbiguity() < 0.01) {
+            if (bestTarget.getPoseAmbiguity() < 1/100.0) {
                 deviationRatio = 1/100.0;
             } else {
                 deviationRatio = bestTarget.getBestCameraToTarget().getTranslation().getNorm() * 3;
