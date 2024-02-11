@@ -46,15 +46,18 @@ public class Robot extends TimedRobot {
     leftJoy.onTrue(new InstantCommand(()->Swerve.get().zeroYaw()));
   }
 
-  private void configureControllerBinds() { 
-    controller.a().whileTrue(new Shoot(3500, 3000, 1, ()-> Util.clamp(Util.lerp( Swerve.get().getDistToSpeaker(Swerve.get().getPose()) / 3.3, 60, 28.0),30.0,60.0)));
-    controller.leftBumper().whileTrue(new Shoot(2000,2000,1, ()->60));
-    controller.b().whileTrue(Shooter.get().Intake());
-    controller.y().whileTrue(new ShooterIntake());
-    controller.x().whileTrue(new Shoot(550,550,1, ()->57));
-    Swerve.get().setDefaultCommand(new TeleopSwerve(()->-controller.getRawAxis(1), ()->-controller.getRawAxis(0), ()->-controller.getRawAxis(4), controller.rightBumper(), 0.08,true, true));
-    controller.button(8).onTrue(new InstantCommand(()->Swerve.get().zeroYaw()));
-  }
+    private void configureControllerBinds() { 
+        controller.b().whileTrue(Shooter.get().Intake());
+        controller.y().whileTrue(new ShooterIntake());
+        Swerve.get().setDefaultCommand(new TeleopSwerve(()->-controller.getRawAxis(1), ()->-controller.getRawAxis(0), ()->-controller.getRawAxis(4), controller.rightBumper(), 0.08,true, true));
+        controller.button(8).onTrue(new InstantCommand(()->Swerve.get().zeroYaw()));
+        controller.a().whileTrue(new Shoot(()->Shooter.get().getStateFromDist(Swerve.get().DistToSpeaker())));
+
+        //OLD METHODS -> UPDATE?
+        //controller.a().whileTrue(new Shoot(3500, 3000, 1, ()-> Util.clamp(Util.lerp( Swerve.get().getDistToSpeaker(Swerve.get().getPose()) / 3.3, 60, 28.0),30.0,60.0))); SPEAKER
+        //controller.leftBumper().whileTrue(new Shoot(2000,2000,1, ()->60)); TRAP
+        //controller.x().whileTrue(new Shoot(550,550,1, ()->57)); AMP
+    }
 
   @Override
   public void robotInit() {

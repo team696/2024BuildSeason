@@ -4,23 +4,19 @@
 
 package frc.robot.commands;
 
-import java.util.function.DoubleSupplier;
+import java.util.function.Supplier;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Shooter;
+import frc.robot.util.Constants;
 
 public class Shoot extends Command {
-  double top, bottom, in;
-  DoubleSupplier angle;
-  /** Creates a new Shoot. */
-  public Shoot(double top, double bottom, double in, DoubleSupplier angle) {
-    this.top = top;
-    this.bottom = bottom;
-    this.in = in;
-    this.angle = angle;
-    addRequirements(Shooter.get());
-    // Use addRequirements() here to declare subsystem dependencies.
-  }
+    Supplier<Constants.Shooter.State> stateSupplier;
+
+    public Shoot(Supplier<Constants.Shooter.State> stateSupplier) {
+        this.stateSupplier = stateSupplier;
+        addRequirements(Shooter.get());
+    }
 
   // Called when the command is initially scheduled.
   @Override
@@ -29,10 +25,11 @@ public class Shoot extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    Shooter.get().setAngle(angle.getAsDouble());
-    Shooter.get().setSpeed(top, bottom);
-    if(Shooter.get().upToSpeed(top, bottom) && !Shooter.get().getBeamBreak() && Math.abs(Shooter.get().getAngle() - angle.getAsDouble()) < 2) {
-      Shooter.get().setSerializerSpeedPercent(in);
+    Constants.Shooter.State desiredState = stateSupplier.get(); 
+    Shooter.get().setAngle(desiredState.angle);
+    Shooter.get().setSpeed(desiredState.topSpeed, desiredState.bottomSpeed);
+    if(Shooter.get().upToSpeed(desiredState.topSpeed, desiredState.bottomSpeed, 100) && !Shooter.get().getBeamBreak() && Shooter.get().atAngle(desiredState.angle, 2)) {
+      Shooter.get().setSerializerSpeedPercent(1);
     } else {
       Shooter.get().setSerializerSpeedPercent(0);
     }

@@ -1,5 +1,7 @@
 package frc.robot.subsystems;
 
+import java.util.Map;
+
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 
@@ -10,10 +12,11 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.util.Constants;
 import frc.robot.util.Log;
+import frc.robot.util.Util;
+import frc.robot.util.Constants.Shooter.State;
 
 public class Shooter extends SubsystemBase {
   private static Shooter m_Shooter;
@@ -96,15 +99,38 @@ public class Shooter extends SubsystemBase {
     m_AngleMotor.setControl(m_PositionRequest.withOutput(m_AnglePID.calculate(getAngle(), desired)));  
   }
 
-  public boolean upToSpeed(double top, double bottom) {
-    if (m_Top.getVelocity().getValueAsDouble() * 60 < top - 100) return false;
-    if (m_Bottom.getVelocity().getValueAsDouble() * 60 < bottom - 100) return false;
+
+  /** desired angle, tolerance all in degrees */
+  public boolean atAngle(double angle, double tolerance) {
+    if (Math.abs(getAngle() - angle) > tolerance) return false;
+
+    return true;
+  }
+
+  /** desired top speed, desired bottom speed, tolerance all in rpm */
+  public boolean upToSpeed(double top, double bottom, double tolerance) {
+    if (m_Top.getVelocity().getValueAsDouble() * 60 < top - tolerance) return false;
+    if (m_Bottom.getVelocity().getValueAsDouble() * 60 < bottom - tolerance) return false;
 
     return true;
   }
 
   public Command Intake() {
     return this.runEnd(()->setSerializerSpeedPercent(0.25), ()->setSerializerSpeedPercent(0)).onlyWhile(()->getBeamBreak());
+  }
+
+  public State getStateFromDist(double dist) {
+        if (dist < Constants.Shooter.distToState.firstKey()) {
+            dist = Constants.Shooter.distToState.firstKey();
+        }
+        if (dist > Constants.Shooter.distToState.lastKey())  {
+            dist = Constants.Shooter.distToState.lastKey();
+        }
+
+        Map.Entry<Double, State> lower = Constants.Shooter.distToState.floorEntry(dist);
+        Map.Entry<Double, State> higher = Constants.Shooter.distToState.ceilingEntry(dist);
+
+        return new State(Util.lerp((dist - lower.getKey())/(higher.getKey() - lower.getKey()), lower.getValue().angle, higher.getValue().angle), lower.getValue().topSpeed, lower.getValue().bottomSpeed);
   }
 
   public void stopShooter() {
@@ -128,17 +154,9 @@ public class Shooter extends SubsystemBase {
     m_AngleMotor.set(percent);
   }
 
-  public Command MoveAngle(double percent) {
-    return Commands.runEnd(()->AnglePercent(percent), ()->AnglePercent(0));
-  }
-
-  public Command PositionAngle(double goal) {
-    return Commands.runEnd(()->setAngle(goal), ()->AnglePercent(0));
-  }
-
-  public Command holdAngle() {
-    return this.runEnd(()->setAngle(AngleGoal), ()->stopAngle());
-  }
+    public Command holdAngle() {
+        return this.runEnd(()->setAngle(AngleGoal), ()->stopAngle());
+    }
 
   @Override
   public void periodic() {

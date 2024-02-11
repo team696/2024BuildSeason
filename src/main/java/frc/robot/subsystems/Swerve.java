@@ -13,6 +13,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -120,18 +121,22 @@ public class Swerve extends SubsystemBase {
     }
   } 
 
-  public Rotation2d getAngleForSpeaker(Pose2d  pose) {
-    double deltaY = pose.getY() - 5;
-    double deltaX = pose.getX() - 0;
-    //if (deltaY > 0) {
-      return Rotation2d.fromRadians(Math.PI + Math.atan(deltaY / deltaX));
-    //} else {
-    //  return Rotation2d.fromRadians(Math.PI - Math.atan(deltaY / deltaX));
-   // }
+  public Rotation2d AngleForSpeaker() {
+    if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == DriverStation.Alliance.Red) {
+        Translation2d delta = getPose().getTranslation().minus(Constants.Field.SpeakerRed);
+        return Rotation2d.fromRadians(Math.PI + Math.atan(delta.getY() / delta.getX()));
+    } else {
+        Translation2d delta = getPose().getTranslation().minus(Constants.Field.SpeakerBlue);
+        return Rotation2d.fromRadians(0       + Math.atan(delta.getY() / delta.getX()));
+    }
   }
 
-  public double getDistToSpeaker(Pose2d pose) {
-    return getPose().getTranslation().getDistance(new Translation2d(1.1, 5.6));
+  public double DistToSpeaker() {
+    if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == DriverStation.Alliance.Red) {
+        return getPose().getTranslation().getDistance(Constants.Field.SpeakerRed);
+    } else {
+        return getPose().getTranslation().getDistance(Constants.Field.SpeakerBlue);
+    }
   }
 
   @Override
@@ -147,9 +152,9 @@ public class Swerve extends SubsystemBase {
 
     Camera.get().updatePose(m_poseEstimator);
 
-    Constants.field.setRobotPose(getPose());
-    Constants.field.getObject("robot").setPose(getPose());
-    Constants.field.getObject("cam").setPose(getPose().transformBy(new Transform2d(Constants.Cameras.position.getTranslation().toTranslation2d(), Constants.Cameras.position.getRotation().toRotation2d())));
+    Constants.Field.sim.setRobotPose(getPose());
+    Constants.Field.sim.getObject("robot").setPose(getPose());
+    Constants.Field.sim.getObject("cam").setPose(getPose().transformBy(new Transform2d(Constants.Cameras.position.getTranslation().toTranslation2d(), Constants.Cameras.position.getRotation().toRotation2d())));
   }
 
   @Override
@@ -161,8 +166,8 @@ public class Swerve extends SubsystemBase {
       builder.addDoubleProperty("Gyro", ()->getYaw().getDegrees(), null);
     }
 
-    builder.addDoubleProperty("Distance To Speaker", ()->getDistToSpeaker(getPose()), null);
-    builder.addDoubleProperty("angle for speakr", ()->getAngleForSpeaker(getPose()).getDegrees() - 180, null);
-    SmartDashboard.putData("Field", Constants.field);
+    builder.addDoubleProperty("Distance To Speaker", ()->DistToSpeaker(), null);
+    builder.addDoubleProperty("angle for speaker", ()->AngleForSpeaker().getDegrees(), null);
+    SmartDashboard.putData("Field", Constants.Field.sim);
   }
 }

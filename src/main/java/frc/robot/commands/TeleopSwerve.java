@@ -70,7 +70,7 @@ public class TeleopSwerve extends Command {
         double xAxis = strafe.getAsDouble();
         double rAxis = rotation.getAsDouble();
         if (rightJoy != null && rightJoy.getAsBoolean()){
-            rAxis = pidController.calculate(Swerve.get().getYaw().getDegrees(), Swerve.get().getAngleForSpeaker(Swerve.get().getPose()).getDegrees() - 180);
+            rAxis = pidController.calculate(Swerve.get().getYaw().getDegrees(), Swerve.get().AngleForSpeaker().getDegrees());
         } else {
             if (Math.abs(rAxis) > deadband) {
                 if (rAxis > 0)
