@@ -48,6 +48,7 @@ public class Auto {
         });
 
         //NamedCommands.registerCommand("Shoot", new Shoot(3000,2500,1, ()->30));
+        NamedCommands.registerCommand("Wait", new WaitCommand(1));
         
         autoChooser = AutoBuilder.buildAutoChooser();
         SmartDashboard.putData("Auto Chooser", autoChooser);
