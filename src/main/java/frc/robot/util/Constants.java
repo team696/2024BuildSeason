@@ -2,6 +2,10 @@ package frc.robot.util;
 
 import java.util.TreeMap;
 
+import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
+import com.pathplanner.lib.util.PIDConstants;
+import com.pathplanner.lib.util.ReplanningConfig;
+
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -13,7 +17,7 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 public final class Constants {
 	public static final boolean DEBUG = true;
 
-	public static final Configs CONFIGS = new Configs();
+    public static final Configs CONFIGS = new Configs();
 
 	public static final String canivoreName = "vore";
 
@@ -39,7 +43,7 @@ public final class Constants {
 	}
 	public static class Cameras {
 		public static final String name = "C";
-		public static final Transform3d position =  new Transform3d(new Translation3d(Units.inchesToMeters(-11.441), Units.inchesToMeters(-7.051), Units.inchesToMeters(8.5)), new Rotation3d(0, Units.degreesToRadians(-27.8), Units.degreesToRadians(180)));
+		public static final Transform3d position =  new Transform3d(new Translation3d(Units.inchesToMeters(-11.441), Units.inchesToMeters(-7.051), Units.inchesToMeters(8.5)), new Rotation3d(0, Units.degreesToRadians(27.8), Units.degreesToRadians(180)));
 	}
 	public static class Shooter {
 	public static final double AngleOffset = -67;
@@ -91,6 +95,18 @@ public final class Constants {
 			new Translation2d(-wheelX / 2.0, wheelY / 2.0), // BL
 			new Translation2d(-wheelX / 2.0, -wheelY / 2.0)); // BR   
 	}
+
+    public static final class Auto {
+        /** Auto Drive Config */
+        public static final HolonomicPathFollowerConfig FollowConfig = new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should likely live in your Constants class
+            new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants
+            new PIDConstants(5.0, 0.0, 0.0), // Rotation PID constants
+            Constants.Swerve.maxSpeed, // Max module speed, in m/s
+            Math.sqrt(Math.pow(Constants.Swerve.wheelX / 2, 2) + Math.pow(Constants.Swerve.wheelY / 2, 2)), // Drive base radius in meters. Distance from robot center to furthest module.
+            new ReplanningConfig() // Default path replanning config. See the API for the options here
+        );
+    }
+
 	public static class Robot {
 		public enum Robots {
 			SIM,
@@ -103,5 +119,4 @@ public final class Constants {
 		public static final byte[] COMP_MAC = new byte[]{ (byte) 0x00, (byte) 0x80, (byte) 0x2F, (byte) 0x38, (byte) 0x5F, (byte) 0x75 };
 		public static final byte[] BETA_MAC = new byte[]{ (byte) 0x00, (byte) 0x80, (byte) 0x2f, (byte) 0x35, (byte) 0xb8, (byte) 0xca };
 	}
-
 }

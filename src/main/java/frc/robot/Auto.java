@@ -1,11 +1,16 @@
 package frc.robot;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.commands.PathPlannerAuto;
+import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.util.PathPlannerLogging;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -14,6 +19,7 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.subsystems.Swerve;
 import frc.robot.util.Constants;
 import frc.robot.util.Dashboard;
+import frc.robot.util.Log;
 
 public class Auto {
     public static Auto m_instance;
@@ -28,7 +34,7 @@ public class Auto {
             m_swerve::resetPose, 
             m_swerve::getRobotRelativeSpeeds,
             m_swerve::Drive, 
-            Constants.CONFIGS.FollowConfig,
+            Constants.Auto.FollowConfig,
             () -> {
                 Optional<DriverStation.Alliance> alliance = DriverStation.getAlliance();
                 if (alliance.isPresent()) {
@@ -54,6 +60,10 @@ public class Auto {
         SmartDashboard.putData("Auto Chooser", autoChooser);
 
         Dashboard.push("selected_auto", ()->m_instance.autoChooser.getSelected().getName());
+
+        autoChooser.onChange((command)-> {
+            visualize();
+        });
     }
 
     public static void Initialize(){
@@ -72,5 +82,21 @@ public class Auto {
         if (m_instance == null) return new WaitCommand(0);
 
         return m_instance.autoChooser.getSelected();
+    }
+
+    public void visualize() {
+        List<PathPlannerPath> paths;
+        List<Pose2d> pathPoses = new ArrayList<Pose2d>();
+        try {
+            paths = PathPlannerAuto.getPathGroupFromAutoFile(autoChooser.getSelected().getName());
+        } catch (Exception e) {
+            Log.fatalException("Auto", "Failed To Find Path", e);
+            return;
+        }
+        for (int i = 0; i < paths.size(); i++) {
+            PathPlannerPath path = paths.get(i);
+            pathPoses.addAll(path.getPathPoses());
+        }
+        Constants.Field.sim.getObject("traj").setPoses(pathPoses);
     }
 }

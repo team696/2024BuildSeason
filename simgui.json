@@ -61,15 +61,18 @@
   },
   "NetworkTables": {
     "transitory": {
-      "PathPlanner": {
+      "Shuffleboard": {
+        "open": true
+      },
+      "SmartDashboard": {
+        "Field": {
+          "open": true
+        },
         "open": true
       }
     }
   },
   "NetworkTables Info": {
     "visible": true
-  },
-  "NetworkTables View": {
-    "visible": false
   }
 }

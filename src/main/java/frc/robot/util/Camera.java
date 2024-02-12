@@ -65,6 +65,12 @@ public class Camera {
 
         PortForwarder.add(5800, "photonvision.local", 5800);
         Log.info("Photonvision", "Initialized: Dashboard open at http://photonvision.local:5800");
+
+        if (Constants.DEBUG) {
+            for(AprilTag tag : m_atLayout.getTags()) { // Shows tags in layout where they should be
+                Constants.Field.sim.getObject(tag.ID + "Desired").setPose(tag.pose.toPose2d());
+            }
+        }
     }
 
     public void simInit() {
@@ -86,9 +92,6 @@ public class Camera {
             List<PhotonTrackedTarget> targets = estimation.get().targetsUsed;
             targets.sort(AmbiguityCompare);
             if (Constants.DEBUG) { 
-                for(AprilTag tag : m_atLayout.getTags()) { // Shows tags in layout where they should be
-                    Constants.Field.sim.getObject(tag.ID + "Desired").setPose(tag.pose.toPose2d());
-                }
                 for (PhotonTrackedTarget t : targets) { // Shows where tags are believed to be based on robot pose.
                     Transform3d targetTransform = t.getBestCameraToTarget(); 
                     Pose2d target = new Pose2d(targetTransform.getTranslation().rotateBy(Constants.Cameras.position.getRotation()).toTranslation2d(), targetTransform.getRotation().toRotation2d());

@@ -31,7 +31,7 @@ public class Shoot extends Command {
     if(Shooter.get().upToSpeed(desiredState.topSpeed, desiredState.bottomSpeed, 100) && !Shooter.get().getBeamBreak() && Shooter.get().atAngle(desiredState.angle, 2)) {
       Shooter.get().setSerializerSpeedPercent(1);
     } else {
-      Shooter.get().setSerializerSpeedPercent(0);
+      Shooter.get().stopSerializer();
     }
   }
 

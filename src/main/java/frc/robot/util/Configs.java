@@ -8,9 +8,6 @@ import com.ctre.phoenix6.signals.AbsoluteSensorRangeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
-import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
-import com.pathplanner.lib.util.PIDConstants;
-import com.pathplanner.lib.util.ReplanningConfig;
 
 public class Configs {
 
@@ -36,8 +33,6 @@ public class Configs {
 
     public TalonFXConfiguration climber_Master = new TalonFXConfiguration();
     public TalonFXConfiguration climber_Follower = new TalonFXConfiguration();
-
-    public HolonomicPathFollowerConfig FollowConfig;
 
     public Configs() {
         /** Swerve CANCoder Configuration */
@@ -93,15 +88,6 @@ public class Configs {
         Mod3.DriveMotorId = 7;
         Mod3.SteerMotorId = 8;
         Mod3.CANcoderOffset = -0.15845;
-
-        /** Auto Drive Config */
-        FollowConfig = new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should likely live in your Constants class
-                        new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants
-                        new PIDConstants(5.0, 0.0, 0.0), // Rotation PID constants
-                        Constants.Swerve.maxSpeed, // Max module speed, in m/s
-                        Math.sqrt(Math.pow(Constants.Swerve.wheelX / 2, 2) + Math.pow(Constants.Swerve.wheelY / 2, 2)), // Drive base radius in meters. Distance from robot center to furthest module.
-                        new ReplanningConfig() // Default path replanning config. See the API for the options here
-                );
 
         /** Shooter Motor Configuration */
         shooter_Top.MotorOutput.NeutralMode = NeutralModeValue.Coast;
