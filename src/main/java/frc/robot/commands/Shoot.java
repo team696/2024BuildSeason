@@ -6,15 +6,16 @@ package frc.robot.commands;
 
 import java.util.function.Supplier;
 
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.Swerve;
 import frc.robot.util.Constants;
 
 public class Shoot extends Command {
-    Supplier<Constants.Shooter.State> stateSupplier;
-
-    public Shoot(Supplier<Constants.Shooter.State> stateSupplier) {
-        this.stateSupplier = stateSupplier;
+    Supplier<Double> distSupplier;
+    public Shoot(Supplier<Double> distSupplier) {
+        this.distSupplier = distSupplier;
         addRequirements(Shooter.get());
     }
 
@@ -25,8 +26,20 @@ public class Shoot extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    Constants.Shooter.State desiredState = stateSupplier.get(); 
-    Shooter.get().setAngle(desiredState.angle);
+    /*
+     *  TODO: MOVING + SHOOTING
+     * 
+     *  Use Distance as ratio for:
+     *
+     *  Swerve.get().getRobotRelativeSpeeds().vyMetersPerSecond -> Sideways speed added to angle to account for moving
+     *  Swerve.get().getRobotRelativeSpeeds().vxMetersPerSecond -> Forward speed removed from speed?
+     *  What To Do With Rotation Speed?
+     */
+    double actualDist = distSupplier.get();
+    double ChassisX = Swerve.get().getRobotRelativeSpeeds().vxMetersPerSecond;
+    Constants.Shooter.State desiredStateStationary = Shooter.get().getStateFromDist(actualDist);
+    Constants.Shooter.State desiredState = desiredStateStationary;//Shooter.get().getStateFromDist(actualDist + (actualDist * ChassisX)/(20*Math.cos(Units.degreesToRadians(desiredStateStationary.angle)) + ChassisX)); 
+    Shooter.get().setAngle(desiredState.angle + actualDist * ChassisX * 1/5);
     Shooter.get().setSpeed(desiredState.topSpeed, desiredState.bottomSpeed);
     if(Shooter.get().upToSpeed(desiredState.topSpeed, desiredState.bottomSpeed, 100) && !Shooter.get().getBeamBreak() && Shooter.get().atAngle(desiredState.angle, 2)) {
       Shooter.get().setSerializerSpeedPercent(1);

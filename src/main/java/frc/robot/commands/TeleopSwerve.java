@@ -2,6 +2,7 @@ package frc.robot.commands;
 
 import frc.robot.subsystems.Swerve;
 import frc.robot.util.Constants;
+import frc.robot.util.Util;
 import edu.wpi.first.wpilibj.GenericHID;
 
 import java.util.function.BooleanSupplier;
@@ -21,12 +22,7 @@ public class TeleopSwerve extends Command {
     private DoubleSupplier rotation;
     private double deadband;
 
-
-    private double mapdouble(double x, double in_min, double in_max, double out_min, double out_max){
-        return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
-    }
-
-    PIDController pidController = new PIDController(0.016  , 0.00, 0);
+    PIDController pidController;
 
     private BooleanSupplier rightJoy;
     /**
@@ -42,6 +38,8 @@ public class TeleopSwerve extends Command {
 
         this.deadband = deadband;
 
+        
+        pidController = new PIDController(0.03  , 0.00, 0);
         pidController.setTolerance(1);
         pidController.enableContinuousInput(-180, 180);
         rightJoy = (new JoystickButton(controller, 2));
@@ -60,7 +58,10 @@ public class TeleopSwerve extends Command {
         this.deadband = deadband; 
 
         this.rightJoy = rightJoy;
-        
+
+        pidController = new PIDController(0.03  , 0.00, 0);
+        pidController.enableContinuousInput(-180, 180);
+
         addRequirements(Swerve.get());
     }
 
@@ -70,13 +71,13 @@ public class TeleopSwerve extends Command {
         double xAxis = strafe.getAsDouble();
         double rAxis = rotation.getAsDouble();
         if (rightJoy != null && rightJoy.getAsBoolean()){
-            rAxis = pidController.calculate(Swerve.get().getYaw().getDegrees(), Swerve.get().AngleForSpeaker().getDegrees());
+            rAxis = pidController.calculate(Swerve.get().getPose().getRotation().getDegrees(), Swerve.get().AngleForSpeaker().getDegrees());
         } else {
             if (Math.abs(rAxis) > deadband) {
                 if (rAxis > 0)
-                    rAxis = mapdouble(rAxis, deadband, 1, 0, 1);
+                    rAxis = Util.map(rAxis, deadband, 1, 0, 1);
                 else 
-                    rAxis = mapdouble(rAxis, -deadband, -1, 0, -1);
+                    rAxis = Util.map(rAxis, -deadband, -1, 0, -1);
             } else {
                 rAxis = 0;
             }

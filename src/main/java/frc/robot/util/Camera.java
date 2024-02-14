@@ -109,7 +109,7 @@ public class Camera {
             } else {
                 deviationRatio = Math.pow(bestTarget.getBestCameraToTarget().getTranslation().getNorm(),2) / 6; // Trust Less With Distance
             }
-            Matrix<N3, N1> deviation = VecBuilder.fill(deviationRatio, deviationRatio, 0.2 * deviationRatio);
+            Matrix<N3, N1> deviation = VecBuilder.fill(deviationRatio, deviationRatio, 5 * deviationRatio);
             estimator.setVisionMeasurementStdDevs(deviation);
             estimator.addVisionMeasurement(estimation.get().estimatedPose.toPose2d(), estimation.get().timestampSeconds);
         }

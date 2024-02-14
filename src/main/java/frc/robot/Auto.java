@@ -95,6 +95,8 @@ public class Auto {
         }
         for (int i = 0; i < paths.size(); i++) {
             PathPlannerPath path = paths.get(i);
+            if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == DriverStation.Alliance.Red)
+                path = path.flipPath();
             pathPoses.addAll(path.getPathPoses());
         }
         Constants.Field.sim.getObject("traj").setPoses(pathPoses);

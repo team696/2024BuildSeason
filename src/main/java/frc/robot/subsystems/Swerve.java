@@ -15,6 +15,7 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.util.Camera;
@@ -30,6 +31,9 @@ public class Swerve extends SubsystemBase {
 
   private SwerveModulePosition[] m_swervePositions = new SwerveModulePosition[4];
   private SwerveDrivePoseEstimator m_poseEstimator;
+
+  private double acceleration = 0;
+  private double lastTimestamp = 0;
 
   public static synchronized Swerve get() {
     if (m_Swerve == null) {
@@ -76,7 +80,7 @@ public class Swerve extends SubsystemBase {
   public ChassisSpeeds getRobotRelativeSpeeds() {
     return Constants.Swerve.swerveKinematics.toChassisSpeeds(getStates());
   }
-  
+
   private SwerveModuleState[] getStates() { 
     SwerveModuleState[] states = new SwerveModuleState[4]; 
     for(SwerveModule mod : Constants.Swerve.swerveMods) { 
@@ -122,13 +126,16 @@ public class Swerve extends SubsystemBase {
   } 
 
   public Rotation2d AngleForSpeaker() {
+    Translation2d delta;
     if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == DriverStation.Alliance.Red) {
-        Translation2d delta = getPose().getTranslation().minus(Constants.Field.SpeakerRed);
-        return Rotation2d.fromRadians(Math.PI + Math.atan(delta.getY() / delta.getX()));
+        delta = getPose().getTranslation().minus(Constants.Field.SpeakerRed);
+        delta = delta.plus(new Translation2d((getRobotRelativeSpeeds().vyMetersPerSecond ) / 3 * delta.getNorm(), 0));  
+        return Rotation2d.fromRadians(Math.atan(delta.getY() / delta.getX())).rotateBy(new Rotation2d(Math.PI));
     } else {
-        Translation2d delta = getPose().getTranslation().minus(Constants.Field.SpeakerBlue);
-        return Rotation2d.fromRadians(0       + Math.atan(delta.getY() / delta.getX()));
-    }
+        delta = getPose().getTranslation().minus(Constants.Field.SpeakerBlue);
+        delta = delta.plus(new Translation2d(getRobotRelativeSpeeds().vyMetersPerSecond / 3 * delta.getNorm(), 0));        //TODO: fix this shit
+        return Rotation2d.fromRadians(Math.atan(delta.getY() / delta.getX()));//.plus(Rotation2d.fromRadians(Math.atan((getRobotRelativeSpeeds().vyMetersPerSecond / 20))));
+    }                                                                   
   }
 
   public double DistToSpeaker() {
@@ -141,6 +148,8 @@ public class Swerve extends SubsystemBase {
 
   @Override
   public void periodic() {
+    Pose2d oldPose = getPose();
+
     if (!m_Gyro.isConnected())
       Log.unusual("Swerve", "Gyro Not Found");
 
@@ -149,6 +158,10 @@ public class Swerve extends SubsystemBase {
     }
 
     m_poseEstimator.update(getYaw(), m_swervePositions);
+
+    /** Update acceleration with only the odometry? */
+    acceleration = getPose().getTranslation().minus(oldPose.getTranslation()).times(Timer.getFPGATimestamp() - lastTimestamp).getNorm();
+    lastTimestamp = Timer.getFPGATimestamp();
 
     Camera.get().updatePose(m_poseEstimator);
 
@@ -168,6 +181,7 @@ public class Swerve extends SubsystemBase {
 
     builder.addDoubleProperty("Distance To Speaker", ()->DistToSpeaker(), null);
     builder.addDoubleProperty("angle for speaker", ()->AngleForSpeaker().getDegrees(), null);
+    builder.addDoubleProperty("Acceleration", ()->acceleration, null); //TODO: Does this value make any sense
     SmartDashboard.putData("Field", Constants.Field.sim);
   }
 }

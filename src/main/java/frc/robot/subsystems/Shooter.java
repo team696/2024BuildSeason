@@ -66,7 +66,6 @@ public class Shooter extends SubsystemBase {
         m_Serializer.getConfigurator().apply(Constants.CONFIGS.shooter_Serializer);
 
         m_Encoder = new DutyCycleEncoder(7);
-        m_Encoder.setConnectedFrequencyThreshold(2);
         
         m_shooterController = new BangBangController();
 
@@ -76,9 +75,9 @@ public class Shooter extends SubsystemBase {
         m_PositionRequest = new DutyCycleOut(0);
 
         m_AnglePID = new PIDController(1/48.0, 0, 0);
-        m_AngleTrapPID = new ProfiledPIDController(1/48.0, 0, 0, new TrapezoidProfile.Constraints(10, 30));
-        m_AngleTrapPID.reset(getAngle());
-        m_AngleFeedForward = new ArmFeedforward(0, 0, 0, 0);
+        m_AngleTrapPID = new ProfiledPIDController(1/40.0, 0, 0, new TrapezoidProfile.Constraints(4000, 2000));
+        m_AngleTrapPID.reset(0);
+        m_AngleFeedForward = new ArmFeedforward(0.05, 1/56.0, 0, 0);
 
         m_BeamBreak = new DigitalInput(9);
     }
@@ -94,8 +93,8 @@ public class Shooter extends SubsystemBase {
         m_Bottom.set(percent);
     }
 
-    public double getAngle() {
-        return -360 * m_Encoder.getAbsolutePosition() - Constants.Shooter.AngleOffset;
+    public double getAngle() { //fix this ...maybe not
+        return (360 * (1 - m_Encoder.getAbsolutePosition()) + 180) % 360 - Constants.Shooter.AngleOffset;
     }
 
     /** Percent */
@@ -114,84 +113,77 @@ public class Shooter extends SubsystemBase {
         m_AngleMotor.setControl(m_PositionRequest.withOutput(motorSpeed));
     }
 
+    /** desired angle, tolerance all in degrees */
+    public boolean atAngle(double angle, double tolerance) {
+        if (Math.abs(getAngle() - angle) > tolerance) return false;
 
-  /** desired angle, tolerance all in degrees */
-  public boolean atAngle(double angle, double tolerance) {
-    if (Math.abs(getAngle() - angle) > tolerance) return false;
+        return true;
+    }
 
-    return true;
-  }
+    /** desired top speed, desired bottom speed, tolerance all in rpm */
+    public boolean upToSpeed(double top, double bottom, double tolerance) {
+        if (m_Top.getVelocity().getValueAsDouble() * 60 < top - tolerance) return false;
+        if (m_Bottom.getVelocity().getValueAsDouble() * 60 < bottom - tolerance) return false;
 
-  /** desired top speed, desired bottom speed, tolerance all in rpm */
-  public boolean upToSpeed(double top, double bottom, double tolerance) {
-    if (m_Top.getVelocity().getValueAsDouble() * 60 < top - tolerance) return false;
-    if (m_Bottom.getVelocity().getValueAsDouble() * 60 < bottom - tolerance) return false;
+        return true;
+    }
 
-    return true;
-  }
+    public Command Intake() {
+        return this.runEnd(()->setSerializerSpeedPercent(0.25), ()->setSerializerSpeedPercent(0)).onlyWhile(()->getBeamBreak());
+    }
 
-  public Command Intake() {
-    return this.runEnd(()->setSerializerSpeedPercent(0.25), ()->setSerializerSpeedPercent(0)).onlyWhile(()->getBeamBreak());
-  }
-
-  public State getStateFromDist(double dist) {
-        if (dist < Constants.Shooter.distToState.firstKey()) {
-            dist = Constants.Shooter.distToState.firstKey();
-        }
-        if (dist > Constants.Shooter.distToState.lastKey())  {
-            dist = Constants.Shooter.distToState.lastKey();
-        }
-
+    public State getStateFromDist(double dist) {
+        dist = Util.clamp(dist, Constants.Shooter.distToState.firstKey() + 0.01,Constants.Shooter.distToState.lastKey() - 0.01);
         Map.Entry<Double, State> lower = Constants.Shooter.distToState.floorEntry(dist);
         Map.Entry<Double, State> higher = Constants.Shooter.distToState.ceilingEntry(dist);
 
-        return new State(Util.lerp((dist - lower.getKey())/(higher.getKey() - lower.getKey()), lower.getValue().angle, higher.getValue().angle), lower.getValue().topSpeed, lower.getValue().bottomSpeed);
-  }
+        return new State(Util.lerp((dist - lower.getKey())/(higher.getKey() - lower.getKey()), lower.getValue().angle, higher.getValue().angle), higher.getValue().topSpeed, higher.getValue().bottomSpeed);
+    }
 
-  public void stopShooter() {
-    m_Top.stopMotor();
-    m_Bottom.stopMotor();
-  }
+    public void stopShooter() {
+        m_Top.stopMotor();
+        m_Bottom.stopMotor();
+    }
 
-  public void stopAngle() {
-    m_AngleMotor.stopMotor();
-  }
+    public void stopAngle() {
+        m_AngleMotor.stopMotor();
+    }
 
-  public void stopSerializer() {
-    m_Serializer.stopMotor();
-  }
+    public void stopSerializer() {
+        m_Serializer.stopMotor();
+    }
 
-  public boolean getBeamBreak() {
-    return m_BeamBreak.get();
-  }
+    public boolean getBeamBreak() {
+        return m_BeamBreak.get();
+    }
 
-  public void AnglePercent(double percent) {
-    m_AngleMotor.set(percent);
-  }
+    public void AnglePercent(double percent) {
+        m_AngleMotor.set(percent);
+    }
 
     public Command holdAngle() {
         return this.runEnd(()->setAngle(AngleGoal), ()->stopAngle());
     }
 
-  @Override
-  public void periodic() {
-   // setAngle(AngleGoal);
+    @Override
+    public void periodic() {
+        // setAngle(AngleGoal);
 
-   if (!m_Encoder.isConnected()) {
-    Log.unusual("Shooter", "Encoder Not Found!");
-   }
-  }
-
-  @Override
-  public void initSendable(SendableBuilder builder) {
-    if (Constants.DEBUG) {
-    	builder.addDoubleProperty("Encoder", this::getAngle, null);
-    	builder.addBooleanProperty("Beam Break", this::getBeamBreak, null);
-
-    	builder.addDoubleProperty("Angle Motor Position", ()->m_AngleMotor.getPosition().getValueAsDouble(), null);
-
-    	builder.addDoubleProperty("Top Velocity", ()->m_Top.getVelocity().getValueAsDouble(), null);
-    	builder.addDoubleProperty("Bottom Velocity", ()->m_Bottom.getVelocity().getValueAsDouble(), null);
+        if (!m_Encoder.isConnected()) {
+            Log.unusual("Shooter", "Encoder Not Found!");
+        }
     }
-  } 
+
+    @Override
+    public void initSendable(SendableBuilder builder) {
+        if (Constants.DEBUG) {
+    	    builder.addDoubleProperty("Encoder", this::getAngle, null);
+    	    builder.addBooleanProperty("Beam Break", this::getBeamBreak, null);
+
+    	    builder.addDoubleProperty("Angle Motor Position", ()->m_AngleMotor.getPosition().getValueAsDouble(), null);
+
+    	    builder.addDoubleProperty("Top Velocity", ()->m_Top.getVelocity().getValueAsDouble(), null);
+        	builder.addDoubleProperty("Bottom Velocity", ()->m_Bottom.getVelocity().getValueAsDouble(), null);
+        }
+    } 
 }

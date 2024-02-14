@@ -24,29 +24,29 @@ public final class Constants {
 	public static final double deadBand = 0.03;
 	public static final class Field {
 		public static final Field2d sim = new Field2d();
-		public static final Translation2d SpeakerRed = new Translation2d(15.6, 5.2);
-		public static final Translation2d SpeakerBlue = new Translation2d(0, 5.2);
+		public static final Translation2d SpeakerRed = new Translation2d(16.7, 5.4);
+		public static final Translation2d SpeakerBlue = new Translation2d(0, 5.);
 	}
 	public static class Motors {
-	public static final class Falcon {
-		public static final double stallCurA = 257;
-		public static final double stallTorqueNm = 4.69;
-		public static final double freeSpinRPM = 6380;
-		public static final double freeSpinA = 1.5;
-	}
-	public static final class Kraken {
-		public static final double stallCurA = 366;
-		public static final double stallTorqueNm = 7.09;
-		public static final double freeSpinRPM = 6000;
-		public static final double freeSpinA = 1.5;
-	}
+        public static final class Falcon {
+            public static final double stallCurA = 257;
+            public static final double stallTorqueNm = 4.69;
+            public static final double freeSpinRPM = 6380;
+            public static final double freeSpinA = 1.5;
+        }
+        public static final class Kraken {
+            public static final double stallCurA = 366;
+            public static final double stallTorqueNm = 7.09;
+            public static final double freeSpinRPM = 6000;
+            public static final double freeSpinA = 1.5;
+        }
 	}
 	public static class Cameras {
 		public static final String name = "C";
-		public static final Transform3d position =  new Transform3d(new Translation3d(Units.inchesToMeters(-11.441), Units.inchesToMeters(-7.051), Units.inchesToMeters(8.5)), new Rotation3d(0, Units.degreesToRadians(27.8), Units.degreesToRadians(180)));
+		public static final Transform3d position =  new Transform3d(new Translation3d(Units.inchesToMeters(-11.441), Units.inchesToMeters(-7.051), Units.inchesToMeters(8.5)), new Rotation3d(0, Units.degreesToRadians(-27.8), Units.degreesToRadians(180)));
 	}
 	public static class Shooter {
-	public static final double AngleOffset = -67;
+	    public static final double AngleOffset = 111.5;
 		public static class State {
 			public double angle;
 			public double topSpeed;
@@ -58,8 +58,13 @@ public final class Constants {
 		}
 	}
 		public static final TreeMap<Double, State> distToState = new TreeMap<Double, State>(){{
-			put(1. ,new State(60,3500,3000));
-			put(6., new State(38, 3500,3000));
+			put(1.5 ,new State(60,2500,2000));
+            put(2.2 ,new State(48, 3500,3000));
+            put(2.8 ,new State(42, 3500,3000));
+            put(3.6 ,new State(37, 3500,3000));
+            put(4.3 ,new State(33.5, 3500,3000));
+            put(5.4 ,new State(33, 3500,3000));
+            put(5.6, new State(31.5, 3500,3000));
 			put(12., new State(28, 3500,3000));
 		}};
 	}
@@ -97,8 +102,7 @@ public final class Constants {
 	}
 
     public static final class Auto {
-        /** Auto Drive Config */
-        public static final HolonomicPathFollowerConfig FollowConfig = new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should likely live in your Constants class
+        public static final HolonomicPathFollowerConfig FollowConfig = new HolonomicPathFollowerConfig(
             new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants
             new PIDConstants(5.0, 0.0, 0.0), // Rotation PID constants
             Constants.Swerve.maxSpeed, // Max module speed, in m/s
