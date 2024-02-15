@@ -1,6 +1,7 @@
 package frc.robot;
 
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
 
@@ -15,6 +16,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.Shoot;
@@ -25,7 +27,9 @@ import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Swerve;
 import frc.robot.util.Constants;
 import frc.robot.util.Dashboard;
-import frc.robot.util.Log;
+import frc.robot.util.Log.ILog;
+import frc.robot.util.Log.Log;
+import frc.robot.util.Log.Logger;
 import frc.robot.util.Util;
 
 public class Robot extends TimedRobot {
@@ -82,17 +86,18 @@ public class Robot extends TimedRobot {
 
     Shooter.get().setDefaultCommand(Shooter.get().holdAngle());
 
+    Logger.start(Logger.type.debug);
+
     SmartDashboard.putData(Swerve.get());
     SmartDashboard.putData(Shooter.get());
     SmartDashboard.putData(Intake.get());
   }
 
-  @Override
-  public void robotPeriodic() {
-    CommandScheduler.getInstance().run();
-    if (Constants.DEBUG) 
-      SmartDashboard.putData(m_PDH);
-
+    @Override
+    public void robotPeriodic() {
+        CommandScheduler.getInstance().run();
+            if (Constants.DEBUG) 
+                SmartDashboard.putData(m_PDH);
     /** Used to update network tables faster (causes lag!) */
     //NetworkTableInstance.getDefault().flush();
   }

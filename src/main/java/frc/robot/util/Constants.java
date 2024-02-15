@@ -13,6 +13,7 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import frc.robot.subsystems.Shooter;
 
 public final class Constants {
 	public static final boolean DEBUG = true;
@@ -45,30 +46,20 @@ public final class Constants {
 		public static final String name = "C";
 		public static final Transform3d position =  new Transform3d(new Translation3d(Units.inchesToMeters(-11.441), Units.inchesToMeters(-7.051), Units.inchesToMeters(8.5)), new Rotation3d(0, Units.degreesToRadians(-27.8), Units.degreesToRadians(180)));
 	}
-	public static class Shooter {
+	public static class shooter {
 	    public static final double AngleOffset = 111.5;
-		public static class State {
-			public double angle;
-			public double topSpeed;
-			public double bottomSpeed;
-			public State(double a, double t, double b) {
-			angle = a;
-			topSpeed = t;
-			bottomSpeed = b;
-		}
-	}
-		public static final TreeMap<Double, State> distToState = new TreeMap<Double, State>(){{
-			put(1.5 ,new State(60,2500,2000));
-            put(2.2 ,new State(48, 3500,3000));
-            put(2.8 ,new State(42, 3500,3000));
-            put(3.6 ,new State(37, 3500,3000));
-            put(4.3 ,new State(33.5, 3500,3000));
-            put(5.4 ,new State(33, 3500,3000));
-            put(5.6, new State(31.5, 3500,3000));
-			put(12., new State(28, 3500,3000));
+		public static final TreeMap<Double, Shooter.State> distToState = new TreeMap<Double, Shooter.State>(){{
+			put(1.5 ,new Shooter.State(60,2500,2000));
+            put(2.2 ,new Shooter.State(48, 3500,3000));
+            put(2.8 ,new Shooter.State(42, 3500,3000));
+            put(3.6 ,new Shooter.State(37, 3500,3000));
+            put(4.3 ,new Shooter.State(33.5, 3500,3000));
+            put(5.4 ,new Shooter.State(33, 3500,3000));
+            put(5.6, new Shooter.State(31.5, 3500,3000));
+			put(12., new Shooter.State(28, 3500,3000));
 		}};
 	}
-	public static class Swerve {
+	public static class swerve {
 		public static final double drivekS = (0.667 / 12); 
 		public static final double drivekV = (2.44 / 12);
 		public static final double drivekA = (0.27 / 12);
@@ -105,8 +96,8 @@ public final class Constants {
         public static final HolonomicPathFollowerConfig FollowConfig = new HolonomicPathFollowerConfig(
             new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants
             new PIDConstants(5.0, 0.0, 0.0), // Rotation PID constants
-            Constants.Swerve.maxSpeed, // Max module speed, in m/s
-            Math.sqrt(Math.pow(Constants.Swerve.wheelX / 2, 2) + Math.pow(Constants.Swerve.wheelY / 2, 2)), // Drive base radius in meters. Distance from robot center to furthest module.
+            Constants.swerve.maxSpeed, // Max module speed, in m/s
+            Math.sqrt(Math.pow(Constants.swerve.wheelX / 2, 2) + Math.pow(Constants.swerve.wheelY / 2, 2)), // Drive base radius in meters. Distance from robot center to furthest module.
             new ReplanningConfig() // Default path replanning config. See the API for the options here
         );
     }

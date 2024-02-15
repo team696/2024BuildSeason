@@ -22,7 +22,7 @@ public class ShooterIntake extends Command {
   public void execute() {
     Shooter.get().setAngle(60);
     if (Shooter.get().getBeamBreak()) {
-      Shooter.get().setShooterSpeedPercent(-0.1);
+      Shooter.get().setShooterSpeedPercent(-0.14);
       Shooter.get().setSerializerSpeedPercent(0.3);
     } else {
       Shooter.get().setSerializerSpeedPercent(0.5);

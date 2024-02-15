@@ -63,7 +63,10 @@
         "open": true
       },
       "SmartDashboard": {
-        "Field": {
+        "[DEBUG]class frc.robot.subsystems.Shooter": {
+          "open": true
+        },
+        "[DEBUG]class frc.robot.subsystems.Swerve": {
           "open": true
         },
         "open": true
@@ -71,9 +74,9 @@
     }
   },
   "NetworkTables Info": {
+    "Server": {
+      "open": true
+    },
     "visible": true
-  },
-  "NetworkTables View": {
-    "visible": false
   }
 }

@@ -85,8 +85,8 @@ public class TeleopSwerve extends Command {
         Rotation2d theta = new Rotation2d(yAxis, xAxis);
         double magnitude = Math.min(Math.sqrt((xAxis * xAxis) + (yAxis * yAxis)),1);
         if (magnitude < deadband) magnitude = 0;
-        Translation2d translation = new Translation2d(Math.pow(magnitude, 2), theta).times(Constants.Swerve.maxSpeed);
-        double rotation = rAxis * Constants.Swerve.maxAngularVelocity;
+        Translation2d translation = new Translation2d(Math.pow(magnitude, 2), theta).times(Constants.swerve.maxSpeed);
+        double rotation = rAxis * Constants.swerve.maxAngularVelocity;
         Swerve.get().Drive(translation, rotation, fieldRelative, openLoop);
     }
 }

@@ -17,9 +17,10 @@ import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.util.Constants;
-import frc.robot.util.Log;
+import frc.robot.util.Log.Debug;
+import frc.robot.util.Log.ILog;
+import frc.robot.util.Log.Log;
 import frc.robot.util.Util;
-import frc.robot.util.Constants.Shooter.State;
 
 public class Shooter extends SubsystemBase {
     private static Shooter m_Shooter;
@@ -47,7 +48,18 @@ public class Shooter extends SubsystemBase {
 
     public double AngleGoal = 0;
 
-    public static synchronized Shooter get() {
+    public static class State {
+        public double angle;
+        public double topSpeed;
+        public double bottomSpeed;
+        public State(double a, double t, double b) {
+        angle = a;
+        topSpeed = t;
+        bottomSpeed = b;
+        }
+    }
+
+    public static Shooter get() {
         if (m_Shooter == null) {
             m_Shooter = new Shooter();
         }
@@ -75,7 +87,7 @@ public class Shooter extends SubsystemBase {
         m_PositionRequest = new DutyCycleOut(0);
 
         m_AnglePID = new PIDController(1/48.0, 0, 0);
-        m_AngleTrapPID = new ProfiledPIDController(1/40.0, 0, 0, new TrapezoidProfile.Constraints(4000, 2000));
+        m_AngleTrapPID = new ProfiledPIDController(1/36.0, 0, 0, new TrapezoidProfile.Constraints(3000, 2000));
         m_AngleTrapPID.reset(0);
         m_AngleFeedForward = new ArmFeedforward(0.05, 1/56.0, 0, 0);
 
@@ -93,8 +105,9 @@ public class Shooter extends SubsystemBase {
         m_Bottom.set(percent);
     }
 
+    @Debug
     public double getAngle() { //fix this ...maybe not
-        return (360 * (1 - m_Encoder.getAbsolutePosition()) + 180) % 360 - Constants.Shooter.AngleOffset;
+        return (360 * (1 - m_Encoder.getAbsolutePosition()) + 180) % 360 - Constants.shooter.AngleOffset;
     }
 
     /** Percent */
@@ -133,9 +146,9 @@ public class Shooter extends SubsystemBase {
     }
 
     public State getStateFromDist(double dist) {
-        dist = Util.clamp(dist, Constants.Shooter.distToState.firstKey() + 0.01,Constants.Shooter.distToState.lastKey() - 0.01);
-        Map.Entry<Double, State> lower = Constants.Shooter.distToState.floorEntry(dist);
-        Map.Entry<Double, State> higher = Constants.Shooter.distToState.ceilingEntry(dist);
+        dist = Util.clamp(dist, Constants.shooter.distToState.firstKey() + 0.01,Constants.shooter.distToState.lastKey() - 0.01);
+        Map.Entry<Double, State> lower = Constants.shooter.distToState.floorEntry(dist);
+        Map.Entry<Double, State> higher = Constants.shooter.distToState.ceilingEntry(dist);
 
         return new State(Util.lerp((dist - lower.getKey())/(higher.getKey() - lower.getKey()), lower.getValue().angle, higher.getValue().angle), higher.getValue().topSpeed, higher.getValue().bottomSpeed);
     }

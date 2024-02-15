@@ -1,4 +1,4 @@
-package frc.robot.util;
+package frc.robot.util.Log;
 
 import edu.wpi.first.wpilibj.DriverStation;
 
@@ -67,7 +67,7 @@ public class Log {
 	 * if you're trying to debug the robot.
 	 * 
 	 * @param category
-	 * @param message
+	 * @param message 
 	 */
 	public static void debug(String category, String message) {
 		log("Debug", category, message);

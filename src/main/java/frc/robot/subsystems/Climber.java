@@ -21,7 +21,7 @@ public class Climber extends SubsystemBase {
     up
   }
 
-  public static synchronized Climber get() {
+  public static Climber get() {
     if (m_Climber == null) {
       m_Climber = new Climber();
     }

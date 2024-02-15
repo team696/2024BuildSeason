@@ -15,6 +15,7 @@ import org.json.simple.JSONObject;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.subsystems.Swerve;
+import frc.robot.util.Log.Log;
 
 public class Dashboard extends WebSocketServer {
     private class KeyInfo {
