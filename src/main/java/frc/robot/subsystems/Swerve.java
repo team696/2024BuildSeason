@@ -32,7 +32,12 @@ public class Swerve extends SubsystemBase {
   private SwerveModulePosition[] m_swervePositions = new SwerveModulePosition[4];
   private SwerveDrivePoseEstimator m_poseEstimator;
 
-  private double acceleration = 0;
+  private double accelerationX = 0;
+  private double accelerationY = 0;
+
+  private double oldAccelerationX = 0;
+  private double oldAccelerationY = 0;
+
   private double lastTimestamp = 0;
 
   public static synchronized Swerve get() {
@@ -148,7 +153,6 @@ public class Swerve extends SubsystemBase {
 
   @Override
   public void periodic() {
-    Pose2d oldPose = getPose();
 
     if (!m_Gyro.isConnected())
       Log.unusual("Swerve", "Gyro Not Found");
@@ -159,8 +163,11 @@ public class Swerve extends SubsystemBase {
 
     m_poseEstimator.update(getYaw(), m_swervePositions);
 
-    /** Update acceleration with only the odometry? */
-    acceleration = getPose().getTranslation().minus(oldPose.getTranslation()).times(Timer.getFPGATimestamp() - lastTimestamp).getNorm();
+    //Potentially incorporate gyro?
+    accelerationX = (getRobotRelativeSpeeds().vxMetersPerSecond - oldAccelerationX) / (Timer.getFPGATimestamp() - lastTimestamp);
+    accelerationY = (getRobotRelativeSpeeds().vyMetersPerSecond - oldAccelerationY) / (Timer.getFPGATimestamp() - lastTimestamp);
+    oldAccelerationX = getRobotRelativeSpeeds().vxMetersPerSecond;
+    oldAccelerationY = getRobotRelativeSpeeds().vyMetersPerSecond;
     lastTimestamp = Timer.getFPGATimestamp();
 
     Camera.get().updatePose(m_poseEstimator);
@@ -181,7 +188,9 @@ public class Swerve extends SubsystemBase {
 
     builder.addDoubleProperty("Distance To Speaker", ()->DistToSpeaker(), null);
     builder.addDoubleProperty("angle for speaker", ()->AngleForSpeaker().getDegrees(), null);
-    builder.addDoubleProperty("Acceleration", ()->acceleration, null); //TODO: Does this value make any sense
+    builder.addDoubleProperty("AccelerationX", ()->accelerationX, null); 
+    builder.addDoubleProperty("AccelerationY", ()->accelerationY, null); 
+
     SmartDashboard.putData("Field", Constants.Field.sim);
   }
 }

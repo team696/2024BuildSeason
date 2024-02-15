@@ -52,7 +52,7 @@ public class Robot extends TimedRobot {
         Swerve.get().setDefaultCommand(new TeleopSwerve(()->-controller.getRawAxis(1), ()->-controller.getRawAxis(0), ()->-controller.getRawAxis(4), controller.rightBumper(), 0.08,true, true));
         controller.button(8).onTrue(new InstantCommand(()->Swerve.get().zeroYaw()));
         controller.a().whileTrue(new Shoot(()->Swerve.get().DistToSpeaker()));
-
+        controller.x().whileTrue(Intake.get().runRollers(0.3));
         //OLD METHODS -> UPDATE?
         //controller.a().whileTrue(new Shoot(3500, 3000, 1, ()-> Util.clamp(Util.lerp( Swerve.get().getDistToSpeaker(Swerve.get().getPose()) / 3.3, 60, 28.0),30.0,60.0))); SPEAKER
         //controller.leftBumper().whileTrue(new Shoot(2000,2000,1, ()->60)); TRAP

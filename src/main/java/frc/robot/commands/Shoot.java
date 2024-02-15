@@ -39,7 +39,8 @@ public class Shoot extends Command {
     double ChassisX = Swerve.get().getRobotRelativeSpeeds().vxMetersPerSecond;
     Constants.Shooter.State desiredStateStationary = Shooter.get().getStateFromDist(actualDist);
     Constants.Shooter.State desiredState = desiredStateStationary;//Shooter.get().getStateFromDist(actualDist + (actualDist * ChassisX)/(20*Math.cos(Units.degreesToRadians(desiredStateStationary.angle)) + ChassisX)); 
-    Shooter.get().setAngle(desiredState.angle + actualDist * ChassisX * 1/5);
+    desiredState.angle = desiredState.angle + actualDist * ChassisX * -0.65;
+    Shooter.get().setAngle(desiredState.angle);
     Shooter.get().setSpeed(desiredState.topSpeed, desiredState.bottomSpeed);
     if(Shooter.get().upToSpeed(desiredState.topSpeed, desiredState.bottomSpeed, 100) && !Shooter.get().getBeamBreak() && Shooter.get().atAngle(desiredState.angle, 2)) {
       Shooter.get().setSerializerSpeedPercent(1);

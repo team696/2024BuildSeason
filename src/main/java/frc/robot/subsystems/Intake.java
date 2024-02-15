@@ -3,6 +3,7 @@ package frc.robot.subsystems;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.util.Constants;
 
@@ -40,7 +41,13 @@ public class Intake extends SubsystemBase {
 
   }
 
+  public void setRollersOutput(double percent) {
+    m_Rollers.set(percent);
+  }
 
+  public Command runRollers(double percent) {
+    return this.runEnd(()->setRollersOutput(percent),()->setRollersOutput(0));
+  }
 
   @Override
   public void periodic() {
