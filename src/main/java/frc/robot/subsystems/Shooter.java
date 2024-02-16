@@ -81,8 +81,6 @@ public class Shooter extends SubsystemBase {
         
         m_shooterController = new BangBangController();
 
-
-
         m_TopRequest = new DutyCycleOut(0);
         m_BottomRequest = new DutyCycleOut(0);
 
