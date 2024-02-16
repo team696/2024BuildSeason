@@ -1,22 +1,37 @@
 package frc.robot.util.Log;
 
+import java.io.File;
+import java.io.FileWriter;
 import java.lang.reflect.Method;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayDeque;
+import java.util.Date;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Queue;
+import java.util.TimeZone;
 import java.util.concurrent.Callable;
 
-import edu.wpi.first.util.sendable.Sendable;
-import edu.wpi.first.util.sendable.SendableRegistry;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Swerve;
+import frc.robot.util.Util;
 
 public class Logger {
     public static Logger m_Logger;
 
-    HashMap<String, Callable<Object>> m_ToLog = new HashMap<String, Callable<Object>>();
+    private final String m_logPath = "src/main/deploy/";
+
+    private static DateFormat dateFormat = new SimpleDateFormat(
+            "yy_MMM_dd_hh_mm_ss_aa");
+
+    private HashMap<String, Callable<Object>> m_ToLog = new HashMap<String, Callable<Object>>();
+
+    private Deque<String> m_ToWrite = new ArrayDeque<String>();
 
     public enum type {
         none, 
@@ -26,7 +41,7 @@ public class Logger {
 
     private Logger(type LogType) {
         addClassToLog(LogType, Shooter.get(), Swerve.get(), Intake.get(), Climber.get());
-
+        dateFormat.setTimeZone(TimeZone.getTimeZone("PST"));
         Thread main = new Thread(new LogThread());
         main.start();
     }
@@ -34,7 +49,7 @@ public class Logger {
     private void addClassToLog(type logtype, Object... objectsToAdd) {
         for (Object objectToAdd : objectsToAdd) {
             for (Method method : objectToAdd.getClass().getDeclaredMethods()) {
-                if (method.isAnnotationPresent(ILog.class))
+                if (method.isAnnotationPresent(Log.class))
                     m_ToLog.put(objectToAdd.getClass().getName() + method.getName(), ()->method.invoke(objectToAdd));    
                 
                 if (logtype == type.debug)
@@ -54,28 +69,49 @@ public class Logger {
 
         @Override
         public void run() {
+            Util.sleep(2000);
+            PLog.info("Logger","Started Logging");
+            FileWriter writer;
             try {
-                Thread.sleep(2000);
+                String logPath = m_logPath;//"home/lvuser/balls";
+                File Folder = new File(logPath);
+                Folder.mkdir();
+                writer = new FileWriter(logPath + "/nuts.log");
             } catch (Exception e) {
-                Log.fatalException("Logger", "Failed To Sleep", e);
+                PLog.fatalException("Logger", "Failed To Write File", e);
+                return;
             }
-            Log.info("Logger","Started Logging");
-            while (true) {
-                try {
-                    //for (Map.Entry<String,Callable<Object>> func : m_ToLog.entrySet()) {
-                    //    Log.info(func.getKey(), func.getValue().call().toString());
-                    //}
 
+
+            while (true) {
+                String time = dateFormat.format(new Date(System.currentTimeMillis()));
+                try {
+                    PLog.info("dat", time);
                     for (Map.Entry<String,Callable<Object>> func : m_ToLog.entrySet()) {
-                        SmartDashboard.putString(func.getKey(), func.getValue().call().toString());
+                        String Name = func.getKey();
+                        String Key = func.getValue().call().toString();
+                        SmartDashboard.putString(Name, Key);
+                        m_ToWrite.add(time + " -> ["+ Name + "] " + Key + "\n");
+                       
                     }
+                    while (m_ToWrite.size() > 0) {
+                        writer.write(m_ToWrite.pop());
+                    }                    
+                    writer.flush();
                 }
                 catch (Exception e) {
-                    Log.fatalException("Logger", "Failed to log value", e);
-                    Log.info("Logger", "Closing Logger");
+                    PLog.fatalException("Logger", "Failed to log value", e);
                     break;
                 }
+                Util.sleep(200);
             }
+            try {
+                writer.close();
+            } catch (Exception e) {
+                PLog.fatalException("Logger", "Failed to close Writer", e);
+            }
+            PLog.info("Logger", "Closing Logger");
+            m_ToWrite.clear();
         }
     }
 

@@ -18,8 +18,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.util.Constants;
 import frc.robot.util.Log.Debug;
-import frc.robot.util.Log.ILog;
 import frc.robot.util.Log.Log;
+import frc.robot.util.Log.PLog;
 import frc.robot.util.Util;
 
 public class Shooter extends SubsystemBase {
@@ -80,6 +80,8 @@ public class Shooter extends SubsystemBase {
         m_Encoder = new DutyCycleEncoder(7);
         
         m_shooterController = new BangBangController();
+
+
 
         m_TopRequest = new DutyCycleOut(0);
         m_BottomRequest = new DutyCycleOut(0);
@@ -183,7 +185,7 @@ public class Shooter extends SubsystemBase {
         // setAngle(AngleGoal);
 
         if (!m_Encoder.isConnected()) {
-            Log.unusual("Shooter", "Encoder Not Found!");
+            PLog.unusual("Shooter", "Encoder Not Found!");
         }
     }
 

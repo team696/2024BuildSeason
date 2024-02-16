@@ -15,7 +15,7 @@ import org.json.simple.JSONObject;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.subsystems.Swerve;
-import frc.robot.util.Log.Log;
+import frc.robot.util.Log.PLog;
 
 public class Dashboard extends WebSocketServer {
     private class KeyInfo {
@@ -67,7 +67,7 @@ public class Dashboard extends WebSocketServer {
             s.setReuseAddr(true);
             s.start();  
         } catch (UnknownHostException e) {
-            Log.fatalException("Dashboard", "Failed To Start Server.", e);   
+            PLog.fatalException("Dashboard", "Failed To Start Server.", e);   
         }
     }
 
@@ -110,18 +110,14 @@ public class Dashboard extends WebSocketServer {
 
     @Override
     public void onOpen(WebSocket conn, ClientHandshake handshake) {
-        Log.info("Dashboard", conn.getRemoteSocketAddress().getHostName() + " has opened a connection.");
+        PLog.info("Dashboard", conn.getRemoteSocketAddress().getHostName() + " has opened a connection.");
 
         (new Thread(() -> {
             while (conn.isOpen()) {
 
                 conn.send(dataToSend());
 
-                try {
-                    Thread.sleep(UpdateRate);
-                } catch (InterruptedException e) {
-                    Log.fatalException("Dashboard", "Thread Interrupted", e);
-                }
+                Util.sleep(UpdateRate);
             }
         })).start();
     }
@@ -137,17 +133,17 @@ public class Dashboard extends WebSocketServer {
         String[] parts = message.split(":"); // Message Comes in "Key:Value pair"
         dataReceived(parts[0], parts[1]);
 
-        Log.info("Dashboard: " + conn.getRemoteSocketAddress().getHostName(), "Message: " + message);
+        PLog.info("Dashboard: " + conn.getRemoteSocketAddress().getHostName(), "Message: " + message);
     }
 
     @Override
     public void onError(WebSocket conn, Exception ex) {
         Keys.clear();
-        Log.fatalException("Dashboard", "Error", ex);
+        PLog.fatalException("Dashboard", "Error", ex);
     }
 
     @Override
     public void onStart() {
-        Log.info("Dashboard", "Server has started on port 5805.");
+        PLog.info("Dashboard", "Server has started on port 5805.");
     }
 }

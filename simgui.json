@@ -63,6 +63,9 @@
         "open": true
       },
       "SmartDashboard": {
+        "[DEBUG] Shooter": {
+          "open": true
+        },
         "[DEBUG]class frc.robot.subsystems.Shooter": {
           "open": true
         },

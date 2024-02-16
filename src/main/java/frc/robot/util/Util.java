@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 
+import frc.robot.util.Log.PLog;
+
 public class Util {
     public static double lerp(double t, double min, double max) {
         return (max - min) * t + min;
@@ -17,6 +19,14 @@ public class Util {
 
     public static double map(double x, double in_min, double in_max, double out_min, double out_max){
         return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+    }
+
+    public static void sleep(long millis) {
+        try {
+            Thread.sleep(millis);
+        } catch (Exception e) {
+            PLog.fatalException("Sleep", "Failed To Sleep", e);
+        }
     }
 
     /**

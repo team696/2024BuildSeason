@@ -21,7 +21,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.util.Camera;
 import frc.robot.util.Constants;
 import frc.robot.util.Log.Debug;
-import frc.robot.util.Log.Log;
+import frc.robot.util.Log.PLog;
 import frc.robot.util.SwerveModule;
 
 public class Swerve extends SubsystemBase {
@@ -158,7 +158,7 @@ public class Swerve extends SubsystemBase {
   public void periodic() {
 
     if (!m_Gyro.isConnected())
-      Log.unusual("Swerve", "Gyro Not Found");
+      PLog.unusual("Swerve", "Gyro Not Found");
 
     for (int i = 0; i < 4; ++i) {
       m_swervePositions[i] = Constants.swerve.swerveMods[i].getPosition();

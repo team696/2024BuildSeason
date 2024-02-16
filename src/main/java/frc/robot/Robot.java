@@ -27,8 +27,8 @@ import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Swerve;
 import frc.robot.util.Constants;
 import frc.robot.util.Dashboard;
-import frc.robot.util.Log.ILog;
 import frc.robot.util.Log.Log;
+import frc.robot.util.Log.PLog;
 import frc.robot.util.Log.Logger;
 import frc.robot.util.Util;
 
@@ -56,7 +56,7 @@ public class Robot extends TimedRobot {
         Swerve.get().setDefaultCommand(new TeleopSwerve(()->-controller.getRawAxis(1), ()->-controller.getRawAxis(0), ()->-controller.getRawAxis(4), controller.rightBumper(), 0.08,true, true));
         controller.button(8).onTrue(new InstantCommand(()->Swerve.get().zeroYaw()));
         controller.a().whileTrue(new Shoot(()->Swerve.get().DistToSpeaker()));
-        controller.x().whileTrue(Intake.get().runRollers(0.3));
+        controller.x().whileTrue(Intake.get().runAngle(0.3));
         //OLD METHODS -> UPDATE?
         //controller.a().whileTrue(new Shoot(3500, 3000, 1, ()-> Util.clamp(Util.lerp( Swerve.get().getDistToSpeaker(Swerve.get().getPose()) / 3.3, 60, 28.0),30.0,60.0))); SPEAKER
         //controller.leftBumper().whileTrue(new Shoot(2000,2000,1, ()->60)); TRAP
@@ -152,7 +152,7 @@ public class Robot extends TimedRobot {
 		try {
 			macAddresses = Util.getMacAddresses();
 		} catch (IOException e) {
-      Log.fatalException("Robot", "Mac Address Attempt Unsuccessful", e);
+      PLog.fatalException("Robot", "Mac Address Attempt Unsuccessful", e);
 			macAddresses = List.of();
 		}
 
@@ -160,21 +160,21 @@ public class Robot extends TimedRobot {
 			// first check if we are comp
 			if (Arrays.compare(Constants.Robot.COMP_MAC, macAddress) == 0) {
 				Constants.Robot.detected = Constants.Robot.Robots.COMP;
-        Log.info("Robot", "Comp Bot Connected");
+        PLog.info("Robot", "Comp Bot Connected");
 				break;
 			}
 			// next check if we are beta
 			else if (Arrays.compare(Constants.Robot.BETA_MAC, macAddress) == 0) {
 				Constants.Robot.detected = Constants.Robot.Robots.BETA;
-        Log.info("Robot", "Beta Bot Connected");
+        PLog.info("Robot", "Beta Bot Connected");
 				break;
 			}
 		}
 
 		if (Constants.Robot.detected == Constants.Robot.Robots.UNKNOWN) {
-      Log.info("Robot", "Unknown MAC address!");
+      PLog.info("Robot", "Unknown MAC address!");
       for (byte[] macAddress : macAddresses) {
-        Log.info("    ", Util.macToString(macAddress));
+        PLog.info("    ", Util.macToString(macAddress));
       }
 		}
 	}

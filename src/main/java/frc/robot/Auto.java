@@ -19,7 +19,7 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.subsystems.Swerve;
 import frc.robot.util.Constants;
 import frc.robot.util.Dashboard;
-import frc.robot.util.Log.Log;
+import frc.robot.util.Log.PLog;
 
 public class Auto {
     public static Auto m_instance;
@@ -90,7 +90,7 @@ public class Auto {
         try {
             paths = PathPlannerAuto.getPathGroupFromAutoFile(autoChooser.getSelected().getName());
         } catch (Exception e) {
-            Log.fatalException("Auto", "Failed To Find Path", e);
+            PLog.fatalException("Auto", "Failed To Find Path", e);
             return;
         }
         for (int i = 0; i < paths.size(); i++) {

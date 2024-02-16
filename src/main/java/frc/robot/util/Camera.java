@@ -27,7 +27,7 @@ import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.wpilibj.RobotBase;
 import frc.robot.subsystems.Swerve;
-import frc.robot.util.Log.Log;
+import frc.robot.util.Log.PLog;
 
 public class Camera {
     private static Camera m_Camera;
@@ -57,7 +57,7 @@ public class Camera {
         try {
             m_atLayout = AprilTagFieldLayout.loadFromResource(AprilTagFields.k2024Crescendo.m_resourceFile);
         } catch (Exception e) {
-            Log.fatalException("Camera", "Failed to load april tag layout.", e);
+            PLog.fatalException("Camera", "Failed to load april tag layout.", e);
         }
 
         m_PCamera = new PhotonCamera(Constants.Cameras.name);
@@ -65,7 +65,7 @@ public class Camera {
         m_Estimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
 
         PortForwarder.add(5800, "photonvision.local", 5800);
-        Log.info("Photonvision", "Initialized: Dashboard open at http://photonvision.local:5800");
+        PLog.info("Photonvision", "Initialized: Dashboard open at http://photonvision.local:5800");
 
         if (Constants.DEBUG) {
             for(AprilTag tag : m_atLayout.getTags()) { // Shows tags in layout where they should be

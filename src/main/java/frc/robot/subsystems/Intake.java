@@ -47,7 +47,7 @@ public class Intake extends SubsystemBase {
     /** Creates a new Intake. */
     private Intake() {
         m_Linear = new TalonFX(18, Constants.canivoreName);
-        m_Angle = new TalonFX(19, Constants.canivoreName);
+        m_Angle = new TalonFX(19);
         m_Rollers = new TalonFX(20, Constants.canivoreName);
         m_SecondAngle = new TalonFX(21, Constants.canivoreName);
 
@@ -71,6 +71,18 @@ public class Intake extends SubsystemBase {
 
     public Command runRollers(double percent) {
         return this.runEnd(()->setRollersOutput(percent),()->setRollersOutput(0));
+    }
+
+     public void setAngleOutput(double percent) {
+        m_Angle.set(percent);
+    }
+
+    public void stopAngle() {
+        m_Angle.stopMotor();
+    }
+
+    public Command runAngle(double percent) {
+        return this.runEnd(()->setAngleOutput(percent),()->stopAngle());
     }
 
     @Override
