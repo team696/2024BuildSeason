@@ -63,6 +63,12 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotInit() {
+    Logger.start(Logger.type.debug);
+
+    PLog.info("Robot", "Begin Robot Initializiation");
+
+    Util.setRobotType();
+
     m_PDH = new PowerDistribution(1, ModuleType.kRev);
 
     DriverStation.silenceJoystickConnectionWarning(true);
@@ -84,11 +90,11 @@ public class Robot extends TimedRobot {
 
     Shooter.get().setDefaultCommand(Shooter.get().holdAngle());
 
-    Logger.start(Logger.type.debug);
-
     SmartDashboard.putData(Swerve.get());
     SmartDashboard.putData(Shooter.get());
     SmartDashboard.putData(Intake.get());
+
+    PLog.info("Robot", "End Robot Initialization");
   }
 
     @Override
@@ -145,35 +151,5 @@ public class Robot extends TimedRobot {
   public void simulationPeriodic() {
   }
 
-  static {
-		List<byte[]> macAddresses;
-		try {
-			macAddresses = Util.getMacAddresses();
-		} catch (IOException e) {
-      PLog.fatalException("Robot", "Mac Address Attempt Unsuccessful", e);
-			macAddresses = List.of();
-		}
 
-		for (byte[] macAddress : macAddresses) {
-			// first check if we are comp
-			if (Arrays.compare(Constants.Robot.COMP_MAC, macAddress) == 0) {
-				Constants.Robot.detected = Constants.Robot.Robots.COMP;
-        PLog.info("Robot", "Comp Bot Connected");
-				break;
-			}
-			// next check if we are beta
-			else if (Arrays.compare(Constants.Robot.BETA_MAC, macAddress) == 0) {
-				Constants.Robot.detected = Constants.Robot.Robots.BETA;
-        PLog.info("Robot", "Beta Bot Connected");
-				break;
-			}
-		}
-
-		if (Constants.Robot.detected == Constants.Robot.Robots.UNKNOWN) {
-      PLog.info("Robot", "Unknown MAC address!");
-      for (byte[] macAddress : macAddresses) {
-        PLog.info("    ", Util.macToString(macAddress));
-      }
-		}
-	}
 }

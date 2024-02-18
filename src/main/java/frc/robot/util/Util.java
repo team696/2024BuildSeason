@@ -3,6 +3,7 @@ package frc.robot.util;
 import java.io.IOException;
 import java.net.NetworkInterface;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.List;
 
@@ -97,4 +98,33 @@ public class Util {
 		}
 		return builder.toString();
 	}
+
+    public static void setRobotType () {
+        List<byte[]> macAddresses;
+		try {
+			macAddresses = Util.getMacAddresses();
+		} catch (IOException e) {
+            PLog.fatalException("Robot", "Mac Address Attempt Unsuccessful", e);
+			macAddresses = List.of();
+		}
+
+		for (byte[] macAddress : macAddresses) {
+			if (Arrays.compare(Constants.Robot.COMP_MAC, macAddress) == 0) {
+				Constants.Robot.detected = Constants.Robot.Robots.COMP;
+                PLog.info("Robot", "Comp Bot Connected");
+				break;
+			} else if (Arrays.compare(Constants.Robot.BETA_MAC, macAddress) == 0) {
+				Constants.Robot.detected = Constants.Robot.Robots.BETA;
+                PLog.info("Robot", "Beta Bot Connected");
+				break;
+			}
+		}
+
+		if (Constants.Robot.detected == Constants.Robot.Robots.UNKNOWN) {
+            PLog.info("Robot", "Unknown MAC address!");
+            for (byte[] macAddress : macAddresses) {
+                PLog.info("    ", Util.macToString(macAddress));
+            }
+		}
+    }
 }

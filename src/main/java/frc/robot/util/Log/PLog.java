@@ -75,5 +75,6 @@ public class PLog {
 
 	private static void log(String severity, String category, String message) {
 		System.out.println(String.format("[%s] [%s] %s", severity, category, message));
+        Logger.log(severity, String.format("[%s] %s", category, message));
 	}
 }

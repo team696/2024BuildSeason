@@ -145,7 +145,6 @@ public class Swerve extends SubsystemBase {
     }                                                                   
   }
 
-  @Debug
   public double DistToSpeaker() {
     if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == DriverStation.Alliance.Red) {
         return getPose().getTranslation().getDistance(Constants.Field.SpeakerRed);

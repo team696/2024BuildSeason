@@ -12,6 +12,7 @@ public class Climber extends SubsystemBase {
   private static Climber m_Climber;
 
   private TalonFX m_Master;
+
   private TalonFX m_Follower;
 
   private PositionDutyCycle m_Controller;

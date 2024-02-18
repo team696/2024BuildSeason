@@ -88,6 +88,11 @@ public class Camera {
     public void updatePose(SwerveDrivePoseEstimator estimator) {
         if (RobotBase.isSimulation()) return;
 
+        if(m_PCamera.isConnected()) {
+            PLog.unusual("Camera", "Camera Not Found:" + Constants.Cameras.name);
+            return;
+        }
+
         Optional<EstimatedRobotPose> estimation = m_Estimator.update();
         if (estimation.isPresent()) {
             List<PhotonTrackedTarget> targets = estimation.get().targetsUsed;
