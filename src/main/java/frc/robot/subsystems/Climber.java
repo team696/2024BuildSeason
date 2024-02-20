@@ -5,6 +5,7 @@ import com.ctre.phoenix6.controls.PositionDutyCycle;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.util.Constants;
 
@@ -37,7 +38,7 @@ public class Climber extends SubsystemBase {
     m_Master.getConfigurator().apply(Constants.CONFIGS.climber_Master);
     m_Follower.getConfigurator().apply(Constants.CONFIGS.climber_Follower);
 
-    m_Follower.setControl(new Follower(m_Master.getDeviceID(), true));
+    m_Follower.setControl(new Follower(m_Master.getDeviceID(), false));
 
     m_Controller = (new PositionDutyCycle(0)).withFeedForward(0);
 
@@ -56,8 +57,24 @@ public class Climber extends SubsystemBase {
     }
   }
 
+  public void runMotorsPercent(double output) {
+    m_Master.set(output);
+  }
+
+  public Command runClimberPercent(double output) {
+    return this.runEnd(()->runMotorsPercent(output),()->runMotorsPercent(0));
+  }
+
+  public void stopMotors() {
+    m_Master.stopMotor();
+  }
+
   public void stop () {
     m_Master.stopMotor();
+  }
+
+  public double getPosition() {
+    return m_Master.getPosition().getValueAsDouble();
   }
 
   @Override
@@ -68,6 +85,6 @@ public class Climber extends SubsystemBase {
 
   @Override
   public void initSendable(SendableBuilder builder) {
-
+    builder.addDoubleProperty("Position", this::getPosition, null);
   }
 }

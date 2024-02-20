@@ -61,23 +61,24 @@ public class SwerveModule {
     }
 
     private void setSpeed(SwerveModuleState desiredState, boolean isOpenLoop){
+        double ratio = 1;//desiredState.angle.getRadians() - getState().angle.getRadians();
         if(isOpenLoop){
-            driveDutyCycle.Output = desiredState.speedMetersPerSecond / Constants.swerve.maxSpeed;
-            mDriveMotor.setControl(driveDutyCycle);
+            driveDutyCycle.Output = desiredState.speedMetersPerSecond / Constants.swerve.maxSpeed * ratio;
+            mDriveMotor.setControl(driveDutyCycle) ;
         }
         else {
-            driveVelocity.Velocity = Util.MPSToRPS(desiredState.speedMetersPerSecond, Constants.swerve.wheelCircumference);
+            driveVelocity.Velocity = Util.MPSToRPS(desiredState.speedMetersPerSecond * ratio, Constants.swerve.wheelCircumference);
             driveVelocity.FeedForward = driveFeedForward.calculate(desiredState.speedMetersPerSecond);
             mDriveMotor.setControl(driveVelocity);
         }
     }
 
-    public Rotation2d getCANcoder(){
+    public Rotation2d getCANCoderAngle(){
         return Rotation2d.fromRotations(angleEncoder.getAbsolutePosition().getValue());
     }
 
     public void resetToAbsolute(){
-        double absolutePosition = getCANcoder().getRotations() - angleOffset;
+        double absolutePosition = getCANCoderAngle().getRotations() - angleOffset;
         mAngleMotor.setPosition(absolutePosition);
     }
 

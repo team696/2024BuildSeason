@@ -1,6 +1,8 @@
 package frc.robot.util.Log;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.lang.reflect.Method;
 import java.nio.file.Files;
@@ -8,36 +10,38 @@ import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayDeque;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Deque;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
 import java.util.concurrent.Callable;
+import java.util.regex.Matcher;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Robot;
-import frc.robot.subsystems.Climber;
-import frc.robot.subsystems.Intake;
-import frc.robot.subsystems.Shooter;
-import frc.robot.subsystems.Swerve;
 import frc.robot.util.Util;
 
 public class Logger {
     public static Logger m_Logger;
+    private Thread main;
 
     private static final String[] m_DriveRoots = { "/media/sdb1/", "/media/sda1/", "/media/sdc1/" };
 
     private static final DateFormat dateFormat = new SimpleDateFormat("yy-MMM-dd-hh-mm-ss-SS-aa");
     private static final DateFormat simpleDateFormat = new SimpleDateFormat("mm:ss.SSS");
 
-    private HashMap<String, Callable<Object>> m_ToLog = new HashMap<String, Callable<Object>>();
+    //private HashMap<String, Callable<Object>> m_ToLog = new HashMap<String, Callable<Object>>();
+    private List<Map.Entry<String, Callable<Object>>> m_ToLog = new ArrayList<Map.Entry<String, Callable<Object>>>();
 
     private Deque<String> m_ToWrite = new ArrayDeque<String>();
     private Deque<String> m_ToWriteCSV = new ArrayDeque<String>();
+
+    private type m_logType = type.none;
+
+    private String curDirectory = "";
 
     public static void log(String Name, String Value) {
         m_Logger.m_ToWrite.add(getSimpleCurrentTimeFormatted() + " -> [" + Name + "] " + Value + "\n");
@@ -50,29 +54,58 @@ public class Logger {
     }
 
     private Logger(type LogType) {
+        m_logType = LogType;
         dateFormat.setTimeZone(TimeZone.getTimeZone("PST"));
-        Thread main = new Thread(new LogThread());
-        addClassToLog(LogType, Shooter.get(), Swerve.get(), Intake.get(), Climber.get());
-        main.start();
+        main = new Thread(new LogThread());
     }
 
     private void addClassToLog(type logtype, Object... objectsToAdd) {
         for (Object objectToAdd : objectsToAdd) {
             for (Method method : objectToAdd.getClass().getDeclaredMethods()) {
                 if (method.isAnnotationPresent(Log.class))
-                    m_ToLog.put(objectToAdd.getClass().getName() + method.getName(), ()->method.invoke(objectToAdd));    
+                    m_ToLog.add(Map.entry(objectToAdd.getClass().getSimpleName() + "/" + method.getName(), ()->method.invoke(objectToAdd)));    
                 
                 if (logtype == type.debug)
                     if (method.isAnnotationPresent(Debug.class))
-                        m_ToLog.put("[D] " + objectToAdd.getClass().getSimpleName() + "/" + method.getName(), ()->method.invoke(objectToAdd));    
+                        m_ToLog.add(Map.entry(objectToAdd.getClass().getSimpleName() + "/D/" + method.getName(), ()->method.invoke(objectToAdd)));    
             }
         }
     }
 
-    public static void start(type LogType) {
-        if (LogType == type.none) return;
+    public static void registerLoggable(type logType, String name, Callable<Object> func) {
+        if(m_Logger == null) {
+            PLog.info("Logger", "Logger Not Started.");
+            return;
+        }
+
+        if(logType == type.none) return;
+
+        if (logType == type.debug)
+            m_Logger.m_ToLog.add(Map.entry("D/" + name, func));  
+        else 
+            m_Logger.m_ToLog.add(Map.entry(name, func));    
+
+        if (m_Logger.curDirectory != "")
+            m_Logger.updateHeaders(m_Logger.curDirectory);
+    } 
+
+    public static Logger init(type LogType, Object... objects) {
+        if (m_Logger != null) {
+            PLog.info("Logger", "Don't Reinitialize The Logger");
+            return m_Logger;
+        }
 
         m_Logger = new Logger(LogType);
+        m_Logger.addClassToLog(m_Logger.m_logType, objects);
+        return m_Logger;
+    }
+
+    public void start() {
+        if (main.isAlive()) {
+            PLog.info("Logger", "Don't Start The Logger Twice");
+            return;
+        }
+        main.start();
     }
 
     private class LogThread implements Runnable {
@@ -81,43 +114,46 @@ public class Logger {
         public void run() {
             FileWriter writer;
             FileWriter writerCSV;
-            String logPath;
+            String headers = "time,";
             try {
-                logPath = getDirectory();
-                File logDir = new File(logPath);
+                curDirectory = getDirectory();
+                File logDir = new File(curDirectory);
                 logDir.mkdir();
-                writer = new FileWriter(logPath + "/main.log");
-                writerCSV = new FileWriter(logPath + "/values.csv");
+                writer = new FileWriter(curDirectory + "/main.log");
             } catch (Exception e) {
                 PLog.fatalException("Logger", "Failed To Write File", e);
                 return;
             }
 
-            PLog.info("Logger","Started Logging at " + logPath);
-            Util.sleep(100);
+            PLog.info("Logger","Started Logging at " + curDirectory);
 
-            String headers = "time,";
-            for (Map.Entry<String,Callable<Object>> func : m_ToLog.entrySet()) {
+            for (Map.Entry<String,Callable<Object>> func : m_ToLog) {
                 headers += func.getKey() + ",";
             }
             try {
+                writerCSV = new FileWriter(curDirectory + "/values.csv", true);
                 writerCSV.write(headers + "\n");
-                writerCSV.flush();
-            }catch (Exception e) {
-                PLog.fatalException("Logger", "Failed to write headers", e);
+                writerCSV.close();
+            } catch (Exception e) {
+
             }
-
             while (true) {
-
                 String time = getSimpleCurrentTimeFormatted();
-                try {
-                    m_ToWriteCSV.add(time);
-                    for (Map.Entry<String,Callable<Object>> func : m_ToLog.entrySet()) {
+                m_ToWriteCSV.add(time);
+                for (Map.Entry<String,Callable<Object>> func : m_ToLog) {
+                    try {
                         String Name = func.getKey();
                         String Key = (func.getValue().call().toString());
                         SmartDashboard.putString(Name, Key);
                         m_ToWriteCSV.add("\"" + Key + "\"");
+                    } catch (Exception e) {
+                        PLog.recoverable("Logger", "Failed to log value: " + func.getKey());
                     }
+                }
+     
+                try {
+                    writerCSV = new FileWriter(curDirectory + "/values.csv", true);
+
                     while (m_ToWrite.size() > 0) {
                         writer.write(m_ToWrite.pop());
                     }          
@@ -125,24 +161,48 @@ public class Logger {
                         writerCSV.write(m_ToWriteCSV.pop() + ",");
                     }          
                     writerCSV.write("\n");
-                    writerCSV.flush();
                     writer.flush();
+                    writerCSV.close();
                 }
                 catch (Exception e) {
                     PLog.fatalException("Logger", "Failed to log value", e);
                     break;
                 }
-                Util.sleep(200);
+                Util.sleep(150);
             }
             try {
                 writer.close();
-                writerCSV.close();
             } catch (Exception e) {
                 PLog.fatalException("Logger", "Failed to close Writer", e);
             }
             PLog.info("Logger", "Closing Logger");
             m_ToWrite.clear();
             m_ToWriteCSV.clear();
+        }
+    }
+
+    private void updateHeaders(String dir) {
+        try{
+            String headers = "time,";
+            for (Map.Entry<String,Callable<Object>> func : m_ToLog) {
+                headers += func.getKey() + ",";
+            }
+
+            File file = new File(curDirectory + "/values.csv");
+            BufferedReader reader = new BufferedReader(new FileReader(file));
+
+            String words = "", list = "", first = null;
+            while ((words = reader.readLine()) != null) {
+                if (first == null) first = words;
+                list += words + "\r\n";
+            }
+            reader.close();
+            String replacedtext = list.replaceAll(first, Matcher.quoteReplacement(headers));
+            FileWriter writer = new FileWriter(curDirectory + "/values.csv", false);
+            writer.write(replacedtext);
+            writer.close();
+        } catch ( Exception e) {
+            PLog.fatalException("Logger", "Failed To Update New Headers", e);
         }
     }
 
@@ -156,7 +216,7 @@ public class Logger {
 
     private static String getBaseDirectory() { 
         if (Robot.isSimulation()) 
-            return "src/main/deploy/Logs/";
+            return "src/main/Logs/";
 
         for (String potential : m_DriveRoots) { 
             if (Files.exists(Paths.get(potential))) {

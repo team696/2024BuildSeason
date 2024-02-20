@@ -7,7 +7,6 @@ import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.BangBangController;
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
@@ -18,7 +17,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.util.Constants;
 import frc.robot.util.Log.Debug;
-import frc.robot.util.Log.Log;
 import frc.robot.util.Log.PLog;
 import frc.robot.util.Util;
 
@@ -40,7 +38,6 @@ public class Shooter extends SubsystemBase {
     private DutyCycleOut m_BottomRequest;
     private DutyCycleOut m_PositionRequest;
 
-    private PIDController m_AnglePID;
     private ProfiledPIDController m_AngleTrapPID;
     private ArmFeedforward m_AngleFeedForward;
 
@@ -86,7 +83,6 @@ public class Shooter extends SubsystemBase {
 
         m_PositionRequest = new DutyCycleOut(0);
 
-        m_AnglePID = new PIDController(1/48.0, 0, 0);
         m_AngleTrapPID = new ProfiledPIDController(1/36.0, 0, 0, new TrapezoidProfile.Constraints(3000, 2000));
         m_AngleTrapPID.reset(0);
         m_AngleFeedForward = new ArmFeedforward(0.05, 1/56.0, 0, 0);
@@ -107,7 +103,10 @@ public class Shooter extends SubsystemBase {
 
     @Debug
     public double getAngle() { //fix this ...maybe not
-        return (360 * (1 - m_Encoder.getAbsolutePosition()) + 180) % 360 - Constants.shooter.AngleOffset;
+        if (m_Encoder.isConnected())
+            return (360 * (1 - m_Encoder.getAbsolutePosition()) + 180) % 360 - Constants.shooter.AngleOffset;
+
+        return m_AngleMotor.getPosition().getValueAsDouble() * 360;
     }
 
     /** Percent */
@@ -184,8 +183,11 @@ public class Shooter extends SubsystemBase {
 
         if (!m_Encoder.isConnected()) {
             PLog.unusual("Shooter", "Encoder Not Found!");
+        } else {
+            m_AngleMotor.setPosition(getAngle());
         }
     }
+
 
     @Override
     public void initSendable(SendableBuilder builder) {
@@ -193,7 +195,8 @@ public class Shooter extends SubsystemBase {
     	    builder.addDoubleProperty("Encoder", this::getAngle, null);
     	    builder.addBooleanProperty("Beam Break", this::getBeamBreak, null);
 
-    	    builder.addDoubleProperty("Angle Motor Position", ()->m_AngleMotor.getPosition().getValueAsDouble(), null);
+            //TODO: Check If This matches up with Encoder, Even a little...
+    	    builder.addDoubleProperty("Angle Motor Position", ()->m_AngleMotor.getPosition().getValueAsDouble() * 360, null);
 
     	    builder.addDoubleProperty("Top Velocity", ()->m_Top.getVelocity().getValueAsDouble(), null);
         	builder.addDoubleProperty("Bottom Velocity", ()->m_Bottom.getVelocity().getValueAsDouble(), null);

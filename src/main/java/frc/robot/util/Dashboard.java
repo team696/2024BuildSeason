@@ -125,7 +125,7 @@ public class Dashboard extends WebSocketServer {
     @Override
     public void onClose(WebSocket conn, int code, String reason, boolean remote) {
         Keys.clear();
-        //Log.info("Dashboard", conn.getRemoteSocketAddress().getHostName() + " has closed its connection.");
+        PLog.info("Dashboard", conn.getRemoteSocketAddress().getHostName() + " has closed its connection.");
     }
 
     @Override

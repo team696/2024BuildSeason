@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.util.Camera;
 import frc.robot.util.Constants;
 import frc.robot.util.Log.Debug;
+import frc.robot.util.Log.Log;
 import frc.robot.util.Log.PLog;
 import frc.robot.util.SwerveModule;
 
@@ -62,7 +63,7 @@ public class Swerve extends SubsystemBase {
     m_poseEstimator = new SwerveDrivePoseEstimator(Constants.swerve.swerveKinematics, getYaw(), m_swervePositions, new Pose2d(0,0,new Rotation2d(0)), VecBuilder.fill(0.1, 0.1, 0.05), VecBuilder.fill(0.3, 0.3, 0.6)); 
   }
 
-  /**  -180 , 180 */
+  @Log /**  -180 , 180 */
   public Rotation2d getYaw() {
     return Rotation2d.fromDegrees(-1 * m_Gyro.getYaw()); 
   }
@@ -183,7 +184,7 @@ public class Swerve extends SubsystemBase {
   public void initSendable(SendableBuilder builder) {
     if ( Constants.DEBUG) {
       for(SwerveModule mod : Constants.swerve.swerveMods){
-        builder.addDoubleProperty("Mod " + mod.moduleNumber + " Cancoder", ()->mod.getCANcoder().getRotations(), null);
+        builder.addDoubleProperty("Mod " + mod.moduleNumber + " Cancoder", ()->mod.getCANCoderAngle().getRotations(), null);
       }
       builder.addDoubleProperty("Gyro", ()->getYaw().getDegrees(), null);
     }

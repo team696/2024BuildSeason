@@ -19,6 +19,7 @@ public class Intake extends SubsystemBase {
         stowed,
         down, 
         pass,
+        amp,
         trap
     } 
 
@@ -47,7 +48,7 @@ public class Intake extends SubsystemBase {
     /** Creates a new Intake. */
     private Intake() {
         m_Linear = new TalonFX(18, Constants.canivoreName);
-        m_Angle = new TalonFX(19);
+        m_Angle = new TalonFX(19, Constants.canivoreName);
         m_Rollers = new TalonFX(20, Constants.canivoreName);
         m_SecondAngle = new TalonFX(21, Constants.canivoreName);
 
@@ -63,6 +64,14 @@ public class Intake extends SubsystemBase {
 
     public void setRollersOutput(double percent) {
         m_Rollers.set(percent);
+    }
+
+    public void setLinearOutput(double percent) {
+        m_Linear.set(percent);
+    }
+
+    public Command runLinear(double percent) {
+        return this.runEnd(()->setLinearOutput(percent),()->setLinearOutput(0));
     }
 
     public void stopRollers() {
@@ -90,9 +99,22 @@ public class Intake extends SubsystemBase {
         // This method will be called once per scheduler run
     }
 
+    public double linearPosition() {
+        return m_Linear.getPosition().getValueAsDouble();
+    }
+
+    public double mainAngle() {
+        return m_Angle.getPosition().getValueAsDouble();
+    }
+
+    public double wristAngle() {
+        return m_SecondAngle.getPosition().getValueAsDouble();
+    }
 
     @Override
     public void initSendable(SendableBuilder builder) {
-    
+        builder.addDoubleProperty("Height", this::linearPosition, null);
+        builder.addDoubleProperty("Main Angle", this::mainAngle, null);
+        builder.addDoubleProperty("Wrist Angle", this::wristAngle, null);
     }
 }
