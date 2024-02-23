@@ -88,7 +88,7 @@ public class Camera {
     public void updatePose(SwerveDrivePoseEstimator estimator) {
         if (RobotBase.isSimulation()) return;
 
-        if(m_PCamera.isConnected()) {
+        if(!m_PCamera.isConnected()) {
             PLog.unusual("Camera", "Camera Not Found:" + Constants.Cameras.name);
             return;
         }

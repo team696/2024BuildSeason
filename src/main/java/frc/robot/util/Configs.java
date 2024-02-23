@@ -96,11 +96,12 @@ public class Configs {
         shooter_Bottom.MotorOutput.NeutralMode = NeutralModeValue.Coast;
         shooter_Bottom.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
 
+
         shooter_Serializer.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
         shooter_Angle.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
         shooter_Angle.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-        shooter_Angle.Feedback.SensorToMechanismRatio = 12;
+        shooter_Angle.Feedback.SensorToMechanismRatio = 94.5;
 
         /** Pigeon Configuration */ 
         swerve_Pigeon.MountPose.MountPoseYaw = 0;
@@ -108,17 +109,20 @@ public class Configs {
         /** Climber Motor Configuration */
         climber_Master.Slot0.kP = 1;
         climber_Master.Feedback.SensorToMechanismRatio = 27;
-        climber_Master.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+        climber_Master.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
-        climber_Follower.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+        climber_Follower.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
         /** Intake Motor Configuaration */
         intake_Linear.Slot0.kP = 1;
         intake_Linear.Feedback.SensorToMechanismRatio = 26;
         intake_Linear.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+        intake_Linear.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
         intake_Angle.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+        intake_Angle.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
         intake_SecondAngle.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+        intake_SecondAngle.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
     }
 }

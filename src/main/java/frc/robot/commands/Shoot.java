@@ -6,33 +6,39 @@ package frc.robot.commands;
 
 import java.util.function.Supplier;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Swerve;
 
 public class Shoot extends Command {
     Supplier<Double> distSupplier;
+    boolean finish = false;
+    double broken = Double.MAX_VALUE;
     public Shoot(Supplier<Double> distSupplier) {
         this.distSupplier = distSupplier;
+        this.finish = false;
+        addRequirements(Shooter.get());
+    }
+
+    public Shoot(Supplier<Double> distSupplier, boolean finish) {
+        this.distSupplier = distSupplier;
+        this.finish = finish;
         addRequirements(Shooter.get());
     }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+    broken = Double.MAX_VALUE;
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    /*
-     *  TODO: MOVING + SHOOTING
-     * 
-     *  Use Distance as ratio for:
-     *
-     *  Swerve.get().getRobotRelativeSpeeds().vyMetersPerSecond -> Sideways speed added to angle to account for moving
-     *  Swerve.get().getRobotRelativeSpeeds().vxMetersPerSecond -> Forward speed removed from speed?
-     *  What To Do With Rotation Speed?
-     */
+    if (broken == Double.MAX_VALUE && Shooter.get().getBeamBreak())
+        broken = Timer.getFPGATimestamp();
+
     double actualDist = distSupplier.get();
     double ChassisX = Swerve.get().getRobotRelativeSpeeds().vxMetersPerSecond;
     Shooter.State desiredStateStationary = Shooter.get().getStateFromDist(actualDist);
@@ -58,6 +64,8 @@ public class Shoot extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
+    if (finish && Timer.getFPGATimestamp() - broken > 0.02 && !Shooter.get().getBeamBreak())
+        return true;
     return false;
   }
 }

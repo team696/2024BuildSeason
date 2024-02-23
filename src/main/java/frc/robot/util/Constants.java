@@ -6,6 +6,8 @@ import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -25,8 +27,16 @@ public final class Constants {
 	public static final double deadBand = 0.03;
 	public static final class Field {
 		public static final Field2d sim = new Field2d();
-		public static final Translation2d SpeakerRed = new Translation2d(16.7, 5.4);
-		public static final Translation2d SpeakerBlue = new Translation2d(0, 5.);
+        public static final class RED {
+		    public static final Translation2d Speaker = new Translation2d(16.7, 5.4);
+            public static final Pose2d Amp = new Pose2d(12, 8, new Rotation2d(Math.PI/2));
+            public static final Pose2d Source = new Pose2d(1, 0.5, Rotation2d.fromDegrees(-135));
+        }
+        public static final class BLUE {
+            public static final Translation2d Speaker = new Translation2d(0, 5.7);
+            public static final Pose2d Amp = new Pose2d(4, 8, new Rotation2d(Math.PI/2));
+            public static final Pose2d Source = new Pose2d(16, 0.5, Rotation2d.fromDegrees(-45));
+        }
 	}
 	public static class Motors {
         public static final class Falcon {

@@ -1,26 +1,25 @@
 package frc.robot.subsystems;
 
-import com.ctre.phoenix6.hardware.TalonFX;
-
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.util.Constants;
+import frc.robot.util.TalonFactory;
 
 public class Intake extends SubsystemBase {
     private static Intake m_Intake;
 
-    private TalonFX m_Linear;
-    private TalonFX m_Angle;
-    private TalonFX m_Rollers;
-    private TalonFX m_SecondAngle;
-
-    public enum Position {
+    private TalonFactory m_Linear;
+    private TalonFactory m_Angle;
+    private TalonFactory m_Rollers;
+    private TalonFactory m_SecondAngle;
+                              
+    public enum Position { //LINEAR TOP IS 3.6
         stowed,
-        down, 
-        pass,
+        down, // Linear 0.7569, Main Angle 9.232
+        pass, //L 1.8, A 7
         amp,
-        trap
+        trap 
     } 
 
     public class State {
@@ -47,27 +46,22 @@ public class Intake extends SubsystemBase {
 
     /** Creates a new Intake. */
     private Intake() {
-        m_Linear = new TalonFX(18, Constants.canivoreName);
-        m_Angle = new TalonFX(19, Constants.canivoreName);
-        m_Rollers = new TalonFX(20, Constants.canivoreName);
-        m_SecondAngle = new TalonFX(21, Constants.canivoreName);
-
-        m_Linear.getConfigurator().apply(Constants.CONFIGS.intake_Linear);
-        m_Angle.getConfigurator().apply(Constants.CONFIGS.intake_Angle);
-        m_Rollers.getConfigurator().apply(Constants.CONFIGS.intake_Rollers);
-        m_SecondAngle.getConfigurator().apply(Constants.CONFIGS.intake_SecondAngle);
+        m_Linear = new TalonFactory(19, Constants.canivoreName, Constants.CONFIGS.intake_Linear, "Intake Linear");
+        m_Angle = new TalonFactory(18, Constants.canivoreName, Constants.CONFIGS.intake_Angle, "Intake Angle");
+        m_Rollers = new TalonFactory(20, Constants.canivoreName, Constants.CONFIGS.intake_Rollers, "Intake Rollers");
+        //m_SecondAngle = new TalonFactory(21, Constants.canivoreName, Constants.CONFIGS.intake_SecondAngle, "Intake Second Angle");
 
         m_Linear.setPosition(0);
         m_Angle.setPosition(0);
-        m_SecondAngle.setPosition(0);
+        //m_SecondAngle.setPosition(0);
     }
 
     public void setRollersOutput(double percent) {
-        m_Rollers.set(percent);
+        m_Rollers.PercentOutput(percent);
     }
 
     public void setLinearOutput(double percent) {
-        m_Linear.set(percent);
+        m_Linear.PercentOutput(percent);
     }
 
     public Command runLinear(double percent) {
@@ -75,7 +69,7 @@ public class Intake extends SubsystemBase {
     }
 
     public void stopRollers() {
-        m_Rollers.stopMotor();
+        m_Rollers.stop();
     }
 
     public Command runRollers(double percent) {
@@ -83,11 +77,11 @@ public class Intake extends SubsystemBase {
     }
 
      public void setAngleOutput(double percent) {
-        m_Angle.set(percent);
+        m_Angle.PercentOutput(percent);
     }
 
     public void stopAngle() {
-        m_Angle.stopMotor();
+        m_Angle.stop();
     }
 
     public Command runAngle(double percent) {
@@ -100,21 +94,21 @@ public class Intake extends SubsystemBase {
     }
 
     public double linearPosition() {
-        return m_Linear.getPosition().getValueAsDouble();
+        return m_Linear.getPosition();
     }
 
     public double mainAngle() {
-        return m_Angle.getPosition().getValueAsDouble();
+        return m_Angle.getPosition();
     }
 
     public double wristAngle() {
-        return m_SecondAngle.getPosition().getValueAsDouble();
+        return m_SecondAngle.getPosition();
     }
 
     @Override
     public void initSendable(SendableBuilder builder) {
         builder.addDoubleProperty("Height", this::linearPosition, null);
         builder.addDoubleProperty("Main Angle", this::mainAngle, null);
-        builder.addDoubleProperty("Wrist Angle", this::wristAngle, null);
+        //builder.addDoubleProperty("Wrist Angle", this::wristAngle, null);
     }
 }

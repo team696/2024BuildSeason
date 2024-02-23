@@ -4,7 +4,6 @@ import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
-import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -17,8 +16,8 @@ public class SwerveModule {
     public int moduleNumber;
     private double angleOffset;
 
-    private TalonFX mAngleMotor;
-    private TalonFX mDriveMotor;
+    private TalonFactory mAngleMotor;
+    private TalonFactory mDriveMotor;
     private CANcoder angleEncoder;
 
     private double m_lastAngle;
@@ -40,14 +39,11 @@ public class SwerveModule {
         angleEncoder.getConfigurator().apply(Constants.CONFIGS.swerve_CANCoder);
 
         /* Angle Motor Config */
-        mAngleMotor = new TalonFX(moduleConstants.SteerMotorId);
-        mAngleMotor.getConfigurator().apply(Constants.CONFIGS.swerve_Angle);
+        mAngleMotor = new TalonFactory(moduleConstants.SteerMotorId, Constants.CONFIGS.swerve_Angle, "Swerve Drive " + moduleNumber);
         resetToAbsolute();
 
         /* Drive Motor Config */
-        mDriveMotor = new TalonFX(moduleConstants.DriveMotorId);
-        mDriveMotor.getConfigurator().apply(Constants.CONFIGS.swerve_Drive);
-        mDriveMotor.getConfigurator().setPosition(0.0);
+        mDriveMotor = new TalonFactory(moduleConstants.DriveMotorId, Constants.CONFIGS.swerve_Drive, "Swerve Angle " + moduleNumber);
 
         m_lastAngle = getState().angle.getRotations();
     }
@@ -61,7 +57,7 @@ public class SwerveModule {
     }
 
     private void setSpeed(SwerveModuleState desiredState, boolean isOpenLoop){
-        double ratio = 1;//desiredState.angle.getRadians() - getState().angle.getRadians();
+        double ratio = Math.cos(desiredState.angle.getRadians() - getState().angle.getRadians()); 
         if(isOpenLoop){
             driveDutyCycle.Output = desiredState.speedMetersPerSecond / Constants.swerve.maxSpeed * ratio;
             mDriveMotor.setControl(driveDutyCycle) ;
@@ -84,15 +80,15 @@ public class SwerveModule {
 
     public SwerveModuleState getState(){
         return new SwerveModuleState(
-            Util.RPSToMPS(mDriveMotor.getVelocity().getValue(), Constants.swerve.wheelCircumference), 
-            Rotation2d.fromRotations(mAngleMotor.getPosition().getValue())
+            Util.RPSToMPS(mDriveMotor.getVelocity(), Constants.swerve.wheelCircumference), 
+            Rotation2d.fromRotations(mAngleMotor.getPosition())
         );
     }
 
     public SwerveModulePosition getPosition(){
         return new SwerveModulePosition(
-            Util.rotationsToMeters(mDriveMotor.getPosition().getValue(), Constants.swerve.wheelCircumference), 
-            Rotation2d.fromRotations(mAngleMotor.getPosition().getValue())
+            Util.rotationsToMeters(mDriveMotor.getPosition(), Constants.swerve.wheelCircumference), 
+            Rotation2d.fromRotations(mAngleMotor.getPosition())
         );
     }
 }

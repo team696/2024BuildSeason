@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -13,9 +14,11 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import frc.robot.commands.Amp;
 import frc.robot.commands.Shoot;
 import frc.robot.commands.ShooterIntake;
 import frc.robot.commands.TeleopSwerve;
+import frc.robot.commands.intake;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
@@ -23,6 +26,7 @@ import frc.robot.subsystems.Swerve;
 import frc.robot.util.Constants;
 import frc.robot.util.Dashboard;
 import frc.robot.util.Log.Logger;
+import frc.robot.util.Log.PLog;
 import frc.robot.util.Log.Logger.type;
 import frc.robot.util.Util;
 
@@ -30,6 +34,9 @@ public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
 
   private PowerDistribution m_PDH;
+
+  private double lastPeriodicTime = 0;
+  private double lastPeriodTimeDelta = 0;
   
   private final Joystick joystickPanel = new Joystick(0);
   //private final Joystick operatorPanel = new Joystick(2);
@@ -45,30 +52,30 @@ public class Robot extends TimedRobot {
   }
 
     private void configureControllerBinds() { 
-        //controller.b().whileTrue(Shooter.get().Intake());
+        controller.b().whileTrue(new intake());
         //controller.y().whileTrue(new ShooterIntake());
-        controller.button(8).whileTrue(Intake.get().runRollers(0.75));
+        //controller.a().whileTrue(Intake.get().runRollers(0.6));
         //controller.b().whileTrue(Intake.get().runAngle(0.2));
         //controller.y().whileTrue(Intake.get().runAngle(-0.2));
 
         Swerve.get().setDefaultCommand(new TeleopSwerve(()->-controller.getRawAxis(1), ()->-controller.getRawAxis(0), ()->-controller.getRawAxis(4), controller.rightBumper(), 0.08,true, true));
-        //controller.button(8).onTrue(new InstantCommand(()->Swerve.get().zeroYaw()));
-        //controller.a().whileTrue(new Shoot(()->Swerve.get().DistToSpeaker()));
-        controller.b().whileTrue(Intake.get().runLinear(-0.3));
-        controller.y().whileTrue(Intake.get().runLinear(0.3));
+        controller.button(8).onTrue(new InstantCommand(()->Swerve.get().zeroYaw()));
+        controller.a().whileTrue(new Shoot(()->Swerve.get().DistToSpeaker()));
+        controller.x().whileTrue(new Amp());
+        //controller.b().whileTrue(Intake.get().runLinear(-0.3));
+        //controller.y().whileTrue(Intake.get().runLinear(0.3));
         
-        controller.a().whileTrue(Climber.get().runClimberPercent(0.5));
-        controller.x().whileTrue(Climber.get().runClimberPercent(-0.5));
+        //controller.a().whileTrue(Climber.get().runClimberPercent(0.5));
+        //controller.x().whileTrue(Climber.get().runClimberPercent(-0.5));
 
         //OLD METHODS -> UPDATE?
-        //controller.a().whileTrue(new Shoot(3500, 3000, 1, ()-> Util.clamp(Util.lerp( Swerve.get().getDistToSpeaker(Swerve.get().getPose()) / 3.3, 60, 28.0),30.0,60.0))); SPEAKER
         //controller.leftBumper().whileTrue(new Shoot(2000,2000,1, ()->60)); TRAP
         //controller.x().whileTrue(new Shoot(550,550,1, ()->57)); AMP
     }
 
   @Override
   public void robotInit() {
-    Logger.init(Logger.type.debug, Shooter.get(), Swerve.get(), Intake.get(), Climber.get()).start();
+    Logger.init(Logger.type.debug, Shooter.get(), Swerve.get(), Intake.get()).start();
 
     Util.setRobotType();
 
@@ -91,18 +98,23 @@ public class Robot extends TimedRobot {
     configureBinds();
     configureControllerBinds();
 
-    //Shooter.get().setDefaultCommand(Shooter.get().holdAngle());
+    Shooter.get().setDefaultCommand(Shooter.get().defaultCom());
 
     SmartDashboard.putData(Swerve.get());
     SmartDashboard.putData(Shooter.get());
     SmartDashboard.putData(Intake.get());
-    SmartDashboard.putData(Climber.get());
 
     Logger.registerLoggable(type.debug, "PDH Voltage",m_PDH::getVoltage);
+    Logger.registerLoggable(type.debug, "Periodic Time Delta", ()->lastPeriodTimeDelta);
   }
+
+  
 
     @Override
     public void robotPeriodic() {
+        lastPeriodTimeDelta = Timer.getFPGATimestamp() - lastPeriodicTime;
+        lastPeriodicTime = Timer.getFPGATimestamp();
+
         CommandScheduler.getInstance().run();
         if (Constants.DEBUG) 
             SmartDashboard.putData(m_PDH);
@@ -111,7 +123,9 @@ public class Robot extends TimedRobot {
   }
 
   @Override
-  public void disabledInit() {}
+  public void disabledInit() {
+    PLog.info("Robot", "Disabled");
+  }
 
   @Override
   public void disabledPeriodic() {}
@@ -124,6 +138,8 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
     }
+
+    PLog.info("Robot", "Auto Init");
   }
 
   @Override
@@ -134,6 +150,7 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
+    PLog.info("Robot", "Teleop Init");
   }
 
   @Override
@@ -145,15 +162,11 @@ public class Robot extends TimedRobot {
   }
 
   @Override
-  public void testPeriodic() {}
+  public void testPeriodic() { }
 
   @Override
-  public void simulationInit() {
-  }
+  public void simulationInit() { }
 
   @Override
-  public void simulationPeriodic() {
-  }
-
-
+  public void simulationPeriodic() { }
 }

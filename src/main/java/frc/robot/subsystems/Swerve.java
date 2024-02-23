@@ -136,21 +136,22 @@ public class Swerve extends SubsystemBase {
   public Rotation2d AngleForSpeaker() {
     Translation2d delta;
     if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == DriverStation.Alliance.Red) {
-        delta = getPose().getTranslation().minus(Constants.Field.SpeakerRed);
+        delta = getPose().getTranslation().minus(Constants.Field.RED.Speaker);
         delta = delta.plus(new Translation2d((getRobotRelativeSpeeds().vyMetersPerSecond ) / 3 * delta.getNorm(), 0));  
         return Rotation2d.fromRadians(Math.atan(delta.getY() / delta.getX())).rotateBy(new Rotation2d(Math.PI));
     } else {
-        delta = getPose().getTranslation().minus(Constants.Field.SpeakerBlue);
-        delta = delta.plus(new Translation2d(getRobotRelativeSpeeds().vyMetersPerSecond / 3 * delta.getNorm(), 0));        //TODO: fix this shit
-        return Rotation2d.fromRadians(Math.atan(delta.getY() / delta.getX()));//.plus(Rotation2d.fromRadians(Math.atan((getRobotRelativeSpeeds().vyMetersPerSecond / 20))));
+        delta = getPose().getTranslation().minus(Constants.Field.BLUE.Speaker);
+        delta = delta.plus(new Translation2d(getRobotRelativeSpeeds().vyMetersPerSecond / 3 * delta.getNorm(), 0));        
+        return Rotation2d.fromRadians(Math.atan(delta.getY() / delta.getX()));
+        
     }                                                                   
   }
 
   public double DistToSpeaker() {
     if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == DriverStation.Alliance.Red) {
-        return getPose().getTranslation().getDistance(Constants.Field.SpeakerRed);
+        return getPose().getTranslation().getDistance(Constants.Field.RED.Speaker);
     } else {
-        return getPose().getTranslation().getDistance(Constants.Field.SpeakerBlue);
+        return getPose().getTranslation().getDistance(Constants.Field.BLUE.Speaker);
     }
   }
 

@@ -1,0 +1,4 @@
+time,Shooter/D/topRollerVelocity,Shooter/D/bottomRollerVelocity,Shooter/D/getAngle,Shooter/D/getBeamBreak,Shooter/D/angleMotorPosition,Swerve/getYaw,Swerve/D/getPose,D/PDH Voltage,D/Periodic Time Delta,
+51:53.457,"0.0","0.0","68.5","true","0.0","Rotation2d(Rads: -0.00, Deg: -0.00)","Pose2d(Translation2d(X: 0.00, Y: 0.00), Rotation2d(Rads: 0.00, Deg: 0.00))",
+51:54.011,"0.0","0.0","68.5","true","0.0","Rotation2d(Rads: -0.00, Deg: -0.00)","Pose2d(Translation2d(X: 0.00, Y: 0.00), Rotation2d(Rads: 0.00, Deg: 0.00))",
+51:54.712,"0.0","0.0","68.5","true","0.0","Rotation2d(Rads: -0.00, Deg: -0.00)","Pose2d(Translation2d(X: 0.00, Y: 0.00), Rotation2d(Rads: 0.00, Deg: 0.00))",

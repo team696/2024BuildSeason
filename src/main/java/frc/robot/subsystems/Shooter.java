@@ -3,7 +3,7 @@ package frc.robot.subsystems;
 import java.util.Map;
 
 import com.ctre.phoenix6.controls.DutyCycleOut;
-import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.controls.VelocityDutyCycle;
 
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.BangBangController;
@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.util.Constants;
+import frc.robot.util.TalonFactory;
 import frc.robot.util.Log.Debug;
 import frc.robot.util.Log.PLog;
 import frc.robot.util.Util;
@@ -23,27 +24,23 @@ import frc.robot.util.Util;
 public class Shooter extends SubsystemBase {
     private static Shooter m_Shooter;
 
-    private TalonFX m_Top;
-    private TalonFX m_Bottom;
+    private TalonFactory m_Top;
+    private TalonFactory m_Bottom;
 
-    private TalonFX m_Serializer;
+    private TalonFactory m_Serializer;
 
-    private TalonFX m_AngleMotor;
+    private TalonFactory m_AngleMotor;
 
     private DutyCycleEncoder m_Encoder;
 
     private BangBangController m_shooterController;
 
-    private DutyCycleOut m_TopRequest;
-    private DutyCycleOut m_BottomRequest;
     private DutyCycleOut m_PositionRequest;
 
     private ProfiledPIDController m_AngleTrapPID;
     private ArmFeedforward m_AngleFeedForward;
 
     private DigitalInput m_BeamBreak;
-
-    public double AngleGoal = 0;
 
     public static class State {
         public double angle;
@@ -64,22 +61,14 @@ public class Shooter extends SubsystemBase {
     }
   
     public Shooter() {
-        m_Top = new TalonFX(10, Constants.canivoreName);
-        m_Bottom = new TalonFX(11, Constants.canivoreName);
-        m_AngleMotor = new TalonFX(12, Constants.canivoreName);
-        m_Serializer = new TalonFX(13, Constants.canivoreName);
-
-        m_Top.getConfigurator().apply(Constants.CONFIGS.shooter_Top);
-        m_Bottom.getConfigurator().apply(Constants.CONFIGS.shooter_Bottom);
-        m_AngleMotor.getConfigurator().apply(Constants.CONFIGS.shooter_Angle);
-        m_Serializer.getConfigurator().apply(Constants.CONFIGS.shooter_Serializer);
+        m_Top = new TalonFactory(10, Constants.canivoreName, Constants.CONFIGS.shooter_Top, "Shooter Top Roller");
+        m_Bottom = new TalonFactory(11, Constants.canivoreName, Constants.CONFIGS.shooter_Bottom, "Shooter Bottom Roller");
+        m_AngleMotor = new TalonFactory(12, Constants.canivoreName, Constants.CONFIGS.shooter_Angle, "Shooter Angle");
+        m_Serializer = new TalonFactory(13, Constants.canivoreName, Constants.CONFIGS.shooter_Serializer, "Shooter Serializer");
 
         m_Encoder = new DutyCycleEncoder(7);
         
         m_shooterController = new BangBangController();
-
-        m_TopRequest = new DutyCycleOut(0);
-        m_BottomRequest = new DutyCycleOut(0);
 
         m_PositionRequest = new DutyCycleOut(0);
 
@@ -88,17 +77,30 @@ public class Shooter extends SubsystemBase {
         m_AngleFeedForward = new ArmFeedforward(0.05, 1/56.0, 0, 0);
 
         m_BeamBreak = new DigitalInput(9);
+
+        m_AngleMotor.setPosition(0);
     }
 
     /** RPM */
-    public void setSpeed(double top, double bottom) {
-        m_Top.setControl(m_TopRequest.withOutput(m_shooterController.calculate(m_Top.getVelocity().getValueAsDouble() * 60.0, top)));
-        m_Bottom.setControl(m_BottomRequest.withOutput(m_shooterController.calculate(m_Bottom.getVelocity().getValueAsDouble() * 60, bottom)));
+    public void setSpeed(double top, double bottom) { 
+        double topSpeed = m_shooterController.calculate(m_Top.getVelocity() * 60.0, top);
+        double bottomSpeed = m_shooterController.calculate(m_Bottom.getVelocity() * 60, bottom); 
+
+        if (topRollerVelocity() < 250) {
+            topSpeed *= 0.45;
+        }
+
+        if (bottomRollerVelocity() < 250) {
+            bottomSpeed *= 0.45;
+        }
+
+        m_Top.PercentOutput(topSpeed);
+        m_Bottom.PercentOutput(bottomSpeed);
     }
 
     public void setShooterSpeedPercent(double percent) {
-        m_Top.set(percent);
-        m_Bottom.set(percent);
+        m_Top.PercentOutput(percent);
+        m_Bottom.PercentOutput(percent);
     }
 
     @Debug
@@ -106,19 +108,17 @@ public class Shooter extends SubsystemBase {
         if (m_Encoder.isConnected())
             return (360 * (1 - m_Encoder.getAbsolutePosition()) + 180) % 360 - Constants.shooter.AngleOffset;
 
-        return m_AngleMotor.getPosition().getValueAsDouble() * 360;
+        return m_AngleMotor.getPosition() * 360;
     }
 
     /** Percent */
     public void setSerializerSpeedPercent(double output) {
-        m_Serializer.set(output);
+        m_Serializer.PercentOutput(output);
     }
 
     public void setAngle(double desired) {
         // TODO: Add acceleration to feed forward control if needed
         //double acceleration = (controller.getSetpoint().velocity - lastSpeed) / (Timer.getFPGATimestamp() - lastTime)
-
-        //m_AngleMotor.setControl(m_PositionRequest.withOutput(m_AnglePID.calculate(getAngle(), desired)));  
         double motorSpeed = m_AngleTrapPID.calculate(getAngle(), desired);
         TrapezoidProfile.State desiredState = m_AngleTrapPID.getSetpoint();
         motorSpeed += m_AngleFeedForward.calculate(Units.degreesToRadians(desiredState.position), Units.degreesToRadians(desiredState.velocity));
@@ -134,14 +134,14 @@ public class Shooter extends SubsystemBase {
 
     /** desired top speed, desired bottom speed, tolerance all in rpm */
     public boolean upToSpeed(double top, double bottom, double tolerance) {
-        if (m_Top.getVelocity().getValueAsDouble() * 60 < top - tolerance) return false;
-        if (m_Bottom.getVelocity().getValueAsDouble() * 60 < bottom - tolerance) return false;
+        if (m_Top.getVelocity() * 60 < top - tolerance) return false;
+        if (m_Bottom.getVelocity() * 60 < bottom - tolerance) return false;
 
         return true;
     }
 
     public Command Intake() {
-        return this.runEnd(()->setSerializerSpeedPercent(0.25), ()->setSerializerSpeedPercent(0)).onlyWhile(()->getBeamBreak());
+        return this.runEnd(()-> { setSerializerSpeedPercent(0.25); setAngle(50); }, ()->{setSerializerSpeedPercent(0); stopAngle();}).onlyWhile(()->getBeamBreak());
     }
 
     public State getStateFromDist(double dist) {
@@ -153,53 +153,57 @@ public class Shooter extends SubsystemBase {
     }
 
     public void stopShooter() {
-        m_Top.stopMotor();
-        m_Bottom.stopMotor();
+        m_Top.stop();
+        m_Bottom.stop();
     }
 
     public void stopAngle() {
-        m_AngleMotor.stopMotor();
+        m_AngleMotor.stop();
     }
 
     public void stopSerializer() {
-        m_Serializer.stopMotor();
+        m_Serializer.stop();
     }
 
+    @Debug
     public boolean getBeamBreak() {
         return m_BeamBreak.get();
     }
 
     public void AnglePercent(double percent) {
-        m_AngleMotor.set(percent);
+        m_AngleMotor.PercentOutput(percent);
     }
 
-    public Command holdAngle() {
-        return this.runEnd(()->setAngle(AngleGoal), ()->stopAngle());
+    public Command defaultCom() { //TODO: Make this slowly run the shooter rollers as well?
+        return this.runEnd(()->setAngle(30), ()->stopAngle());
     }
 
     @Override
     public void periodic() {
-        // setAngle(AngleGoal);
-
         if (!m_Encoder.isConnected()) {
             PLog.unusual("Shooter", "Encoder Not Found!");
         } else {
-            m_AngleMotor.setPosition(getAngle());
+           // m_AngleMotor.setPosition(getAngle()/360, 0.00001); // This SLows the fuck out of the code, changing timeout does nothing?
         }
+        
+    }
+
+    @Debug
+    public double topRollerVelocity() {
+        return m_Top.getVelocity() * 60;
+    }
+
+    @Debug 
+    public double bottomRollerVelocity() {
+        return m_Bottom.getVelocity() * 60;
+    }
+
+    @Debug
+    public double angleMotorPosition() {
+        return m_AngleMotor.getPosition();
     }
 
 
     @Override
-    public void initSendable(SendableBuilder builder) {
-        if (Constants.DEBUG) {
-    	    builder.addDoubleProperty("Encoder", this::getAngle, null);
-    	    builder.addBooleanProperty("Beam Break", this::getBeamBreak, null);
-
-            //TODO: Check If This matches up with Encoder, Even a little...
-    	    builder.addDoubleProperty("Angle Motor Position", ()->m_AngleMotor.getPosition().getValueAsDouble() * 360, null);
-
-    	    builder.addDoubleProperty("Top Velocity", ()->m_Top.getVelocity().getValueAsDouble(), null);
-        	builder.addDoubleProperty("Bottom Velocity", ()->m_Bottom.getVelocity().getValueAsDouble(), null);
-        }
-    } 
+    public void initSendable(SendableBuilder builder) {    } 
 }

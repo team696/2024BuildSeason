@@ -44,7 +44,8 @@ public class Logger {
     private String curDirectory = "";
 
     public static void log(String Name, String Value) {
-        m_Logger.m_ToWrite.add(getSimpleCurrentTimeFormatted() + " -> [" + Name + "] " + Value + "\n");
+        if (m_Logger == null) return;
+            m_Logger.m_ToWrite.add(getSimpleCurrentTimeFormatted() + " -> [" + Name + "] " + Value + "\n");
     }
 
     public enum type {

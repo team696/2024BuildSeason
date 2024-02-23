@@ -7,6 +7,7 @@ import java.util.Optional;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
+import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.util.PathPlannerLogging;
 
@@ -82,6 +83,10 @@ public class Auto {
         if (m_instance == null) return new WaitCommand(0);
 
         return m_instance.autoChooser.getSelected();
+    }
+
+    public static Command PathFind(Pose2d end) {
+        return AutoBuilder.pathfindToPose(end, new PathConstraints(1, 1, Math.PI,Math.PI));
     }
 
     public void visualize() {
