@@ -76,7 +76,7 @@ public class Swerve extends SubsystemBase {
   public void zeroYaw() {
     m_Gyro.zeroYaw();
   }
-
+//SHIT IN THE ASS
   public void resetPose(Pose2d pose) {
     m_poseEstimator.resetPosition(getYaw(), m_swervePositions, pose);
   }
@@ -115,7 +115,7 @@ public class Swerve extends SubsystemBase {
         mod.setDesiredState(swerveModuleStates[mod.moduleNumber], isOpenLoop);
     }
   }  
-
+//HEHEHEHEHEHEHE
   public void Drive(ChassisSpeeds c) {
     SwerveModuleState[] swerveModuleStates = Constants.swerve.swerveKinematics.toSwerveModuleStates(c);
     SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, Constants.swerve.maxSpeed);
@@ -137,16 +137,16 @@ public class Swerve extends SubsystemBase {
     Translation2d delta;
     if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == DriverStation.Alliance.Red) {
         delta = getPose().getTranslation().minus(Constants.Field.RED.Speaker);
-        delta = delta.plus(new Translation2d((getRobotRelativeSpeeds().vyMetersPerSecond ) / 3 * delta.getNorm(), 0));  
+        delta = delta.minus(new Translation2d((getRobotRelativeSpeeds().vyMetersPerSecond * 30)  * delta.getNorm() , 0));  
         return Rotation2d.fromRadians(Math.atan(delta.getY() / delta.getX())).rotateBy(new Rotation2d(Math.PI));
     } else {
         delta = getPose().getTranslation().minus(Constants.Field.BLUE.Speaker);
-        delta = delta.plus(new Translation2d(getRobotRelativeSpeeds().vyMetersPerSecond / 3 * delta.getNorm(), 0));        
+        delta = delta.plus(new Translation2d((getRobotRelativeSpeeds().vyMetersPerSecond + accelerationY)  * delta.getNorm() , 0));        
         return Rotation2d.fromRadians(Math.atan(delta.getY() / delta.getX()));
         
     }                                                                   
   }
-
+//poopy
   public double DistToSpeaker() {
     if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == DriverStation.Alliance.Red) {
         return getPose().getTranslation().getDistance(Constants.Field.RED.Speaker);
@@ -174,7 +174,9 @@ public class Swerve extends SubsystemBase {
     oldAccelerationY = getRobotRelativeSpeeds().vyMetersPerSecond;
     lastTimestamp = Timer.getFPGATimestamp();
 
-    Camera.get().updatePose(m_poseEstimator);
+    if (!DriverStation.isAutonomousEnabled()) {
+        Camera.get().updatePose(m_poseEstimator);
+    }
 
     Constants.Field.sim.setRobotPose(getPose());
     Constants.Field.sim.getObject("robot").setPose(getPose());

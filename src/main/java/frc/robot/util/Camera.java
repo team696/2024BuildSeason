@@ -113,7 +113,7 @@ public class Camera {
             if (bestTarget.getPoseAmbiguity() < 1/100.0) {
                 deviationRatio = 1/100.0; // Tag estimation very good -> Use it
             } else {
-                deviationRatio = Math.pow(bestTarget.getBestCameraToTarget().getTranslation().getNorm(),2) / 6; // Trust Less With Distance
+                deviationRatio = Math.pow(bestTarget.getBestCameraToTarget().getTranslation().getNorm(),2) / 2; // Trust Less With Distance
             }
             Matrix<N3, N1> deviation = VecBuilder.fill(deviationRatio, deviationRatio, 5 * deviationRatio);
             estimator.setVisionMeasurementStdDevs(deviation);

@@ -2,9 +2,6 @@ package frc.robot.subsystems;
 
 import java.util.Map;
 
-import com.ctre.phoenix6.controls.DutyCycleOut;
-import com.ctre.phoenix6.controls.VelocityDutyCycle;
-
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.BangBangController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
@@ -34,8 +31,6 @@ public class Shooter extends SubsystemBase {
     private DutyCycleEncoder m_Encoder;
 
     private BangBangController m_shooterController;
-
-    private DutyCycleOut m_PositionRequest;
 
     private ProfiledPIDController m_AngleTrapPID;
     private ArmFeedforward m_AngleFeedForward;
@@ -70,15 +65,11 @@ public class Shooter extends SubsystemBase {
         
         m_shooterController = new BangBangController();
 
-        m_PositionRequest = new DutyCycleOut(0);
-
         m_AngleTrapPID = new ProfiledPIDController(1/36.0, 0, 0, new TrapezoidProfile.Constraints(3000, 2000));
         m_AngleTrapPID.reset(0);
         m_AngleFeedForward = new ArmFeedforward(0.05, 1/56.0, 0, 0);
 
         m_BeamBreak = new DigitalInput(9);
-
-        m_AngleMotor.setPosition(0);
     }
 
     /** RPM */
@@ -122,7 +113,7 @@ public class Shooter extends SubsystemBase {
         double motorSpeed = m_AngleTrapPID.calculate(getAngle(), desired);
         TrapezoidProfile.State desiredState = m_AngleTrapPID.getSetpoint();
         motorSpeed += m_AngleFeedForward.calculate(Units.degreesToRadians(desiredState.position), Units.degreesToRadians(desiredState.velocity));
-        m_AngleMotor.setControl(m_PositionRequest.withOutput(motorSpeed));
+        m_AngleMotor.PercentOutput(motorSpeed);
     }
 
     /** desired angle, tolerance all in degrees */
@@ -183,7 +174,7 @@ public class Shooter extends SubsystemBase {
         if (!m_Encoder.isConnected()) {
             PLog.unusual("Shooter", "Encoder Not Found!");
         } else {
-           // m_AngleMotor.setPosition(getAngle()/360, 0.00001); // This SLows the fuck out of the code, changing timeout does nothing?
+            m_AngleMotor.setPosition(getAngle()/360); 
         }
         
     }

@@ -1,5 +1,7 @@
 package frc.robot;
 
+import com.pathplanner.lib.commands.PathfindingCommand;
+
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PowerDistribution;
@@ -52,30 +54,18 @@ public class Robot extends TimedRobot {
   }
 
     private void configureControllerBinds() { 
-        controller.b().whileTrue(new intake());
-        //controller.y().whileTrue(new ShooterIntake());
-        //controller.a().whileTrue(Intake.get().runRollers(0.6));
-        //controller.b().whileTrue(Intake.get().runAngle(0.2));
-        //controller.y().whileTrue(Intake.get().runAngle(-0.2));
+        controller.b().whileTrue(Auto.PathFind(Constants.Field.BLUE.Source));
+        controller.y().whileTrue(new ShooterIntake());
 
         Swerve.get().setDefaultCommand(new TeleopSwerve(()->-controller.getRawAxis(1), ()->-controller.getRawAxis(0), ()->-controller.getRawAxis(4), controller.rightBumper(), 0.08,true, true));
         controller.button(8).onTrue(new InstantCommand(()->Swerve.get().zeroYaw()));
         controller.a().whileTrue(new Shoot(()->Swerve.get().DistToSpeaker()));
         controller.x().whileTrue(new Amp());
-        //controller.b().whileTrue(Intake.get().runLinear(-0.3));
-        //controller.y().whileTrue(Intake.get().runLinear(0.3));
-        
-        //controller.a().whileTrue(Climber.get().runClimberPercent(0.5));
-        //controller.x().whileTrue(Climber.get().runClimberPercent(-0.5));
-
-        //OLD METHODS -> UPDATE?
-        //controller.leftBumper().whileTrue(new Shoot(2000,2000,1, ()->60)); TRAP
-        //controller.x().whileTrue(new Shoot(550,550,1, ()->57)); AMP
     }
 
   @Override
   public void robotInit() {
-    Logger.init(Logger.type.debug, Shooter.get(), Swerve.get(), Intake.get()).start();
+    Logger.init(Logger.type.debug, Shooter.get(), Swerve.get()).start();
 
     Util.setRobotType();
 
@@ -95,14 +85,13 @@ public class Robot extends TimedRobot {
 
     Auto.Initialize();
 
-    configureBinds();
-    configureControllerBinds();
+    configureControllerBinds();   
+    configureBinds(); 
 
     Shooter.get().setDefaultCommand(Shooter.get().defaultCom());
 
     SmartDashboard.putData(Swerve.get());
     SmartDashboard.putData(Shooter.get());
-    SmartDashboard.putData(Intake.get());
 
     Logger.registerLoggable(type.debug, "PDH Voltage",m_PDH::getVoltage);
     Logger.registerLoggable(type.debug, "Periodic Time Delta", ()->lastPeriodTimeDelta);

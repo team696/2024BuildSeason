@@ -8,7 +8,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Shooter;
 
 public class Amp extends Command {
-  /** Creates a new Amp. */
+  Shooter.State desiredState = new Shooter.State(58, 900, 400);
   public Amp() {
     addRequirements(Shooter.get());
     // Use addRequirements() here to declare subsystem dependencies.
@@ -21,10 +21,9 @@ public class Amp extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    Shooter.get().setAngle(65);//59
-    //Shooter.get().setSpeed(650,650);
-    Shooter.get().setShooterSpeedPercent(0.35);//
-    if(Shooter.get().upToSpeed(650,650, 100) && !Shooter.get().getBeamBreak() && Shooter.get().atAngle(65, 2)) {
+    Shooter.get().setAngle(desiredState.angle);
+    Shooter.get().setSpeed(desiredState.topSpeed,desiredState.bottomSpeed);
+    if(Shooter.get().upToSpeed(desiredState.topSpeed,desiredState.bottomSpeed, 100) && !Shooter.get().getBeamBreak() && Shooter.get().atAngle(desiredState.angle, 2)) {
       Shooter.get().setSerializerSpeedPercent(1);
     } else {
       Shooter.get().stopSerializer();

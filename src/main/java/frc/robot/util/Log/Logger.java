@@ -120,7 +120,6 @@ public class Logger {
                 curDirectory = getDirectory();
                 File logDir = new File(curDirectory);
                 logDir.mkdir();
-                writer = new FileWriter(curDirectory + "/main.log");
             } catch (Exception e) {
                 PLog.fatalException("Logger", "Failed To Write File", e);
                 return;
@@ -154,7 +153,7 @@ public class Logger {
      
                 try {
                     writerCSV = new FileWriter(curDirectory + "/values.csv", true);
-
+                    writer = new FileWriter(curDirectory + "/main.log", true);
                     while (m_ToWrite.size() > 0) {
                         writer.write(m_ToWrite.pop());
                     }          
@@ -162,7 +161,7 @@ public class Logger {
                         writerCSV.write(m_ToWriteCSV.pop() + ",");
                     }          
                     writerCSV.write("\n");
-                    writer.flush();
+                    writer.close();
                     writerCSV.close();
                 }
                 catch (Exception e) {
@@ -170,11 +169,6 @@ public class Logger {
                     break;
                 }
                 Util.sleep(150);
-            }
-            try {
-                writer.close();
-            } catch (Exception e) {
-                PLog.fatalException("Logger", "Failed to close Writer", e);
             }
             PLog.info("Logger", "Closing Logger");
             m_ToWrite.clear();

@@ -15,6 +15,8 @@ public class Shoot extends Command {
     Supplier<Double> distSupplier;
     boolean finish = false;
     double broken = Double.MAX_VALUE;
+    double start = 0;
+    double unbroken = 0;
     public Shoot(Supplier<Double> distSupplier) {
         this.distSupplier = distSupplier;
         this.finish = false;
@@ -31,13 +33,17 @@ public class Shoot extends Command {
   @Override
   public void initialize() {
     broken = Double.MAX_VALUE;
+    start = Timer.getFPGATimestamp();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if (broken == Double.MAX_VALUE && Shooter.get().getBeamBreak())
+    if (broken == Double.MAX_VALUE && !Shooter.get().getBeamBreak())
         broken = Timer.getFPGATimestamp();
+    if (broken != Double.MAX_VALUE && Shooter.get().getBeamBreak()) {
+        unbroken = Timer.getFPGATimestamp();
+    }
 
     double actualDist = distSupplier.get();
     double ChassisX = Swerve.get().getRobotRelativeSpeeds().vxMetersPerSecond;
@@ -46,10 +52,12 @@ public class Shoot extends Command {
     desiredState.angle = desiredState.angle + actualDist * ChassisX * -0.65;
     Shooter.get().setAngle(desiredState.angle);
     Shooter.get().setSpeed(desiredState.topSpeed, desiredState.bottomSpeed);
-    if(Shooter.get().upToSpeed(desiredState.topSpeed, desiredState.bottomSpeed, 100) && !Shooter.get().getBeamBreak() && Shooter.get().atAngle(desiredState.angle, 2)) {
+    if(Shooter.get().upToSpeed(desiredState.topSpeed, desiredState.bottomSpeed, 100) && Timer.getFPGATimestamp() - unbroken > 0.02 && Shooter.get().atAngle(desiredState.angle, 2)) {
       Shooter.get().setSerializerSpeedPercent(1);
+    } else if (Shooter.get().getBeamBreak()) {
+        Shooter.get().setSerializerSpeedPercent(0.4);
     } else {
-      Shooter.get().stopSerializer();
+        Shooter.get().stopSerializer();
     }
   }
 
@@ -64,7 +72,9 @@ public class Shoot extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if (finish && Timer.getFPGATimestamp() - broken > 0.02 && !Shooter.get().getBeamBreak())
+    if (finish && Timer.getFPGATimestamp() - start > 2.0) 
+        return true;
+    if (finish && Timer.getFPGATimestamp() - unbroken > 0.02 && Shooter.get().getBeamBreak()) 
         return true;
     return false;
   }

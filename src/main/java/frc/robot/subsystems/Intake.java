@@ -9,10 +9,8 @@ import frc.robot.util.TalonFactory;
 public class Intake extends SubsystemBase {
     private static Intake m_Intake;
 
-    private TalonFactory m_Linear;
     private TalonFactory m_Angle;
     private TalonFactory m_Rollers;
-    private TalonFactory m_SecondAngle;
                               
     public enum Position { //LINEAR TOP IS 3.6
         stowed,
@@ -46,26 +44,14 @@ public class Intake extends SubsystemBase {
 
     /** Creates a new Intake. */
     private Intake() {
-        m_Linear = new TalonFactory(19, Constants.canivoreName, Constants.CONFIGS.intake_Linear, "Intake Linear");
         m_Angle = new TalonFactory(18, Constants.canivoreName, Constants.CONFIGS.intake_Angle, "Intake Angle");
         m_Rollers = new TalonFactory(20, Constants.canivoreName, Constants.CONFIGS.intake_Rollers, "Intake Rollers");
-        //m_SecondAngle = new TalonFactory(21, Constants.canivoreName, Constants.CONFIGS.intake_SecondAngle, "Intake Second Angle");
 
-        m_Linear.setPosition(0);
         m_Angle.setPosition(0);
-        //m_SecondAngle.setPosition(0);
     }
 
     public void setRollersOutput(double percent) {
         m_Rollers.PercentOutput(percent);
-    }
-
-    public void setLinearOutput(double percent) {
-        m_Linear.PercentOutput(percent);
-    }
-
-    public Command runLinear(double percent) {
-        return this.runEnd(()->setLinearOutput(percent),()->setLinearOutput(0));
     }
 
     public void stopRollers() {
@@ -93,22 +79,12 @@ public class Intake extends SubsystemBase {
         // This method will be called once per scheduler run
     }
 
-    public double linearPosition() {
-        return m_Linear.getPosition();
-    }
-
     public double mainAngle() {
         return m_Angle.getPosition();
     }
 
-    public double wristAngle() {
-        return m_SecondAngle.getPosition();
-    }
-
     @Override
     public void initSendable(SendableBuilder builder) {
-        builder.addDoubleProperty("Height", this::linearPosition, null);
         builder.addDoubleProperty("Main Angle", this::mainAngle, null);
-        //builder.addDoubleProperty("Wrist Angle", this::wristAngle, null);
     }
 }

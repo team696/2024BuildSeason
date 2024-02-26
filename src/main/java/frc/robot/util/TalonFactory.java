@@ -1,5 +1,6 @@
 package frc.robot.util;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.ctre.phoenix6.Orchestra;
@@ -14,7 +15,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.util.Log.PLog;
 
-public class TalonFactory {
+public class TalonFactory { //TODO: Make this general for CAN devices
     private final double TIMEOUT = 0.025;
     private TalonFX m_Motor;
     private TalonFXConfiguration m_Config;
@@ -27,7 +28,7 @@ public class TalonFactory {
     private boolean configured = false;
     private double lastConfigure = 0;
 
-    private static List<TalonFactory> Motors;
+    private static List<TalonFactory> Motors = new ArrayList<TalonFactory>();
     private static Orchestra orchestra = new Orchestra();
 
     public TalonFactory(int id, String canBus, TalonFXConfiguration config, String name) {
@@ -73,6 +74,12 @@ public class TalonFactory {
         }
 
         return configured;
+    }
+
+    public static void configAll() {
+        for (TalonFactory talon : Motors) {
+            talon.configure();
+        }
     }
 
     public void Follow(int id, boolean opposeDirection) {

@@ -35,7 +35,7 @@ public final class Constants {
         public static final class BLUE {
             public static final Translation2d Speaker = new Translation2d(0, 5.7);
             public static final Pose2d Amp = new Pose2d(4, 8, new Rotation2d(Math.PI/2));
-            public static final Pose2d Source = new Pose2d(16, 0.5, Rotation2d.fromDegrees(-45));
+            public static final Pose2d Source = new Pose2d(15.15, 1.5, Rotation2d.fromDegrees(135));
         }
 	}
 	public static class Motors {
@@ -60,13 +60,14 @@ public final class Constants {
 	    public static final double AngleOffset = 111.5;
 		public static final TreeMap<Double, Shooter.State> distToState = new TreeMap<Double, Shooter.State>(){{
 			put(1.5 ,new Shooter.State(60,2500,2000));
-            put(2.2 ,new Shooter.State(48, 3500,3000));
-            put(2.8 ,new Shooter.State(42, 3500,3000));
-            put(3.6 ,new Shooter.State(37, 3500,3000));
-            put(4.3 ,new Shooter.State(33.5, 3500,3000));
-            put(5.4 ,new Shooter.State(33, 3500,3000));
-            put(5.6, new Shooter.State(31.5, 3500,3000));
-			put(12., new Shooter.State(28, 3500,3000));
+            put(2.2 ,new Shooter.State(48, 2500,2500));
+            put(2.8 ,new Shooter.State(42, 3000,2500));
+            put(3.6 ,new Shooter.State(37, 3000,2500));
+            put(4.3 ,new Shooter.State(33.5, 3000,2500));
+            put(5.4 ,new Shooter.State(33, 3000,2500));
+            put(5.6, new Shooter.State(32.5, 3000,2500));
+            put(5.7, new Shooter.State(31.5, 3000, 2500));
+			put(12., new Shooter.State(28, 3000,2500));
 		}};
 	}
 	public static class swerve {
@@ -81,7 +82,7 @@ public final class Constants {
 
 		public static final double wheelX = Units.inchesToMeters(21.75);
 		public static final double wheelY = Units.inchesToMeters(21.75);
-		public static final double wheelDiameter = Units.inchesToMeters(3.94);
+		public static final double wheelDiameter = Units.inchesToMeters(4.);
 		public static final double wheelCircumference = wheelDiameter * Math.PI;
 
 		public static final double theoreticalMaxSpeed = Motors.Kraken.freeSpinRPM / 60 / driveGearRatio * wheelCircumference; // 5.13 mps way more resonable

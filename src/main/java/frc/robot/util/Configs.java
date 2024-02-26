@@ -63,8 +63,8 @@ public class Configs {
         swerve_Drive.Slot0.kP = 2.;
         swerve_Drive.Slot0.kI = 0.0;
         swerve_Drive.Slot0.kD = 0.0;
-        swerve_Drive.OpenLoopRamps.DutyCycleOpenLoopRampPeriod = 0.3;
-        swerve_Drive.OpenLoopRamps.VoltageOpenLoopRampPeriod = 0.3;
+        swerve_Drive.OpenLoopRamps.DutyCycleOpenLoopRampPeriod = 0;
+        swerve_Drive.OpenLoopRamps.VoltageOpenLoopRampPeriod = 0;
         swerve_Drive.ClosedLoopRamps.DutyCycleClosedLoopRampPeriod = 0.1;
         swerve_Drive.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.1;
 
