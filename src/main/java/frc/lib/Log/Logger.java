@@ -18,8 +18,9 @@ import java.util.TimeZone;
 import java.util.concurrent.Callable;
 import java.util.regex.Matcher;
 
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Robot;
 import frc.robot.util.Util;
 
@@ -69,6 +70,8 @@ public class Logger {
 
     private String curDirectory = "";
 
+    private NetworkTable ntTable = NetworkTableInstance.getDefault().getTable("*** Logger ***");
+    
     public static void log(String Name, String Value) {
         m_ToWrite.add(getSimpleCurrentTimeFormatted() + " -> [" + Name + "] " + Value + "\n");
     }
@@ -77,6 +80,7 @@ public class Logger {
         m_logType = LogType;
         dateFormat.setTimeZone(TimeZone.getTimeZone("PST"));
         main = new Thread(new LogThread());
+        main.setDaemon(true);
     }
 
     public static void addClassToLog(Object... objectsToAdd) {
@@ -162,7 +166,7 @@ public class Logger {
                         String Name = loggable.name;
                         Object key = (loggable.func.call());
                         String Key = key.toString();
-                        SmartDashboard.putString(Name, Key);
+                        ntTable.getStringTopic(Name).publish().set(Key);
                         m_ToWriteCSV.add("\"" + Key + "\"");
                     } catch (Exception e) {
                         m_ToWriteCSV.add("");
@@ -187,6 +191,36 @@ public class Logger {
                 }
                 Util.sleep(150);
             }
+        }
+    }
+
+    public static void close() {
+        if (m_Logger == null) return;
+
+        try {
+            m_Logger.main.join(300);
+        } catch(Exception e) {
+            PLog.fatalException("Logger", "Failed to close logging thread", e);
+        }
+
+        FileWriter writer;
+        FileWriter writerCSV;
+
+        try {
+            writerCSV = new FileWriter(m_Logger.curDirectory + "/values.csv", true);
+            writer = new FileWriter(m_Logger.curDirectory + "/main.log", true);
+            while (m_ToWrite.size() > 0) {
+                writer.write(m_ToWrite.pop());
+            }          
+            while (m_Logger.m_ToWriteCSV.size() > 0) {
+                writerCSV.write(m_Logger.m_ToWriteCSV.pop() + ",");
+            }          
+            writerCSV.write("\n");
+            writer.close();
+            writerCSV.close();
+        }
+        catch (Exception e) {
+            PLog.fatalException("Logger", "Failed to log value", e);
         }
     }
 

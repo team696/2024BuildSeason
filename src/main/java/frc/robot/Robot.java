@@ -4,7 +4,6 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.RobotController;
-import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
@@ -20,9 +19,9 @@ import frc.robot.commands.TeleopSwerve;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Swerve;
 import frc.robot.util.Constants;
-import frc.robot.util.Dashboard;
 import frc.robot.util.Util;
 import frc.lib.CommandHandler;
+import frc.lib.TimedRobot;
 import frc.lib.Log.Logger;
 import frc.lib.Log.PLog;
 import frc.lib.Log.Logger.type;
@@ -60,10 +59,6 @@ public class Robot extends TimedRobot {
 
     @Override
     public void robotInit() {
-        Logger.init(Logger.type.debug).start();
-
-        PLog.info("Robot", "Init");
-
         Util.setRobotType();
 
         m_PDH = new PowerDistribution(1, ModuleType.kRev);
@@ -77,8 +72,8 @@ public class Robot extends TimedRobot {
         RobotController.setEnabled6V(false);
 
         m_PDH.setSwitchableChannel(true);
-
-        Dashboard.startServer();
+        
+        //Dashboard.startServer();
 
         Auto.Initialize();
 

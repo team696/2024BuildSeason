@@ -11,7 +11,6 @@ import edu.wpi.first.hal.FRCNetComm.tInstances;
 import edu.wpi.first.hal.FRCNetComm.tResourceType;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.RobotState;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.event.EventLoop;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
@@ -221,85 +220,80 @@ public final class CommandHandler {
    *
    * <p>Any subsystems not being used as requirements have their default methods started.
    */
-  public void run() {
-    if (m_disabled) {
-      return;
-    }
+    public void run() {
+        if (m_disabled) {
+            return;
+        }
 
-    double start = Timer.getFPGATimestamp();
-    double updated = start;
-    String overrun = "";
-    // Run the periodic method of all registered subsystems.
-    for (Subsystem subsystem : m_subsystems.keySet()) {
-      subsystem.periodic();
-      if (RobotBase.isSimulation()) {
-        subsystem.simulationPeriodic();
-      }
-      overrun += String.format("\n                [%s] %5f",subsystem.getClass().getSimpleName(), (Timer.getFPGATimestamp() - updated)); 
-      updated = Timer.getFPGATimestamp();
-    }
+        frc.lib.Timer timer = new frc.lib.Timer();
+        // Run the periodic method of all registered subsystems.
+        for (Subsystem subsystem : m_subsystems.keySet()) {
+            subsystem.periodic();
+            if (RobotBase.isSimulation()) {
+                subsystem.simulationPeriodic();
+            }
+            timer.mark(subsystem.getClass().getSimpleName());
+        }
 
     
-    EventLoop loopCache = m_activeButtonLoop;
-    // Poll buttons for new commands to add.
-    loopCache.poll();
-    overrun += String.format("\n                [%s] %5f","buttons", (Timer.getFPGATimestamp() - updated));
-    updated = Timer.getFPGATimestamp();
+        EventLoop loopCache = m_activeButtonLoop;
+        // Poll buttons for new commands to add.
+        loopCache.poll();
+        timer.mark("buttons");
 
-    m_inRunLoop = true;
-    boolean isDisabled = RobotState.isDisabled(); 
-    // Run scheduled commands, remove finished commands.
-    for (Iterator<Command> iterator = m_scheduledCommands.iterator(); iterator.hasNext(); ) {
-      Command command = iterator.next();
+        m_inRunLoop = true;
+        boolean isDisabled = RobotState.isDisabled(); 
+        // Run scheduled commands, remove finished commands.
+        for (Iterator<Command> iterator = m_scheduledCommands.iterator(); iterator.hasNext(); ) {
+            Command command = iterator.next();
 
-      if (isDisabled && !command.runsWhenDisabled()) {
-        cancel(command, kNoInterruptor);
-        continue;
-      }
+            if (isDisabled && !command.runsWhenDisabled()) {
+                cancel(command, kNoInterruptor);
+                continue;
+            }
 
-      command.execute();
-      for (Consumer<Command> action : m_executeActions) {
-        action.accept(command);
-      }
-      if (command.isFinished()) {
-        m_endingCommands.add(command);
-        command.end(false);
-        for (Consumer<Command> action : m_finishActions) {
-          action.accept(command);
+            command.execute();
+            for (Consumer<Command> action : m_executeActions) {
+                action.accept(command);
+            }
+            if (command.isFinished()) {
+                m_endingCommands.add(command);
+                command.end(false);
+                for (Consumer<Command> action : m_finishActions) {
+                    action.accept(command);
+                }
+                m_endingCommands.remove(command);
+                iterator.remove();
+
+                m_requirements.keySet().removeAll(command.getRequirements());
+            }
         }
-        m_endingCommands.remove(command);
-        iterator.remove();
+        m_inRunLoop = false;
 
-        m_requirements.keySet().removeAll(command.getRequirements());
-      }
-    }
-    m_inRunLoop = false;
+        timer.mark("commands");
 
-    overrun += String.format("\n                [%s] %5f","commands", (Timer.getFPGATimestamp() - updated));
-    updated = Timer.getFPGATimestamp();
+        // Schedule/cancel commands from queues populated during loop
+        for (Command command : m_toSchedule) {
+            schedule(command);
+        }
 
-    // Schedule/cancel commands from queues populated during loop
-    for (Command command : m_toSchedule) {
-      schedule(command);
-    }
+        for (int i = 0; i < m_toCancelCommands.size(); i++) {
+            cancel(m_toCancelCommands.get(i), m_toCancelInterruptors.get(i));
+        }
 
-    for (int i = 0; i < m_toCancelCommands.size(); i++) {
-      cancel(m_toCancelCommands.get(i), m_toCancelInterruptors.get(i));
-    }
+        m_toSchedule.clear();
+        m_toCancelCommands.clear();
+        m_toCancelInterruptors.clear();
 
-    m_toSchedule.clear();
-    m_toCancelCommands.clear();
-    m_toCancelInterruptors.clear();
-
-    // Add default commands for un-required registered subsystems.
-    for (Map.Entry<Subsystem, Command> subsystemCommand : m_subsystems.entrySet()) {
-      if (!m_requirements.containsKey(subsystemCommand.getKey())
-          && subsystemCommand.getValue() != null) {
-        schedule(subsystemCommand.getValue());
-      }
-    }
-        if (Timer.getFPGATimestamp() - start > 0.02) {
-            PLog.unusual("Command Handler", "Loop Overrun" + overrun);
+        // Add default commands for un-required registered subsystems.
+        for (Map.Entry<Subsystem, Command> subsystemCommand : m_subsystems.entrySet()) {
+            if (!m_requirements.containsKey(subsystemCommand.getKey())
+                && subsystemCommand.getValue() != null) {
+                schedule(subsystemCommand.getValue());
+            }
+        }
+        if (timer.overrun(0.02)) {
+            PLog.unusual("Command Handler", "Loop Overrun" + timer.print());
         }
     }
 

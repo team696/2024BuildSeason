@@ -25,9 +25,19 @@ public class PLog {
 	 */
 	public static void fatalException(String category, String userMessage, Exception exception) {
 		String exceptionMessage = String.format("%s -- %s: %s", userMessage, exception.getClass().getSimpleName(), exception.getMessage());
+        for (StackTraceElement element : exception.getStackTrace()) {
+            exceptionMessage += "\n    " + element;
+        }
 		log("Fatal", category, exceptionMessage);
-		exception.printStackTrace();
-		DriverStation.reportError("Fatal Error: " + exceptionMessage, true);
+		
+	}
+
+    public static void fatalException(String category, String userMessage, StackTraceElement[] elements) {
+		String exceptionMessage = String.format("%s ", userMessage);
+        for (StackTraceElement element : elements) {
+            exceptionMessage += "\n    " + element;
+        }
+		log("Fatal", category, exceptionMessage);
 	}
 
 	/**

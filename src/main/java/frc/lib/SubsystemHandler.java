@@ -17,7 +17,7 @@ public abstract class SubsystemHandler implements Subsystem, Sendable {
   public SubsystemHandler() {
     String name = this.getClass().getSimpleName();
     name = name.substring(name.lastIndexOf('.') + 1);
-    SendableRegistry.addLW(this, name, name);
+    SendableRegistry.add(this, name);
     CommandHandler.getInstance().registerSubsystem(this);
   }
 
@@ -28,7 +28,7 @@ public abstract class SubsystemHandler implements Subsystem, Sendable {
    */
   @SuppressWarnings("this-escape")
   public SubsystemHandler(String name) {
-    SendableRegistry.addLW(this, name, name);
+    SendableRegistry.add(this, name);
     CommandHandler.getInstance().registerSubsystem(this);
   }
 
@@ -76,7 +76,7 @@ public abstract class SubsystemHandler implements Subsystem, Sendable {
    * @param child sendable
    */
   public void addChild(String name, Sendable child) {
-    SendableRegistry.addLW(child, getSubsystem(), name);
+    SendableRegistry.add(child, getSubsystem(), name);
   }
 
   @Override

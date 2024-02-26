@@ -8,10 +8,31 @@
   },
   "NetworkTables": {
     "transitory": {
+      "* Logger *": {
+        "open": true
+      },
+      "*** Logger ***": {
+        "Swerve": {
+          "open": true
+        },
+        "open": true
+      },
+      "FMSInfo": {
+        "open": true
+      },
+      "LiveWindow": {
+        ".status": {
+          "open": true
+        },
+        "open": true
+      },
       "SmartDashboard": {
         "Swerve": {
           "open": true
         },
+        "open": true
+      },
+      "photonvision": {
         "open": true
       }
     }
