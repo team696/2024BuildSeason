@@ -1,4 +1,4 @@
-package frc.robot.util.Log;
+package frc.lib.Log;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Deque;
 import java.util.List;
-import java.util.Map;
 import java.util.TimeZone;
 import java.util.concurrent.Callable;
 import java.util.regex.Matcher;
@@ -28,15 +27,42 @@ public class Logger {
     public static Logger m_Logger;
     private Thread main;
 
+    public enum type {
+        none(0), 
+        minimal(1), 
+        debug(2);
+
+        private int m_severity;
+        private type(int severity) {
+            m_severity = severity;
+        }
+
+        public boolean worse(type other) {
+            return this.m_severity <= other.m_severity;
+        }
+    }
+
+    private static class Loggable {
+        public type Type;
+        public Callable<Object> func;
+        public String name;
+
+        public Loggable(type t, String n, Callable<Object> f) {
+            Type = t;
+            func = f;
+            name = n;
+        }
+    }
+
     private static final String[] m_DriveRoots = { "/media/sdb1/", "/media/sda1/", "/media/sdc1/" };
 
     private static final DateFormat dateFormat = new SimpleDateFormat("yy-MMM-dd-hh-mm-ss-SS-aa");
     private static final DateFormat simpleDateFormat = new SimpleDateFormat("mm:ss.SSS");
 
     //private HashMap<String, Callable<Object>> m_ToLog = new HashMap<String, Callable<Object>>();
-    private List<Map.Entry<String, Callable<Object>>> m_ToLog = new ArrayList<Map.Entry<String, Callable<Object>>>();
+    private static List<Loggable> m_ToLog = new ArrayList<Loggable>();
 
-    private Deque<String> m_ToWrite = new ArrayDeque<String>();
+    private static Deque<String> m_ToWrite = new ArrayDeque<String>();
     private Deque<String> m_ToWriteCSV = new ArrayDeque<String>();
 
     private type m_logType = type.none;
@@ -44,14 +70,7 @@ public class Logger {
     private String curDirectory = "";
 
     public static void log(String Name, String Value) {
-        if (m_Logger == null) return;
-            m_Logger.m_ToWrite.add(getSimpleCurrentTimeFormatted() + " -> [" + Name + "] " + Value + "\n");
-    }
-
-    public enum type {
-        none, 
-        minimal, 
-        debug,
+        m_ToWrite.add(getSimpleCurrentTimeFormatted() + " -> [" + Name + "] " + Value + "\n");
     }
 
     private Logger(type LogType) {
@@ -60,33 +79,25 @@ public class Logger {
         main = new Thread(new LogThread());
     }
 
-    private void addClassToLog(type logtype, Object... objectsToAdd) {
+    public static void addClassToLog(Object... objectsToAdd) {
         for (Object objectToAdd : objectsToAdd) {
             for (Method method : objectToAdd.getClass().getDeclaredMethods()) {
                 if (method.isAnnotationPresent(Log.class))
-                    m_ToLog.add(Map.entry(objectToAdd.getClass().getSimpleName() + "/" + method.getName(), ()->method.invoke(objectToAdd)));    
+                    m_ToLog.add(new Loggable(type.minimal, objectToAdd.getClass().getSimpleName() + "/" + method.getName(), ()->method.invoke(objectToAdd)));    
                 
-                if (logtype == type.debug)
-                    if (method.isAnnotationPresent(Debug.class))
-                        m_ToLog.add(Map.entry(objectToAdd.getClass().getSimpleName() + "/D/" + method.getName(), ()->method.invoke(objectToAdd)));    
+                if (method.isAnnotationPresent(Debug.class))
+                    m_ToLog.add(new Loggable(type.debug  , objectToAdd.getClass().getSimpleName() + "/" + method.getName(), ()->method.invoke(objectToAdd)));    
             }
         }
+
+        if (m_Logger != null && m_Logger.curDirectory != "")
+            m_Logger.updateHeaders(m_Logger.curDirectory);
     }
 
     public static void registerLoggable(type logType, String name, Callable<Object> func) {
-        if(m_Logger == null) {
-            PLog.info("Logger", "Logger Not Started.");
-            return;
-        }
+        m_ToLog.add(new Loggable(logType, name, func));    
 
-        if(logType == type.none) return;
-
-        if (logType == type.debug)
-            m_Logger.m_ToLog.add(Map.entry("D/" + name, func));  
-        else 
-            m_Logger.m_ToLog.add(Map.entry(name, func));    
-
-        if (m_Logger.curDirectory != "")
+        if (m_Logger != null && m_Logger.curDirectory != "")
             m_Logger.updateHeaders(m_Logger.curDirectory);
     } 
 
@@ -97,7 +108,7 @@ public class Logger {
         }
 
         m_Logger = new Logger(LogType);
-        m_Logger.addClassToLog(m_Logger.m_logType, objects);
+        addClassToLog(objects);
         return m_Logger;
     }
 
@@ -107,6 +118,10 @@ public class Logger {
             return;
         }
         main.start();
+    }
+
+    public static Logger get() {
+        return m_Logger;
     }
 
     private class LogThread implements Runnable {
@@ -127,27 +142,30 @@ public class Logger {
 
             PLog.info("Logger","Started Logging at " + curDirectory);
 
-            for (Map.Entry<String,Callable<Object>> func : m_ToLog) {
-                headers += func.getKey() + ",";
+            for (Loggable func : m_ToLog) {
+                if (!func.Type.worse(m_logType)) continue;
+                headers += func.name + ",";
             }
             try {
                 writerCSV = new FileWriter(curDirectory + "/values.csv", true);
                 writerCSV.write(headers + "\n");
                 writerCSV.close();
             } catch (Exception e) {
-
+                PLog.fatalException("Logger", "Failed to write headers", e);
             }
             while (true) {
                 String time = getSimpleCurrentTimeFormatted();
                 m_ToWriteCSV.add(time);
-                for (Map.Entry<String,Callable<Object>> func : m_ToLog) {
+                for (Loggable loggable : m_ToLog) {
+                    if (!loggable.Type.worse(m_logType)) continue;
                     try {
-                        String Name = func.getKey();
-                        String Key = (func.getValue().call().toString());
+                        String Name = loggable.name;
+                        Object key = (loggable.func.call());
+                        String Key = key.toString();
                         SmartDashboard.putString(Name, Key);
                         m_ToWriteCSV.add("\"" + Key + "\"");
                     } catch (Exception e) {
-                        PLog.recoverable("Logger", "Failed to log value: " + func.getKey());
+                        m_ToWriteCSV.add("");
                     }
                 }
      
@@ -166,21 +184,18 @@ public class Logger {
                 }
                 catch (Exception e) {
                     PLog.fatalException("Logger", "Failed to log value", e);
-                    break;
                 }
                 Util.sleep(150);
             }
-            PLog.info("Logger", "Closing Logger");
-            m_ToWrite.clear();
-            m_ToWriteCSV.clear();
         }
     }
 
     private void updateHeaders(String dir) {
         try{
             String headers = "time,";
-            for (Map.Entry<String,Callable<Object>> func : m_ToLog) {
-                headers += func.getKey() + ",";
+            for (Loggable func : m_ToLog) {
+                if (!func.Type.worse(m_logType)) continue;
+                headers += func.name + ",";
             }
 
             File file = new File(curDirectory + "/values.csv");

@@ -2,11 +2,11 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.lib.SubsystemHandler;
+import frc.lib.TalonFactory;
 import frc.robot.util.Constants;
-import frc.robot.util.TalonFactory;
 
-public class Intake extends SubsystemBase {
+public class Intake extends SubsystemHandler {
     private static Intake m_Intake;
 
     private TalonFactory m_Angle;

@@ -1,7 +1,5 @@
 package frc.robot;
 
-import com.pathplanner.lib.commands.PathfindingCommand;
-
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PowerDistribution;
@@ -12,7 +10,6 @@ import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -20,17 +17,15 @@ import frc.robot.commands.Amp;
 import frc.robot.commands.Shoot;
 import frc.robot.commands.ShooterIntake;
 import frc.robot.commands.TeleopSwerve;
-import frc.robot.commands.intake;
-import frc.robot.subsystems.Climber;
-import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Swerve;
 import frc.robot.util.Constants;
 import frc.robot.util.Dashboard;
-import frc.robot.util.Log.Logger;
-import frc.robot.util.Log.PLog;
-import frc.robot.util.Log.Logger.type;
 import frc.robot.util.Util;
+import frc.lib.CommandHandler;
+import frc.lib.Log.Logger;
+import frc.lib.Log.PLog;
+import frc.lib.Log.Logger.type;
 
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
@@ -63,48 +58,45 @@ public class Robot extends TimedRobot {
         controller.x().whileTrue(new Amp());
     }
 
-  @Override
-  public void robotInit() {
-    Logger.init(Logger.type.debug, Shooter.get(), Swerve.get()).start();
+    @Override
+    public void robotInit() {
+        Logger.init(Logger.type.debug).start();
 
-    Util.setRobotType();
+        PLog.info("Robot", "Init");
 
-    m_PDH = new PowerDistribution(1, ModuleType.kRev);
+        Util.setRobotType();
 
-    DriverStation.silenceJoystickConnectionWarning(true);
+        m_PDH = new PowerDistribution(1, ModuleType.kRev);
+
+        DriverStation.silenceJoystickConnectionWarning(true);
     
-    LiveWindow.disableAllTelemetry();
+        LiveWindow.disableAllTelemetry();
 
-    RobotController.setEnabled3V3(false);
-    RobotController.setEnabled5V(true);
-    RobotController.setEnabled6V(false);
+        RobotController.setEnabled3V3(false);
+        RobotController.setEnabled5V(true);
+        RobotController.setEnabled6V(false);
 
-    m_PDH.setSwitchableChannel(true);
+        m_PDH.setSwitchableChannel(true);
 
-    Dashboard.startServer();
+        Dashboard.startServer();
 
-    Auto.Initialize();
+        Auto.Initialize();
 
-    configureControllerBinds();   
-    configureBinds(); 
+        configureControllerBinds();   
+        configureBinds(); 
 
-    Shooter.get().setDefaultCommand(Shooter.get().defaultCom());
+        Shooter.get().setDefaultCommand(Shooter.get().defaultCom());
 
-    SmartDashboard.putData(Swerve.get());
-    SmartDashboard.putData(Shooter.get());
-
-    Logger.registerLoggable(type.debug, "PDH Voltage",m_PDH::getVoltage);
-    Logger.registerLoggable(type.debug, "Periodic Time Delta", ()->lastPeriodTimeDelta);
-  }
-
-  
+        Logger.registerLoggable(type.debug, "PDH Voltage",m_PDH::getVoltage);
+        Logger.registerLoggable(type.debug, "Periodic Time Delta", ()->lastPeriodTimeDelta);
+    }
 
     @Override
     public void robotPeriodic() {
         lastPeriodTimeDelta = Timer.getFPGATimestamp() - lastPeriodicTime;
         lastPeriodicTime = Timer.getFPGATimestamp();
 
-        CommandScheduler.getInstance().run();
+        CommandHandler.getInstance().run();
         if (Constants.DEBUG) 
             SmartDashboard.putData(m_PDH);
     /** Used to update network tables faster (causes lag!) */
@@ -147,7 +139,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void testInit() {
-    CommandScheduler.getInstance().cancelAll();
+    CommandHandler.getInstance().cancelAll();
   }
 
   @Override

@@ -17,12 +17,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import frc.lib.Log.PLog;
 import frc.robot.commands.Shoot;
-import frc.robot.commands.intake;
 import frc.robot.subsystems.Swerve;
 import frc.robot.util.Constants;
 import frc.robot.util.Dashboard;
-import frc.robot.util.Log.PLog;
 
 public class Auto {
     public static Auto m_instance;
@@ -32,6 +31,7 @@ public class Auto {
 
     private Auto () {
         m_swerve = Swerve.get();
+        
         AutoBuilder.configureHolonomic(
             m_swerve::getPose, 
             m_swerve::resetPose, 

@@ -11,14 +11,14 @@ import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.lib.SubsystemHandler;
+import frc.lib.TalonFactory;
+import frc.lib.Log.Debug;
+import frc.lib.Log.PLog;
 import frc.robot.util.Constants;
-import frc.robot.util.TalonFactory;
-import frc.robot.util.Log.Debug;
-import frc.robot.util.Log.PLog;
 import frc.robot.util.Util;
 
-public class Shooter extends SubsystemBase {
+public class Shooter extends SubsystemHandler {
     private static Shooter m_Shooter;
 
     private TalonFactory m_Top;
@@ -194,6 +194,10 @@ public class Shooter extends SubsystemBase {
         return m_AngleMotor.getPosition();
     }
 
+    @Debug
+    public double getSerializerCurrent() {
+        return m_Serializer.getCurrent();
+    }
 
     @Override
     public void initSendable(SendableBuilder builder) {    } 

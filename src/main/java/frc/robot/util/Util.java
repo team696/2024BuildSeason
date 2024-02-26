@@ -7,7 +7,7 @@ import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.List;
 
-import frc.robot.util.Log.PLog;
+import frc.lib.Log.PLog;
 
 public class Util {
     public static double lerp(double t, double min, double max) {

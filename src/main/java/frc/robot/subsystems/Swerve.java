@@ -17,15 +17,15 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.lib.SubsystemHandler;
+import frc.lib.Log.Debug;
+import frc.lib.Log.Log;
+import frc.lib.Log.PLog;
 import frc.robot.util.Camera;
 import frc.robot.util.Constants;
-import frc.robot.util.Log.Debug;
-import frc.robot.util.Log.Log;
-import frc.robot.util.Log.PLog;
 import frc.robot.util.SwerveModule;
 
-public class Swerve extends SubsystemBase {
+public class Swerve extends SubsystemHandler {
   
   private static Swerve m_Swerve;
   private AHRS m_Gyro;
@@ -63,7 +63,7 @@ public class Swerve extends SubsystemBase {
     m_poseEstimator = new SwerveDrivePoseEstimator(Constants.swerve.swerveKinematics, getYaw(), m_swervePositions, new Pose2d(0,0,new Rotation2d(0)), VecBuilder.fill(0.1, 0.1, 0.05), VecBuilder.fill(0.3, 0.3, 0.6)); 
   }
 
-  @Log /**  -180 , 180 */
+ /**  -180 , 180 */ @Log
   public Rotation2d getYaw() {
     return Rotation2d.fromDegrees(-1 * m_Gyro.getYaw()); 
   }

@@ -4,11 +4,11 @@ import com.ctre.phoenix6.controls.PositionDutyCycle;
 
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.lib.SubsystemHandler;
+import frc.lib.TalonFactory;
 import frc.robot.util.Constants;
-import frc.robot.util.TalonFactory;
 
-public class Climber extends SubsystemBase {
+public class Climber extends SubsystemHandler {
   private static Climber m_Climber;
 
   private TalonFactory m_Master;

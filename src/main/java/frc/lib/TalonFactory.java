@@ -1,4 +1,4 @@
-package frc.robot.util;
+package frc.lib;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +13,7 @@ import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.wpilibj.Timer;
-import frc.robot.util.Log.PLog;
+import frc.lib.Log.PLog;
 
 public class TalonFactory { //TODO: Make this general for CAN devices
     private final double TIMEOUT = 0.025;
@@ -26,7 +26,7 @@ public class TalonFactory { //TODO: Make this general for CAN devices
     private boolean opposeDirection = false;
 
     private boolean configured = false;
-    private double lastConfigure = 0;
+    private double lastConfigure = -100;
 
     private static List<TalonFactory> Motors = new ArrayList<TalonFactory>();
     private static Orchestra orchestra = new Orchestra();
@@ -105,7 +105,6 @@ public class TalonFactory { //TODO: Make this general for CAN devices
         if (configure())
             if(!m_Motor.setPosition(newPosition).isOK()) {
                 configured = false;
-                PLog.unusual(name, "Failed to set position");
             }
     }
 
@@ -113,7 +112,7 @@ public class TalonFactory { //TODO: Make this general for CAN devices
         setPosition(0);
     }
 
-    public void beep() {
+    public void play() {
         orchestra.clearInstruments();
 
         for (TalonFactory motor : Motors) {
@@ -130,7 +129,6 @@ public class TalonFactory { //TODO: Make this general for CAN devices
             StatusSignal<Double> positionCode = m_Motor.getPosition();
             if(!positionCode.getStatus().isOK()) {
                 configured = false;
-                PLog.unusual(name, "Failed to get position");
                 return 0;
             }
             return positionCode.getValueAsDouble();
@@ -143,7 +141,6 @@ public class TalonFactory { //TODO: Make this general for CAN devices
             StatusSignal<Double> velocityCode = m_Motor.getVelocity();
             if(!velocityCode.getStatus().isOK()) {
                 configured = false;
-                PLog.unusual(name, "Failed to get velocity");
                 return 0;
             }
             return velocityCode.getValueAsDouble();
@@ -164,11 +161,23 @@ public class TalonFactory { //TODO: Make this general for CAN devices
         if (configure())
             if (!m_Motor.setControl(request).isOK()) {
                 configured = false;
-                PLog.unusual(name, "Failed to setControl");
             }
+    }
+
+    public double getCurrent() {
+        if (configure()) {
+            StatusSignal<Double> currentCode = m_Motor.getStatorCurrent();
+            if(!currentCode.getStatus().isOK()) {
+                configured = false;
+                return 0;
+            }
+            return currentCode.getValueAsDouble();
+        } else 
+            return 0;
     }
 
     public TalonFX get() {
         return m_Motor;
+        
     }
 }
