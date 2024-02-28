@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -16,6 +17,7 @@ import frc.robot.commands.Amp;
 import frc.robot.commands.Shoot;
 import frc.robot.commands.ShooterIntake;
 import frc.robot.commands.TeleopSwerve;
+import frc.robot.commands.Trap;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Swerve;
 import frc.robot.util.Constants;
@@ -40,21 +42,23 @@ public class Robot extends TimedRobot {
   private final CommandXboxController controller = new CommandXboxController(1);
 
   private final JoystickButton leftJoy = new JoystickButton(joystickPanel, 1);
-  //private final JoystickButton rightJoy = new JoystickButton(joystickPanel, 2);
+  private final JoystickButton rightJoy = new JoystickButton(joystickPanel, 2);
 
   private void configureBinds() {
     Swerve.get().setDefaultCommand(new TeleopSwerve(joystickPanel, 1, 0, 2, Constants.deadBand,true, true));
-    leftJoy.onTrue(new InstantCommand(()->Swerve.get().zeroYaw()));
+    //leftJoy.onTrue(new InstantCommand(()->Swerve.get().zeroYaw()));
   }
 
     private void configureControllerBinds() { 
-        controller.b().whileTrue(Auto.PathFind(Constants.Field.BLUE.Source));
         controller.y().whileTrue(new ShooterIntake());
 
         Swerve.get().setDefaultCommand(new TeleopSwerve(()->-controller.getRawAxis(1), ()->-controller.getRawAxis(0), ()->-controller.getRawAxis(4), controller.rightBumper(), 0.08,true, true));
         controller.button(8).onTrue(new InstantCommand(()->Swerve.get().zeroYaw()));
-        controller.a().whileTrue(new Shoot(()->Swerve.get().DistToSpeaker()));
-        controller.x().whileTrue(new Amp());
+        controller.a().whileTrue(new Shoot(()->Swerve.get().DistToSpeaker(), ()->true));
+        leftJoy.whileTrue(new Shoot(()->Swerve.get().DistToSpeaker(), ()->true));
+
+        controller.x().whileTrue(new Amp(controller.b()::getAsBoolean));
+        controller.leftBumper().whileTrue(new Trap(()->true));
     }
 
     @Override
@@ -78,7 +82,9 @@ public class Robot extends TimedRobot {
         Auto.Initialize();
 
         configureControllerBinds();   
-        configureBinds(); 
+        //configureBinds(); 
+
+        //SmartDashboard.putData(Swerve.get());
 
         Shooter.get().setDefaultCommand(Shooter.get().defaultCom());
 
@@ -91,7 +97,7 @@ public class Robot extends TimedRobot {
         lastPeriodTimeDelta = Timer.getFPGATimestamp() - lastPeriodicTime;
         lastPeriodicTime = Timer.getFPGATimestamp();
 
-        CommandHandler.getInstance().run();
+        CommandScheduler.getInstance().run();
         if (Constants.DEBUG) 
             SmartDashboard.putData(m_PDH);
     /** Used to update network tables faster (causes lag!) */
@@ -134,7 +140,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void testInit() {
-    CommandHandler.getInstance().cancelAll();
+    CommandScheduler.getInstance().cancelAll();
   }
 
   @Override

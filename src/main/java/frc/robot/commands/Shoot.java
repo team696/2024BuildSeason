@@ -6,6 +6,7 @@ package frc.robot.commands;
 
 import java.util.function.Supplier;
 
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Shooter;
@@ -15,17 +16,20 @@ public class Shoot extends Command {
     Supplier<Double> distSupplier;
     boolean finish = false;
     double broken = Double.MAX_VALUE;
+    Supplier<Boolean> button;
     double start = 0;
     double unbroken = 0;
-    public Shoot(Supplier<Double> distSupplier) {
+    public Shoot(Supplier<Double> distSupplier, Supplier<Boolean> button) {
         this.distSupplier = distSupplier;
         this.finish = false;
+        this.button = button;
         addRequirements(Shooter.get());
     }
 
     public Shoot(Supplier<Double> distSupplier, boolean finish) {
         this.distSupplier = distSupplier;
         this.finish = finish;
+        this.button = ()->true;
         addRequirements(Shooter.get());
     }
 
@@ -48,14 +52,16 @@ public class Shoot extends Command {
     double actualDist = distSupplier.get();
     double ChassisX = Swerve.get().getRobotRelativeSpeeds().vxMetersPerSecond;
     Shooter.State desiredStateStationary = Shooter.get().getStateFromDist(actualDist);
-    Shooter.State desiredState = desiredStateStationary;//Shooter.get().getStateFromDist(actualDist + (actualDist * ChassisX)/(20*Math.cos(Units.degreesToRadians(desiredStateStationary.angle)) + ChassisX)); 
-    desiredState.angle = desiredState.angle + actualDist * ChassisX * -0.65;
+    Shooter.State desiredState = desiredStateStationary;//Shooter.get().getStateFromDist(actualDist + ChassisX * 0.75); 
+    desiredState.angle += (actualDist * ChassisX * -.5);
+    //desiredState.topSpeed = (desiredState.topSpeed * 0.23 * Math.PI - ChassisX) / (0.23 * Math.PI);
+    //desiredState.bottomSpeed = (desiredState.bottomSpeed * 0.23 * Math.PI - ChassisX) / (0.23 * Math.PI);
+
     Shooter.get().setAngle(desiredState.angle);
     Shooter.get().setSpeed(desiredState.topSpeed, desiredState.bottomSpeed);
-    if(Shooter.get().upToSpeed(desiredState.topSpeed, desiredState.bottomSpeed, 100) && Timer.getFPGATimestamp() - unbroken > 0.02 && Shooter.get().atAngle(desiredState.angle, 2)) {
+    boolean aimed = Math.abs(Swerve.get().getPose().getRotation().getDegrees() - Swerve.get().AngleForSpeaker().getDegrees()) < 10;
+    if(aimed && button.get() && Shooter.get().upToSpeed(desiredState.topSpeed, desiredState.bottomSpeed, 100) && Shooter.get().atAngle(desiredState.angle, 2)) {
       Shooter.get().setSerializerSpeedPercent(1);
-    } else if (Shooter.get().getBeamBreak()) {
-        Shooter.get().setSerializerSpeedPercent(0.4);
     } else {
         Shooter.get().stopSerializer();
     }

@@ -65,9 +65,9 @@ public class Shooter extends SubsystemHandler {
         
         m_shooterController = new BangBangController();
 
-        m_AngleTrapPID = new ProfiledPIDController(1/36.0, 0, 0, new TrapezoidProfile.Constraints(3000, 2000));
+        m_AngleTrapPID = new ProfiledPIDController(1/40.0, 0, 0, new TrapezoidProfile.Constraints(3000, 2000));
         m_AngleTrapPID.reset(0);
-        m_AngleFeedForward = new ArmFeedforward(0.05, 1/56.0, 0, 0);
+        m_AngleFeedForward = new ArmFeedforward(0.05, 1/48.0, 0, 0);
 
         m_BeamBreak = new DigitalInput(9);
     }

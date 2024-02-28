@@ -7,6 +7,8 @@ import edu.wpi.first.wpilibj.GenericHID;
 
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
+
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -23,7 +25,7 @@ public class TeleopSwerve extends Command {
     private DoubleSupplier rotation;
     private double deadband;
 
-    ProfiledPIDController pidController;
+    PIDController pidController;
 
     private BooleanSupplier rightJoy;
     /**
@@ -40,8 +42,7 @@ public class TeleopSwerve extends Command {
         this.deadband = deadband;
 
         
-        pidController = new ProfiledPIDController(0.03  , 0.00, 0, new TrapezoidProfile.Constraints(0.1,0.1));
-        pidController.setTolerance(1);
+        pidController = new PIDController(0.0056, 0.00, 0);
         pidController.enableContinuousInput(-180, 180);
         rightJoy = (new JoystickButton(controller, 2));
 
@@ -60,7 +61,7 @@ public class TeleopSwerve extends Command {
 
         this.rightJoy = rightJoy;
 
-        pidController = new ProfiledPIDController(0.018, 0.00, 0, new TrapezoidProfile.Constraints(12.,40.));
+        pidController = new PIDController(0.0056, 0.00, 0);
         pidController.enableContinuousInput(-180, 180);
 
         addRequirements(Swerve.get());
@@ -68,7 +69,6 @@ public class TeleopSwerve extends Command {
 
     @Override
     public void initialize() {
-        pidController.reset(Swerve.get().getPose().getRotation().getDegrees());
     }
 
     @Override
@@ -82,8 +82,12 @@ public class TeleopSwerve extends Command {
         if (magnitude < deadband) magnitude = 0;
 
         if (rightJoy != null && rightJoy.getAsBoolean()){
-            rAxis = pidController.calculate(Swerve.get().getPose().getRotation().getDegrees(), Swerve.get().AngleForSpeaker().getDegrees());
-            magnitude *= 0.5;
+            double pid = pidController.calculate(Swerve.get().getPose().getRotation().getDegrees(), Swerve.get().AngleForSpeaker().getDegrees());
+            if (Math.abs(pidController.getPositionError()) > 3)
+                rAxis = Math.abs(Math.pow(pid, 2)) * 0.7 * Math.signum(pid) + pid * 2;
+            else    
+                rAxis = 0;
+            //magnitude *= 0.75;
         } else {
             if (Math.abs(rAxis) > deadband) {
                 if (rAxis > 0)

@@ -1,7 +1,3 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
 package frc.robot.commands;
 
 import java.util.function.Supplier;
@@ -9,10 +5,10 @@ import java.util.function.Supplier;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Shooter;
 
-public class Amp extends Command {
-  Shooter.State desiredState = new Shooter.State(58, 900, 650);
+public class Trap extends Command {
+  Shooter.State desiredState = new Shooter.State(64, 2250, 2000);
     Supplier<Boolean> button;
-  public Amp(Supplier<Boolean> b) {
+  public Trap(Supplier<Boolean> b) {
     button = b;
     addRequirements(Shooter.get());
     // Use addRequirements() here to declare subsystem dependencies.

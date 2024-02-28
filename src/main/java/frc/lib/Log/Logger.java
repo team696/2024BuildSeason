@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.IOError;
 import java.lang.reflect.Method;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -20,6 +21,7 @@ import java.util.regex.Matcher;
 
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.networktables.StringPublisher;
 import edu.wpi.first.wpilibj.DriverStation;
 import frc.robot.Robot;
 import frc.robot.util.Util;
@@ -47,11 +49,13 @@ public class Logger {
         public type Type;
         public Callable<Object> func;
         public String name;
+        public StringPublisher ntPublisher;
 
         public Loggable(type t, String n, Callable<Object> f) {
             Type = t;
             func = f;
             name = n;
+            ntPublisher = NetworkTableInstance.getDefault().getTable("*** Logger ***").getStringTopic(name).publish();
         }
     }
 
@@ -70,7 +74,8 @@ public class Logger {
 
     private String curDirectory = "";
 
-    private NetworkTable ntTable = NetworkTableInstance.getDefault().getTable("*** Logger ***");
+
+    private boolean m_disabled = false;
     
     public static void log(String Name, String Value) {
         m_ToWrite.add(getSimpleCurrentTimeFormatted() + " -> [" + Name + "] " + Value + "\n");
@@ -121,6 +126,7 @@ public class Logger {
             PLog.info("Logger", "Don't Start The Logger Twice");
             return;
         }
+        m_disabled = false;
         main.start();
     }
 
@@ -158,15 +164,16 @@ public class Logger {
                 PLog.fatalException("Logger", "Failed to write headers", e);
             }
             while (true) {
+                if (m_disabled) continue;
+
                 String time = getSimpleCurrentTimeFormatted();
                 m_ToWriteCSV.add(time);
                 for (Loggable loggable : m_ToLog) {
                     if (!loggable.Type.worse(m_logType)) continue;
                     try {
-                        String Name = loggable.name;
                         Object key = (loggable.func.call());
                         String Key = key.toString();
-                        ntTable.getStringTopic(Name).publish().set(Key);
+                        loggable.ntPublisher.set(Key);
                         m_ToWriteCSV.add("\"" + Key + "\"");
                     } catch (Exception e) {
                         m_ToWriteCSV.add("");
@@ -196,6 +203,8 @@ public class Logger {
 
     public static void close() {
         if (m_Logger == null) return;
+
+        m_Logger.m_disabled = true;
 
         try {
             m_Logger.main.join(300);
@@ -263,8 +272,17 @@ public class Logger {
             return "src/main/Logs/";
 
         for (String potential : m_DriveRoots) { 
-            if (Files.exists(Paths.get(potential))) {
+            // Files.exists only works if usb has not been plugged in and removed since first boot, so we have to do this!
+            File testDir = new File(potential + "iotest/");
+            try {
+                testDir.mkdir();
+                if (!testDir.exists()) {
+                    continue;
+                }
+                testDir.delete();
                 return potential;
+            } catch (IOError e) {
+                continue;
             }
         }
 

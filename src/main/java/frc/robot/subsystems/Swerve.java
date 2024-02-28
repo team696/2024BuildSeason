@@ -60,7 +60,7 @@ public class Swerve extends SubsystemHandler {
     //m_Pigeon = new Pigeon2(0);
     //m_Pigeon.getConfigurator().apply(Constants.CONFIGS.swerve_Pigeon);
 
-    m_poseEstimator = new SwerveDrivePoseEstimator(Constants.swerve.swerveKinematics, getYaw(), m_swervePositions, new Pose2d(0,0,new Rotation2d(0)), VecBuilder.fill(0.1, 0.1, 0.05), VecBuilder.fill(0.3, 0.3, 0.6)); 
+    m_poseEstimator = new SwerveDrivePoseEstimator(Constants.swerve.swerveKinematics, getYaw(), m_swervePositions, new Pose2d(0,0,new Rotation2d(0)), VecBuilder.fill(0.1, 0.1, 0.03), VecBuilder.fill(0.3, 0.3, 0.6)); 
   }
 
  /**  -180 , 180 */ @Log
@@ -137,11 +137,11 @@ public class Swerve extends SubsystemHandler {
     Translation2d delta;
     if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == DriverStation.Alliance.Red) {
         delta = getPose().getTranslation().minus(Constants.Field.RED.Speaker);
-        delta = delta.minus(new Translation2d((getRobotRelativeSpeeds().vyMetersPerSecond * 30)  * delta.getNorm() , 0));  
+        delta = delta.minus(new Translation2d(0, (getRobotRelativeSpeeds().vyMetersPerSecond * 1/8)  * delta.getNorm()));  
         return Rotation2d.fromRadians(Math.atan(delta.getY() / delta.getX())).rotateBy(new Rotation2d(Math.PI));
     } else {
         delta = getPose().getTranslation().minus(Constants.Field.BLUE.Speaker);
-        delta = delta.plus(new Translation2d((getRobotRelativeSpeeds().vyMetersPerSecond + accelerationY)  * delta.getNorm() , 0));        
+        delta = delta.plus(new Translation2d(0, (getRobotRelativeSpeeds().vyMetersPerSecond * 1/8)  * delta.getNorm()));  
         return Rotation2d.fromRadians(Math.atan(delta.getY() / delta.getX()));
         
     }                                                                   
