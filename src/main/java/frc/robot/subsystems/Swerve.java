@@ -55,13 +55,15 @@ public class Swerve extends SubsystemHandler {
     }
 
     m_Gyro = new AHRS(SPI.Port.kMXP);
-    zeroYaw();
 
     //m_Pigeon = new Pigeon2(0);
     //m_Pigeon.getConfigurator().apply(Constants.CONFIGS.swerve_Pigeon);
 
     m_poseEstimator = new SwerveDrivePoseEstimator(Constants.swerve.swerveKinematics, getYaw(), m_swervePositions, new Pose2d(0,0,new Rotation2d(0)), VecBuilder.fill(0.1, 0.1, 0.03), VecBuilder.fill(0.3, 0.3, 0.6)); 
-  }
+  
+    zeroYaw();
+    }
+
 
  /**  -180 , 180 */ @Log
   public Rotation2d getYaw() {
@@ -75,6 +77,7 @@ public class Swerve extends SubsystemHandler {
 
   public void zeroYaw() {
     m_Gyro.zeroYaw();
+    resetPose(new Pose2d(getPose().getTranslation(), new Rotation2d(0)));
   }
 //SHIT IN THE ASS
   public void resetPose(Pose2d pose) {
@@ -104,7 +107,7 @@ public class Swerve extends SubsystemHandler {
                                 translation.getX(), 
                                 translation.getY(), 
                                 rotation, 
-                                getYaw()
+                                getPose().getRotation().rotateBy(Rotation2d.fromDegrees((DriverStation.getAlliance().isPresent() ? (DriverStation.getAlliance().get() == DriverStation.Alliance.Red ? 180 : 0) : 0)))
                             ) : new ChassisSpeeds(
                                 translation.getX(), 
                                 translation.getY(), 
@@ -146,7 +149,8 @@ public class Swerve extends SubsystemHandler {
         
     }                                                                   
   }
-//poopy
+
+  @Debug
   public double DistToSpeaker() {
     if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == DriverStation.Alliance.Red) {
         return getPose().getTranslation().getDistance(Constants.Field.RED.Speaker);

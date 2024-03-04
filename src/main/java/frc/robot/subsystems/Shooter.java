@@ -2,6 +2,9 @@ package frc.robot.subsystems;
 
 import java.util.Map;
 
+import com.ctre.phoenix6.controls.VelocityVoltage;
+import com.ctre.phoenix6.signals.NeutralModeValue;
+
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.BangBangController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
@@ -31,6 +34,9 @@ public class Shooter extends SubsystemHandler {
     private DutyCycleEncoder m_Encoder;
 
     private BangBangController m_shooterController;
+    private VelocityVoltage m_VelocityVoltageTop;
+    private VelocityVoltage m_VelocityVoltageBottom;
+
 
     private ProfiledPIDController m_AngleTrapPID;
     private ArmFeedforward m_AngleFeedForward;
@@ -72,6 +78,16 @@ public class Shooter extends SubsystemHandler {
         m_BeamBreak = new DigitalInput(9);
     }
 
+    public void enable(){
+        m_AngleMotor.get().setNeutralMode(NeutralModeValue.Brake);
+        m_AngleTrapPID.reset(getAngle());
+    }
+
+    public void disable() {
+        m_AngleMotor.get().setNeutralMode(NeutralModeValue.Coast);
+    }
+
+
     /** RPM */
     public void setSpeed(double top, double bottom) { 
         double topSpeed = m_shooterController.calculate(m_Top.getVelocity() * 60.0, top);
@@ -85,8 +101,13 @@ public class Shooter extends SubsystemHandler {
             bottomSpeed *= 0.45;
         }
 
-        m_Top.PercentOutput(topSpeed);
-        m_Bottom.PercentOutput(bottomSpeed);
+        m_Top.VoltageOut(topSpeed);
+        m_Bottom.VoltageOut(bottomSpeed);
+    }
+
+    public void setVelocity(double top, double bottom) {
+        m_Top.setControl(m_VelocityVoltageTop.withVelocity(top / 60.0));
+        m_Top.setControl(m_VelocityVoltageBottom.withVelocity(bottom / 60.0));
     }
 
     public void setShooterSpeedPercent(double percent) {
@@ -104,7 +125,7 @@ public class Shooter extends SubsystemHandler {
 
     /** Percent */
     public void setSerializerSpeedPercent(double output) {
-        m_Serializer.PercentOutput(output);
+        m_Serializer.VoltageOut(output);
     }
 
     public void setAngle(double desired) {
@@ -165,8 +186,8 @@ public class Shooter extends SubsystemHandler {
         m_AngleMotor.PercentOutput(percent);
     }
 
-    public Command defaultCom() { //TODO: Make this slowly run the shooter rollers as well?
-        return this.runEnd(()->setAngle(30), ()->stopAngle());
+    public Command defaultCom() { 
+        return this.runEnd(()->{setAngle(30);}, ()->{stopAngle();});
     }
 
     @Override

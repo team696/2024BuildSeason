@@ -6,7 +6,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Shooter;
 
 public class Trap extends Command {
-  Shooter.State desiredState = new Shooter.State(64, 2250, 2000);
+  Shooter.State desiredState = new Shooter.State(63, 2400, 2100  );
     Supplier<Boolean> button;
   public Trap(Supplier<Boolean> b) {
     button = b;

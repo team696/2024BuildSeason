@@ -408,7 +408,7 @@ public abstract class RobotBase implements AutoCloseable {
       DriverStation.reportWarning("Setting HAL Notifier RT priority to 40 failed", false);
     }
 
-    //Logger.init(Logger.type.debug).start();
+    Logger.init(Logger.type.debug).start();
 
     if (HAL.hasMain()) {
       Thread thread =

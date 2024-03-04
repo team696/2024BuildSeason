@@ -9,10 +9,8 @@ import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
@@ -28,19 +26,22 @@ public class TeleopSwerve extends Command {
     PIDController pidController;
 
     private BooleanSupplier rightJoy;
+
+    private DoubleSupplier goalRotation;
     /**
      * Driver control
      */
-    public TeleopSwerve(GenericHID controller, int translationAxis, int strafeAxis, int rotationAxis, double deadband,boolean fieldRelative, boolean openLoop) {
+    public TeleopSwerve(GenericHID controller, int translationAxis, int strafeAxis, int rotationAxis, DoubleSupplier goal, double deadband,boolean fieldRelative, boolean openLoop) {
         this.fieldRelative = fieldRelative;
         this.openLoop = openLoop;
 
         translation = ()->-controller.getRawAxis(translationAxis);
         strafe = ()->controller.getRawAxis(strafeAxis);
-        rotation = ()->controller.getRawAxis(rotationAxis);
+        rotation = ()->-controller.getRawAxis(rotationAxis);
 
         this.deadband = deadband;
 
+        goalRotation = goal;
         
         pidController = new PIDController(0.0056, 0.00, 0);
         pidController.enableContinuousInput(-180, 180);
@@ -49,7 +50,26 @@ public class TeleopSwerve extends Command {
         addRequirements(Swerve.get());
     }
 
-    public TeleopSwerve(DoubleSupplier x, DoubleSupplier y, DoubleSupplier r, BooleanSupplier rightJoy, double deadband ,boolean fieldRelative, boolean openLoop) {
+    public TeleopSwerve(GenericHID controller, int translationAxis, int strafeAxis, int rotationAxis, double deadband,boolean fieldRelative, boolean openLoop) {
+        this.fieldRelative = fieldRelative;
+        this.openLoop = openLoop;
+
+        translation = ()->-controller.getRawAxis(translationAxis);
+        strafe = ()->controller.getRawAxis(strafeAxis);
+        rotation = ()->-controller.getRawAxis(rotationAxis);
+
+        this.deadband = deadband;
+
+        goalRotation = ()->Swerve.get().AngleForSpeaker().getDegrees();
+        
+        pidController = new PIDController(0.0056, 0.00, 0);
+        pidController.enableContinuousInput(-180, 180);
+        rightJoy = (new JoystickButton(controller, 2));
+
+        addRequirements(Swerve.get());
+    }
+
+    public TeleopSwerve(DoubleSupplier x, DoubleSupplier y, DoubleSupplier r, BooleanSupplier rightJoy, DoubleSupplier goal, double deadband ,boolean fieldRelative, boolean openLoop) {
         translation = x;
         strafe = y;
         rotation = r;
@@ -60,6 +80,8 @@ public class TeleopSwerve extends Command {
         this.deadband = deadband; 
 
         this.rightJoy = rightJoy;
+
+        this.goalRotation = goal;
 
         pidController = new PIDController(0.0056, 0.00, 0);
         pidController.enableContinuousInput(-180, 180);
@@ -82,8 +104,8 @@ public class TeleopSwerve extends Command {
         if (magnitude < deadband) magnitude = 0;
 
         if (rightJoy != null && rightJoy.getAsBoolean()){
-            double pid = pidController.calculate(Swerve.get().getPose().getRotation().getDegrees(), Swerve.get().AngleForSpeaker().getDegrees());
-            if (Math.abs(pidController.getPositionError()) > 3)
+            double pid = pidController.calculate(Swerve.get().getPose().getRotation().getDegrees(), goalRotation.getAsDouble());
+            if (Math.abs(pidController.getPositionError()) > 1)
                 rAxis = Math.abs(Math.pow(pid, 2)) * 0.7 * Math.signum(pid) + pid * 2;
             else    
                 rAxis = 0;

@@ -10,6 +10,7 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.ControlRequest;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.Follower;
+import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.wpilibj.Timer;
@@ -21,6 +22,7 @@ public class TalonFactory { //TODO: Make this general for CAN devices
     private TalonFXConfiguration m_Config;
     private String name;
     private DutyCycleOut m_DutyCycleControl;
+    private VoltageOut m_VoltageControl;
 
     private int followID = -1;
     private boolean opposeDirection = false;
@@ -36,6 +38,7 @@ public class TalonFactory { //TODO: Make this general for CAN devices
         this.name = name;
         this.m_Config = config;
         m_DutyCycleControl = new DutyCycleOut(0);
+        m_VoltageControl = new VoltageOut(0);
         configure();
     }
 
@@ -44,6 +47,7 @@ public class TalonFactory { //TODO: Make this general for CAN devices
         this.name = name;
         this.m_Config = config;
         m_DutyCycleControl = new DutyCycleOut(0);
+        m_VoltageControl = new VoltageOut(0);
         configure();
     }
 
@@ -150,6 +154,11 @@ public class TalonFactory { //TODO: Make this general for CAN devices
 
     public void PercentOutput(double percent) {
         setControl(m_DutyCycleControl.withOutput(percent));
+    }
+
+    /** @param voltage 0-1 output */
+    public void VoltageOut(double voltage) {
+        setControl(m_VoltageControl.withOutput(voltage * 12));
     }
 
     public void stop() {

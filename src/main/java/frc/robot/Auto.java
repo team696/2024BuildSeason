@@ -16,9 +16,11 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.lib.Log.PLog;
 import frc.robot.commands.Shoot;
+import frc.robot.commands.intake;
 import frc.robot.subsystems.Swerve;
 import frc.robot.util.Constants;
 import frc.robot.util.Dashboard;
@@ -57,14 +59,13 @@ public class Auto {
         });
 
         NamedCommands.registerCommand("Shoot", new Shoot(()->m_swerve.DistToSpeaker(), true).asProxy());
-        //NamedCommands.registerCommand("Intake", new intake(true).asProxy());
+        NamedCommands.registerCommand("Intake", new intake(true).asProxy());
 
         
         autoChooser = AutoBuilder.buildAutoChooser();
         SmartDashboard.putData("Auto Chooser", autoChooser);
 
         Dashboard.push("selected_auto", ()->m_instance.autoChooser.getSelected().getName());
-
         autoChooser.onChange((command)-> {
             visualize();
         });

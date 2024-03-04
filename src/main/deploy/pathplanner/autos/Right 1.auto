@@ -14,19 +14,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Middle"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Shoot"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Mid Left"
+            "pathName": "New Path"
           }
         },
         {

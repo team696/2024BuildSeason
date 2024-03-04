@@ -3,41 +3,57 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.8960514753327646,
-        "y": 5.553398347997524
+        "x": 1.309603349020363,
+        "y": 4.242611766797032
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.657712754348905,
-        "y": 6.439605068651132
+        "x": 2.244276574474474,
+        "y": 1.6226320237319565
       },
       "isLocked": false,
-      "linkedName": "2"
+      "linkedName": null
     },
     {
       "anchor": {
-        "x": 7.842157878932736,
-        "y": 7.338028004213359
+        "x": 3.9074080063274006,
+        "y": 2.856403337030277
       },
       "prevControl": {
-        "x": 7.542157878932737,
-        "y": 7.338028004213359
+        "x": 3.111154620707489,
+        "y": 2.2514400770806966
       },
       "nextControl": {
-        "x": 8.142157878932736,
-        "y": 7.338028004213359
+        "x": 5.672252705789055,
+        "y": 4.197265708196013
       },
       "isLocked": false,
-      "linkedName": "4"
+      "linkedName": null
     },
     {
       "anchor": {
-        "x": 3.9794438388048623,
-        "y": 6.405612122818448
+        "x": 7.735996315677932,
+        "y": 4.237698723844653
       },
       "prevControl": {
-        "x": 5.175570620292381,
-        "y": 7.113289485378142
+        "x": 8.242009094335003,
+        "y": 4.096360920405451
+      },
+      "nextControl": {
+        "x": 7.048103909872417,
+        "y": 4.429838538766104
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 4.163151809740473,
+        "y": 5.033146934823891
+      },
+      "prevControl": {
+        "x": 3.9394764250191034,
+        "y": 5.024499315302979
       },
       "nextControl": null,
       "isLocked": false,
@@ -49,7 +65,7 @@
   "eventMarkers": [
     {
       "name": "New Event Marker",
-      "waypointRelativePos": 0.15,
+      "waypointRelativePos": 1.35,
       "command": {
         "type": "parallel",
         "data": {
@@ -73,13 +89,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 15.0,
-    "rotateFast": true
+    "rotation": -6.0,
+    "rotateFast": false
   },
   "reversed": false,
   "folder": null,
   "previewStartingState": {
-    "rotation": 0,
+    "rotation": -30.0,
     "velocity": 0
   },
   "useDefaultConstraints": true

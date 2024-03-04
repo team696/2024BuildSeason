@@ -6,7 +6,6 @@ package frc.robot.commands;
 
 import java.util.function.Supplier;
 
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Shooter;
@@ -53,7 +52,7 @@ public class Shoot extends Command {
     double ChassisX = Swerve.get().getRobotRelativeSpeeds().vxMetersPerSecond;
     Shooter.State desiredStateStationary = Shooter.get().getStateFromDist(actualDist);
     Shooter.State desiredState = desiredStateStationary;//Shooter.get().getStateFromDist(actualDist + ChassisX * 0.75); 
-    desiredState.angle += (actualDist * ChassisX * -.5);
+    desiredState.angle += (actualDist * ChassisX * -.525);
     //desiredState.topSpeed = (desiredState.topSpeed * 0.23 * Math.PI - ChassisX) / (0.23 * Math.PI);
     //desiredState.bottomSpeed = (desiredState.bottomSpeed * 0.23 * Math.PI - ChassisX) / (0.23 * Math.PI);
 

@@ -1,5 +1,8 @@
 package frc.robot.util;
 
+import com.ctre.phoenix.led.CANdleConfiguration;
+import com.ctre.phoenix.led.CANdle.LEDStripType;
+import com.ctre.phoenix.led.CANdle.VBatOutputMode;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.Pigeon2Configuration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
@@ -26,13 +29,13 @@ public class Configs {
     public TalonFXConfiguration shooter_Serializer = new TalonFXConfiguration();
 
     public TalonFXConfiguration intake_Angle = new TalonFXConfiguration();
-    public TalonFXConfiguration intake_Linear = new TalonFXConfiguration();
+    public TalonFXConfiguration intake_Serializer = new TalonFXConfiguration();
     public TalonFXConfiguration intake_Rollers = new TalonFXConfiguration();
-    public TalonFXConfiguration intake_SecondAngle = new TalonFXConfiguration();
-
 
     public TalonFXConfiguration climber_Master = new TalonFXConfiguration();
     public TalonFXConfiguration climber_Follower = new TalonFXConfiguration();
+
+    public CANdleConfiguration candle = new CANdleConfiguration();
 
     public Configs() {
         /** Swerve CANCoder Configuration */
@@ -57,14 +60,14 @@ public class Configs {
         swerve_Drive.MotorOutput.NeutralMode = NeutralModeValue.Brake;
         swerve_Drive.Feedback.SensorToMechanismRatio = Constants.swerve.driveGearRatio;
         swerve_Drive.CurrentLimits.SupplyCurrentLimitEnable = true;
-        swerve_Drive.CurrentLimits.SupplyCurrentLimit = 35;
+        swerve_Drive.CurrentLimits.SupplyCurrentLimit = 38;
         swerve_Drive.CurrentLimits.SupplyCurrentThreshold = 60;
         swerve_Drive.CurrentLimits.SupplyTimeThreshold = 0.1;
         swerve_Drive.Slot0.kP = 2.;
         swerve_Drive.Slot0.kI = 0.0;
         swerve_Drive.Slot0.kD = 0.0;
-        swerve_Drive.OpenLoopRamps.DutyCycleOpenLoopRampPeriod = 0.1;
-        swerve_Drive.OpenLoopRamps.VoltageOpenLoopRampPeriod = 0.1;
+        swerve_Drive.OpenLoopRamps.DutyCycleOpenLoopRampPeriod = 0.05;
+        swerve_Drive.OpenLoopRamps.VoltageOpenLoopRampPeriod = 0.05;
         swerve_Drive.ClosedLoopRamps.DutyCycleClosedLoopRampPeriod = 0.1;
         swerve_Drive.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.1;
 
@@ -92,9 +95,11 @@ public class Configs {
         /** Shooter Motor Configuration */
         shooter_Top.MotorOutput.NeutralMode = NeutralModeValue.Coast;
         shooter_Top.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+        shooter_Top.Slot0.kP = 1;
     
         shooter_Bottom.MotorOutput.NeutralMode = NeutralModeValue.Coast;
         shooter_Bottom.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+        shooter_Bottom.Slot0.kP = 1;
 
 
         shooter_Serializer.MotorOutput.NeutralMode = NeutralModeValue.Brake;
@@ -114,15 +119,22 @@ public class Configs {
         climber_Follower.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
         /** Intake Motor Configuaration */
-        intake_Linear.Slot0.kP = 1;
-        intake_Linear.Feedback.SensorToMechanismRatio = 26;
-        intake_Linear.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-        intake_Linear.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
-
-        intake_Angle.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+        intake_Angle.MotorOutput.NeutralMode = NeutralModeValue.Coast;
         intake_Angle.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+        intake_Angle.Slot0.kP = 1/11.0;
+        intake_Angle.MotionMagic.MotionMagicAcceleration = 178;
+        intake_Angle.MotionMagic.MotionMagicCruiseVelocity = 128;
 
-        intake_SecondAngle.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-        intake_SecondAngle.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+        intake_Angle.ClosedLoopRamps.DutyCycleClosedLoopRampPeriod = 0.1;
+
+        intake_Serializer.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+
+        candle.statusLedOffWhenActive = true;
+        candle.disableWhenLOS = false;
+        candle.stripType = LEDStripType.RGB;
+        candle.brightnessScalar = 1;
+        candle.vBatOutputMode = VBatOutputMode.On;
+        candle.enableOptimizations = true;
+        candle.v5Enabled = true;
     }
 }

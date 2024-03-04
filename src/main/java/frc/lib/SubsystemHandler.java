@@ -3,6 +3,7 @@ package frc.lib;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.util.sendable.SendableRegistry;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 
 /**
@@ -18,7 +19,7 @@ public abstract class SubsystemHandler implements Subsystem, Sendable {
     String name = this.getClass().getSimpleName();
     name = name.substring(name.lastIndexOf('.') + 1);
     SendableRegistry.add(this, name);
-    CommandHandler.getInstance().registerSubsystem(this);
+    CommandScheduler.getInstance().registerSubsystem(this);
   }
 
   /**
@@ -29,7 +30,7 @@ public abstract class SubsystemHandler implements Subsystem, Sendable {
   @SuppressWarnings("this-escape")
   public SubsystemHandler(String name) {
     SendableRegistry.add(this, name);
-    CommandHandler.getInstance().registerSubsystem(this);
+    CommandScheduler.getInstance().registerSubsystem(this);
   }
 
   /**

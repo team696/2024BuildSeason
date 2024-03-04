@@ -10,13 +10,13 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Shooter;
 
 public class Amp extends Command {
-  Shooter.State desiredState = new Shooter.State(58, 900, 650);
+  Shooter.State desiredState = new Shooter.State(60.5, 850 , 850);
     Supplier<Boolean> button;
   public Amp(Supplier<Boolean> b) {
     button = b;
     addRequirements(Shooter.get());
-    // Use addRequirements() here to declare subsystem dependencies.
-  }
+  }    // Use addRequirements() here to declare subsystem dependencies.
+
 
   // Called when the command is initially scheduled.
   @Override
