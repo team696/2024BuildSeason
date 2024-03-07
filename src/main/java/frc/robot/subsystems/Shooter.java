@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import java.util.Map;
 
+import com.ctre.phoenix6.controls.PositionDutyCycle;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
@@ -37,6 +38,7 @@ public class Shooter extends SubsystemHandler {
     private VelocityVoltage m_VelocityVoltageTop;
     private VelocityVoltage m_VelocityVoltageBottom;
 
+    private PositionDutyCycle m_serializerPositionDutyCycle;
 
     private ProfiledPIDController m_AngleTrapPID;
     private ArmFeedforward m_AngleFeedForward;
@@ -75,16 +77,20 @@ public class Shooter extends SubsystemHandler {
         m_AngleTrapPID.reset(0);
         m_AngleFeedForward = new ArmFeedforward(0.05, 1/48.0, 0, 0);
 
+        m_serializerPositionDutyCycle = new PositionDutyCycle(0);
+
         m_BeamBreak = new DigitalInput(9);
     }
 
     public void enable(){
         m_AngleMotor.get().setNeutralMode(NeutralModeValue.Brake);
+        m_Serializer.get().setNeutralMode(NeutralModeValue.Brake);
         m_AngleTrapPID.reset(getAngle());
     }
 
     public void disable() {
         m_AngleMotor.get().setNeutralMode(NeutralModeValue.Coast);
+        m_Serializer.get().setNeutralMode(NeutralModeValue.Coast);
     }
 
 
@@ -164,6 +170,14 @@ public class Shooter extends SubsystemHandler {
         return new State(Util.lerp((dist - lower.getKey())/(higher.getKey() - lower.getKey()), lower.getValue().angle, higher.getValue().angle), higher.getValue().topSpeed, higher.getValue().bottomSpeed);
     }
 
+    public void serializerPosition(double desired) {
+        m_Serializer.setControl(m_serializerPositionDutyCycle.withPosition(desired));
+    }
+
+    public double getSerializerPosition() {
+        return m_Serializer.getPosition();
+    }
+
     public void stopShooter() {
         m_Top.stop();
         m_Bottom.stop();
@@ -188,6 +202,10 @@ public class Shooter extends SubsystemHandler {
 
     public Command defaultCom() { 
         return this.runEnd(()->{setAngle(30);}, ()->{stopAngle();});
+    }
+
+    public Command defaultAutoCom() { 
+        return this.runEnd(()->{setAngle(30); setShooterSpeedPercent(0.6);}, ()->{stopAngle(); stopShooter(); stopSerializer();});
     }
 
     @Override

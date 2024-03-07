@@ -1,7 +1,6 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
@@ -11,15 +10,16 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.Amp;
 import frc.robot.commands.Drop;
 import frc.robot.commands.Shoot;
+import frc.robot.commands.ShootIntakeAmp;
+import frc.robot.commands.ShooterDefault;
 import frc.robot.commands.ShooterIntake;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.commands.Trap;
 import frc.robot.commands.intake;
+import frc.robot.commands.intakeAmp;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.LED;
 import frc.robot.subsystems.Shooter;
@@ -40,64 +40,37 @@ public class Robot extends TimedRobot {
   private double lastPeriodicTime = 0;
   private double lastPeriodTimeDelta = 0;
   
-  private final Joystick joystickPanel = new Joystick(0);
-  private final Joystick operatorPanel = new Joystick(1);
-  private final Joystick operatorPanelB = new Joystick(2);
-  //private final Joystick operatorPanel = new Joystick(2);
-
-  private final CommandXboxController controller = new CommandXboxController(5);
-
-  private final JoystickButton leftJoy = new JoystickButton(joystickPanel, 1);
-  private final JoystickButton rightJoy = new JoystickButton(joystickPanel, 2);
-
-    private final JoystickButton Shoot = new JoystickButton(operatorPanel, 1);
-    private final JoystickButton Amp = new JoystickButton(operatorPanel, 2);
-    private final JoystickButton ExtraA = new JoystickButton(operatorPanel, 3);
-    private final JoystickButton Trap = new JoystickButton(operatorPanel, 4);
-    private final JoystickButton ExtraB = new JoystickButton(operatorPanel, 6);
-    private final JoystickButton Ground = new JoystickButton(operatorPanel, 7);
-    private final JoystickButton Source = new JoystickButton(operatorPanel, 8);
-    private final JoystickButton Rollers = new JoystickButton(operatorPanel, 9);
-    private final JoystickButton Drop = new JoystickButton(operatorPanel, 10);
-    private final JoystickButton ExtraC = new JoystickButton(operatorPanel,11);
-
-    private final JoystickButton Climb = new JoystickButton(operatorPanelB, 2);
-    private final JoystickButton OhShit = new JoystickButton(operatorPanelB,   3);
-    private final JoystickButton Rightest = new JoystickButton(operatorPanelB, 4);
-    private final JoystickButton Right = new JoystickButton(operatorPanelB, 5);
-    private final JoystickButton Left = new JoystickButton(operatorPanelB, 6);
-    private final JoystickButton Gyro = new JoystickButton(operatorPanelB, 7);
-    private final JoystickButton Leftest = new JoystickButton(operatorPanelB, 8);
-
   private void configureBinds() {
-    Swerve.get().setDefaultCommand(new TeleopSwerve(joystickPanel, 1, 0, 2, Constants.deadBand,true, true));
+    Swerve.get().setDefaultCommand(new TeleopSwerve(Controls.joystickPanel, 1, 0, 2, Constants.deadBand,true, true));
     //leftJoy.onTrue(new InstantCommand(()->Swerve.get().zeroYaw()));
   }
 
     private void configureOperatorBinds() {
-        Shoot.whileTrue(new Shoot(()->Swerve.get().DistToSpeaker(), ()->true));
-        Ground.whileTrue(new intake());
-        Source.whileTrue(new ShooterIntake().alongWith(new TeleopSwerve(joystickPanel, 1, 0, 2, ()->135, Constants.deadBand, true, true)));
-        Amp.whileTrue(new Amp(Rollers::getAsBoolean).alongWith(new TeleopSwerve(joystickPanel, 1, 0, 2, ()->-90, Constants.deadBand, true, true)));
-        Trap.whileTrue(Auto.PathFind(Constants.Field.BLUE.Trap).andThen(new Trap(()->true)));
-        Drop.whileTrue(new Drop());
-        Gyro.onTrue(new InstantCommand(()->Swerve.get().zeroYaw())); 
+        Controls.Shoot.whileTrue(new Shoot(()->Swerve.get().DistToSpeaker(), ()->true));
+        Controls.Ground.whileTrue(new intake());
+        Controls.Source.whileTrue(new ShooterIntake().alongWith(new TeleopSwerve(Controls.joystickPanel, 1, 0, 2, ()->135, Constants.deadBand, true, true)));
+        Controls.Amp.whileTrue(new Amp(Controls.Rollers::getAsBoolean).alongWith(new TeleopSwerve(Controls.joystickPanel, 1, 0, 2, ()->-90, Constants.deadBand, true, true)));
+        Controls.Trap.whileTrue(Auto.PathFind(Constants.Field.RED.Trap).andThen(new Trap(()->true)));
+        Controls.Drop.whileTrue(new Drop());
+        Controls.Gyro.onTrue(new InstantCommand(()->Swerve.get().zeroYaw())); 
+
+        Controls.ExtraC.whileTrue(new intakeAmp());
+        Controls.ExtraA.whileTrue(new ShootIntakeAmp(Controls.Rollers::getAsBoolean));
     }
 
     private void configureControllerBinds() { 
-        controller.rightBumper().whileTrue(new intake());
+        Controls.controller.rightBumper().whileTrue(new intake());
 
-        controller.y().whileTrue(new ShooterIntake());
+        Controls.controller.y().whileTrue(new ShooterIntake());
 
        // Swerve.get().setDefaultCommand(new TeleopSwerve(()->-controller.getRawAxis(1), ()->-controller.getRawAxis(0), ()->-controller.getRawAxis(4), ()->false, 0.08,true, true));
-        controller.button(8).onTrue(new InstantCommand(()->Swerve.get().zeroYaw()));
-        controller.a().whileTrue(new Shoot(()->Swerve.get().DistToSpeaker(), ()->true));
-        leftJoy.whileTrue(new Shoot(()->Swerve.get().DistToSpeaker(), ()->true));
+        Controls.controller.button(8).onTrue(new InstantCommand(()->Swerve.get().zeroYaw()));
+        Controls.controller.a().whileTrue(new Shoot(()->Swerve.get().DistToSpeaker(), ()->true));
 
-        controller.x().whileTrue(new Amp(controller.b()::getAsBoolean));
-        controller.leftBumper().whileTrue(new Trap(()->true));
-        controller.leftTrigger(0.9).whileTrue(Intake.get().goToAngle(Position.down));
-        controller.rightTrigger(0.9).whileTrue(Intake.get().goToAngle(Position.stowed));
+        Controls.controller.x().whileTrue(new Amp(Controls.controller.b()::getAsBoolean));
+        Controls.controller.leftBumper().whileTrue(new Trap(()->true));
+        Controls.controller.leftTrigger(0.9).whileTrue(Intake.get().goToAngle(Position.down));
+        Controls.controller.rightTrigger(0.9).whileTrue(Intake.get().goToAngle(Position.stowed));
 
     }
 
@@ -127,8 +100,9 @@ public class Robot extends TimedRobot {
         
         SmartDashboard.putData(Swerve.get());
         SmartDashboard.putData(Intake.get());
+        SmartDashboard.putNumber("Shooter Offset", 0);
 
-        Shooter.get().setDefaultCommand(Shooter.get().defaultCom());
+        Shooter.get().setDefaultCommand(new ShooterDefault());
         Intake.get().setDefaultCommand(Intake.get().goToAngle(Position.stowed));
 
         LED.get();
@@ -139,14 +113,14 @@ public class Robot extends TimedRobot {
 
     @Override
     public void robotPeriodic() {
-        lastPeriodTimeDelta = Timer.getFPGATimestamp() - lastPeriodicTime;
-        lastPeriodicTime = Timer.getFPGATimestamp();
-
         CommandScheduler.getInstance().run();
         if (Constants.DEBUG) 
             SmartDashboard.putData(m_PDH);
     /** Used to update network tables faster (causes lag!) */
         //NetworkTableInstance.getDefault().flush();
+
+        lastPeriodTimeDelta = Timer.getFPGATimestamp() - lastPeriodicTime;
+        lastPeriodicTime = Timer.getFPGATimestamp();
   }
 
   @Override
@@ -167,6 +141,9 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousInit() {
+    Intake.get().setDefaultCommand(Intake.get().goToAngle(Position.down));
+    Shooter.get().setDefaultCommand(Shooter.get().defaultAutoCom());
+
     m_autonomousCommand = Auto.Selected();
 
     // schedule the autonomous command (example)
@@ -180,6 +157,12 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousPeriodic() {}
 
+  @Override 
+  public void autonomousExit() {
+        Shooter.get().setDefaultCommand(Shooter.get().defaultCom());
+        Intake.get().setDefaultCommand(Intake.get().goToAngle(Position.stowed));
+  }
+
   @Override
   public void teleopInit() {
     if (m_autonomousCommand != null) {
@@ -190,7 +173,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
-    LED.get().intake = Climb.getAsBoolean();
+    LED.get().intake = Controls.Climb.getAsBoolean();
   }
 
   @Override

@@ -1,6 +1,5 @@
 package frc.robot.util;
 
-import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
@@ -26,7 +25,6 @@ public class SwerveModule {
     private final SimpleMotorFeedforward driveFeedForward = new SimpleMotorFeedforward(Constants.swerve.drivekS, Constants.swerve.drivekV, Constants.swerve.drivekA);
 
     /* drive motor control requests */
-    private final DutyCycleOut driveDutyCycle = new DutyCycleOut(0);
     private final VelocityVoltage driveVelocity = new VelocityVoltage(0);
 
     /* angle motor control requests */
@@ -60,8 +58,7 @@ public class SwerveModule {
     private void setSpeed(SwerveModuleState desiredState, boolean isOpenLoop){
         double ratio = Math.cos(desiredState.angle.getRadians() - getState().angle.getRadians()); 
         if(isOpenLoop){
-            driveDutyCycle.Output = desiredState.speedMetersPerSecond / Constants.swerve.maxSpeed * ratio;
-            mDriveMotor.setControl(driveDutyCycle) ;
+            mDriveMotor.VoltageOut(desiredState.speedMetersPerSecond / Constants.swerve.maxSpeed * ratio);
         }
         else {
             driveVelocity.Velocity = Util.MPSToRPS(desiredState.speedMetersPerSecond * ratio, Constants.swerve.wheelCircumference);

@@ -8,7 +8,7 @@
         {
           "type": "named",
           "data": {
-            "name": "Shoot"
+            "name": "Shoot Target"
           }
         },
         {
@@ -20,7 +20,7 @@
         {
           "type": "named",
           "data": {
-            "name": "Shoot"
+            "name": "Shoot Target"
           }
         },
         {
@@ -32,7 +32,19 @@
         {
           "type": "named",
           "data": {
-            "name": "Shoot"
+            "name": "Shoot Target"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "shot 2"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Shoot Target"
           }
         }
       ]

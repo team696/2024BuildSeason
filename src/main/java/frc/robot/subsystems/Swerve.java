@@ -77,7 +77,7 @@ public class Swerve extends SubsystemHandler {
 
   public void zeroYaw() {
     m_Gyro.zeroYaw();
-    resetPose(new Pose2d(getPose().getTranslation(), new Rotation2d(0)));
+    resetPose(new Pose2d(getPose().getTranslation(), Rotation2d.fromDegrees((DriverStation.getAlliance().isPresent() ? (DriverStation.getAlliance().get() == DriverStation.Alliance.Red ? 180 : 0) : 0))));
   }
 //SHIT IN THE ASS
   public void resetPose(Pose2d pose) {
@@ -140,13 +140,12 @@ public class Swerve extends SubsystemHandler {
     Translation2d delta;
     if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == DriverStation.Alliance.Red) {
         delta = getPose().getTranslation().minus(Constants.Field.RED.Speaker);
-        delta = delta.minus(new Translation2d(0, (getRobotRelativeSpeeds().vyMetersPerSecond * 1/8)  * delta.getNorm()));  
+        delta = delta.minus(new Translation2d(0, (getRobotRelativeSpeeds().vyMetersPerSecond * 1/8)  * delta.getNorm()).rotateBy(getPose().getRotation().plus(Rotation2d.fromDegrees(180))));  
         return Rotation2d.fromRadians(Math.atan(delta.getY() / delta.getX())).rotateBy(new Rotation2d(Math.PI));
     } else {
         delta = getPose().getTranslation().minus(Constants.Field.BLUE.Speaker);
-        delta = delta.plus(new Translation2d(0, (getRobotRelativeSpeeds().vyMetersPerSecond * 1/8)  * delta.getNorm()));  
+        delta = delta.plus(new Translation2d(0, (getRobotRelativeSpeeds().vyMetersPerSecond * 1/8)  * delta.getNorm()).rotateBy(getPose().getRotation()));  
         return Rotation2d.fromRadians(Math.atan(delta.getY() / delta.getX()));
-        
     }                                                                   
   }
 

@@ -60,14 +60,14 @@ public class Configs {
         swerve_Drive.MotorOutput.NeutralMode = NeutralModeValue.Brake;
         swerve_Drive.Feedback.SensorToMechanismRatio = Constants.swerve.driveGearRatio;
         swerve_Drive.CurrentLimits.SupplyCurrentLimitEnable = true;
-        swerve_Drive.CurrentLimits.SupplyCurrentLimit = 38;
+        swerve_Drive.CurrentLimits.SupplyCurrentLimit = 35;
         swerve_Drive.CurrentLimits.SupplyCurrentThreshold = 60;
         swerve_Drive.CurrentLimits.SupplyTimeThreshold = 0.1;
         swerve_Drive.Slot0.kP = 2.;
         swerve_Drive.Slot0.kI = 0.0;
         swerve_Drive.Slot0.kD = 0.0;
-        swerve_Drive.OpenLoopRamps.DutyCycleOpenLoopRampPeriod = 0.05;
-        swerve_Drive.OpenLoopRamps.VoltageOpenLoopRampPeriod = 0.05;
+        swerve_Drive.OpenLoopRamps.DutyCycleOpenLoopRampPeriod = 0.2;
+        swerve_Drive.OpenLoopRamps.VoltageOpenLoopRampPeriod = 0.2;
         swerve_Drive.ClosedLoopRamps.DutyCycleClosedLoopRampPeriod = 0.1;
         swerve_Drive.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.1;
 
@@ -96,17 +96,31 @@ public class Configs {
         shooter_Top.MotorOutput.NeutralMode = NeutralModeValue.Coast;
         shooter_Top.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
         shooter_Top.Slot0.kP = 1;
+        shooter_Top.CurrentLimits.SupplyCurrentLimitEnable = true;
+        shooter_Top.CurrentLimits.SupplyCurrentLimit = 35;
+        shooter_Top.CurrentLimits.SupplyCurrentThreshold = 50;
+        shooter_Top.CurrentLimits.SupplyTimeThreshold = 0.1;
+        
     
         shooter_Bottom.MotorOutput.NeutralMode = NeutralModeValue.Coast;
         shooter_Bottom.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
         shooter_Bottom.Slot0.kP = 1;
-
-
+        shooter_Bottom.CurrentLimits.SupplyCurrentLimitEnable = true;
+        shooter_Bottom.CurrentLimits.SupplyCurrentLimit = 35;
+        shooter_Bottom.CurrentLimits.SupplyCurrentThreshold = 50;
+        shooter_Bottom.CurrentLimits.SupplyTimeThreshold = 0.1;
+        
         shooter_Serializer.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+        shooter_Serializer.Slot0.kP = 2.5;
 
         shooter_Angle.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
         shooter_Angle.MotorOutput.NeutralMode = NeutralModeValue.Brake;
         shooter_Angle.Feedback.SensorToMechanismRatio = 94.5;
+
+        shooter_Angle.CurrentLimits.SupplyCurrentLimitEnable = true;
+        shooter_Angle.CurrentLimits.SupplyCurrentLimit = 20;
+        shooter_Angle.CurrentLimits.SupplyCurrentThreshold = 30;
+        shooter_Angle.CurrentLimits.SupplyTimeThreshold = 0.1;
 
         /** Pigeon Configuration */ 
         swerve_Pigeon.MountPose.MountPoseYaw = 0;
@@ -122,13 +136,19 @@ public class Configs {
         intake_Angle.MotorOutput.NeutralMode = NeutralModeValue.Coast;
         intake_Angle.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
         intake_Angle.Slot0.kP = 1/11.0;
-        intake_Angle.MotionMagic.MotionMagicAcceleration = 178;
+        intake_Angle.MotionMagic.MotionMagicAcceleration = 256;
         intake_Angle.MotionMagic.MotionMagicCruiseVelocity = 128;
 
-        intake_Angle.ClosedLoopRamps.DutyCycleClosedLoopRampPeriod = 0.1;
+        intake_Angle.CurrentLimits.SupplyCurrentLimitEnable = true;
+        intake_Angle.CurrentLimits.SupplyCurrentLimit = 20;
+        intake_Angle.CurrentLimits.SupplyCurrentThreshold = 30;
+        intake_Angle.CurrentLimits.SupplyTimeThreshold = 0.;
+
+        //intake_Angle.ClosedLoopRamps.DutyCycleClosedLoopRampPeriod = 0.1;
 
         intake_Serializer.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
+        /** Candle Configuration */
         candle.statusLedOffWhenActive = true;
         candle.disableWhenLOS = false;
         candle.stripType = LEDStripType.RGB;

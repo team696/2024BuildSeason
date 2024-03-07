@@ -5,6 +5,7 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.lib.SubsystemHandler;
 import frc.lib.TalonFactory;
@@ -19,10 +20,20 @@ public class Intake extends SubsystemHandler {
 
     private MotionMagicDutyCycle m_AngleControl;
     private ArmFeedforward m_ArmFeedforward;
+
+    private DigitalInput m_BeamBreak;
                               
-    public enum Position { //LINEAR TOP IS 3.6
-        stowed, // 0
-        down, 
+    public enum Position { 
+        stowed(0), 
+        down(19.6), 
+        passback(14),
+        spit(4),
+        amp(3);
+
+        public double pos;
+        Position(double p) {
+            pos = p;
+        }
     } 
 
     public class State {
@@ -58,7 +69,9 @@ public class Intake extends SubsystemHandler {
         m_Angle.setPosition(0);
 
         m_AngleControl = new MotionMagicDutyCycle(0);
-        m_ArmFeedforward = new ArmFeedforward(0, 0.05, 0);
+        m_ArmFeedforward = new ArmFeedforward(0, 0.07, 0);
+
+        m_BeamBreak = new DigitalInput(6);
     }
 
     public void setRollersOutput(double percent) {
@@ -78,15 +91,8 @@ public class Intake extends SubsystemHandler {
     }
 
     public void positionAngle(Position p) {
-        m_AngleControl.FeedForward = m_ArmFeedforward.calculate((12.6 - m_Angle.getPosition()) / 53 * 2 * Math.PI, 0);
-        switch (p) {
-            case down:
-                m_Angle.setControl(m_AngleControl.withPosition(19.6));
-                break;
-            case stowed:
-                m_Angle.setControl(m_AngleControl.withPosition(0));
-                break;
-        }
+        m_AngleControl.FeedForward = -1 * m_ArmFeedforward.calculate((12.6 - m_Angle.getPosition()) / 53 * 2 * Math.PI, 0);
+        m_Angle.setControl(m_AngleControl.withPosition(p.pos));
     }
 
     public void goalAngle(double goal) {
@@ -131,8 +137,13 @@ public class Intake extends SubsystemHandler {
         return m_Angle.getPosition();
     }
 
+    public boolean getBeamBreak() {
+        return m_BeamBreak.get();
+    }
+
     @Override
     public void initSendable(SendableBuilder builder) {
         builder.addDoubleProperty("Main Angle", this::mainAngle, null);
+        builder.addBooleanProperty("Beam Break", this::getBeamBreak, null);
     }
 }

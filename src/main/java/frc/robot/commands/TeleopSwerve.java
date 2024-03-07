@@ -1,5 +1,6 @@
 package frc.robot.commands;
 
+import frc.robot.Controls;
 import frc.robot.subsystems.Swerve;
 import frc.robot.util.Constants;
 import frc.robot.util.Util;
@@ -12,7 +13,6 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 public class TeleopSwerve extends Command {
 
@@ -45,7 +45,7 @@ public class TeleopSwerve extends Command {
         
         pidController = new PIDController(0.0056, 0.00, 0);
         pidController.enableContinuousInput(-180, 180);
-        rightJoy = (new JoystickButton(controller, 2));
+        rightJoy = Controls.rightJoy::getAsBoolean;
 
         addRequirements(Swerve.get());
     }
@@ -64,7 +64,7 @@ public class TeleopSwerve extends Command {
         
         pidController = new PIDController(0.0056, 0.00, 0);
         pidController.enableContinuousInput(-180, 180);
-        rightJoy = (new JoystickButton(controller, 2));
+        rightJoy = Controls.rightJoy::getAsBoolean;
 
         addRequirements(Swerve.get());
     }

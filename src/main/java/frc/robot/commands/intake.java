@@ -15,6 +15,7 @@ public class intake extends Command {
     boolean finish = false;
     double broken = 0;
     double start = 0;
+    double goalPos = 0;
     public intake() {
         this.finish = false;
         addRequirements(Shooter.get(), Intake.get());
@@ -31,28 +32,30 @@ public class intake extends Command {
     LED.get().override = true;
     broken = 0;
     start = Timer.getFPGATimestamp();
+    goalPos = Shooter.get().getSerializerPosition();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    Shooter.get().setShooterSpeedPercent(-0.1);
+    if (finish)
+        Shooter.get().setShooterSpeedPercent(0.45);
+    else 
+        Shooter.get().setShooterSpeedPercent(-0.03);
     Shooter.get().setAngle(32);
     if (Shooter.get().getBeamBreak() ) {
-        Shooter.get().setSerializerSpeedPercent(0.15); 
-        if (Intake.get().mainAngle() > 5) {
-            Intake.get().setSerializerSpeedPercent(0.85); 
-            Intake.get().setRollersOutput(0.6);
+        Shooter.get().setSerializerSpeedPercent(0.06);
+        if (Intake.get().mainAngle() > 15) {
+            Intake.get().setSerializerSpeedPercent(0.5); 
+            Intake.get().setRollersOutput(0.8);
         }
         Intake.get().positionAngle(Position.down);
         LED.get().setOverride(255,0,0);
+        goalPos = Shooter.get().getSerializerPosition() + 0.25;
+
     } else {
-        //if ((Timer.getFPGATimestamp() * 2) % 2 > 1) {
-        //    Shooter.get().setSerializerSpeedPercent(-0.05); 
-        //} else {
-        //    Shooter.get().setSerializerSpeedPercent(0.05);
-        //}
-        Shooter.get().setSerializerSpeedPercent(0);
+        
+        Shooter.get().serializerPosition(goalPos);
         Intake.get().setRollersOutput(0);
         Intake.get().setSerializerSpeedPercent(0);
         Intake.get().positionAngle(Position.stowed);
@@ -75,14 +78,13 @@ public class intake extends Command {
     Shooter.get().stopShooter();
     Intake.get().stopRollers();
     Intake.get().stopSerializer();
-    Intake.get().stopAngle();
     LED.get().override = false;
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if (finish && broken != 0 && Timer.getFPGATimestamp() - broken > 0.015)
+    if (finish && broken != 0 && Timer.getFPGATimestamp() - broken > 0.03)
         return true;
     return false;
   }

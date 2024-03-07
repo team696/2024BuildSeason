@@ -28,15 +28,15 @@ public final class Constants {
 	public static final class Field {
 		public static final Field2d sim = new Field2d();
         public static final class RED {
-		    public static final Translation2d Speaker = new Translation2d(16.3, 5.4);
+		    public static final Translation2d Speaker = new Translation2d(16.58, 5.55);
             public static final Pose2d Amp = new Pose2d(12, 8, new Rotation2d(Math.PI/2));
             public static final Pose2d Source = new Pose2d(1, 0.5, Rotation2d.fromDegrees(-135));
+            public static final Pose2d Trap = new Pose2d(11.754, 5.12, Rotation2d.fromDegrees(60));
         }
         public static final class BLUE {
-            public static final Translation2d Speaker = new Translation2d(0, 5.4);
+            public static final Translation2d Speaker = new Translation2d(0, 5.55);
             public static final Pose2d Amp = new Pose2d(4, 8, new Rotation2d(Math.PI/2));
             public static final Pose2d Source = new Pose2d(15.15, 1.5, Rotation2d.fromDegrees(135)); 
-            public static final Pose2d Trap = new Pose2d(11.754, 5.12, Rotation2d.fromDegrees(60));
         }
 	}
 	public static class Motors {
@@ -65,12 +65,28 @@ public final class Constants {
             put(2.8 ,new Shooter.State(41, 3000,2500));
             put(3.6 ,new Shooter.State(39, 3000,2500));
             put(4.3 ,new Shooter.State(35, 3000,2500));
-            put(5.2, new Shooter.State(32.5, 3000, 2500));
-            put(5.4 ,new Shooter.State(31.5, 3000,2500));
-            put(5.6, new Shooter.State(32.5, 3000,2500));
-            put(5.7, new Shooter.State(32, 3000, 2500));
-            put(6.2, new Shooter.State(32, 3000, 2500));
-			put(12., new Shooter.State(30, 3000,2500));
+            put(4.8, new Shooter.State(33 , 3200,2900));
+            put(5.2, new Shooter.State(32.5, 3200, 2900));
+            put(5.4 ,new Shooter.State(32, 3200,2900));
+            put(5.6, new Shooter.State(31, 3200,2900));
+            put(5.7, new Shooter.State(32.5, 3200, 2900));
+            put(6.2, new Shooter.State(30.5, 3200, 2900));
+			put(12., new Shooter.State(31, 3200,2900));
+         /*
+            put(1., new Shooter.State(60, 3000, 3000));
+            put(1.5, new Shooter.State(60, 3000, 3000));
+            put(2., new Shooter.State(50, 3000, 3000));
+            put(2.5, new Shooter.State(45, 3000, 3000));
+            put(3., new Shooter.State(42, 3000, 3000));
+            put(3.5, new Shooter.State(39, 3000, 3000));
+            put(4., new Shooter.State(36, 3000, 3000));
+            put(4.5, new Shooter.State(3 5, 3000, 3000));
+            put(5., new Shooter.State(33, 3000, 3000));
+            put(5.5, new Shooter.State(33, 3000, 3000));
+            put(6., new Shooter.State(31, 3000, 3000));
+
+            put(12., new Shooter.State(32, 3000, 3000));
+   */
 		}};
 	}
 	public static class swerve {
@@ -85,12 +101,12 @@ public final class Constants {
 
 		public static final double wheelX = Units.inchesToMeters(21.75);
 		public static final double wheelY = Units.inchesToMeters(21.75);
-		public static final double wheelDiameter = Units.inchesToMeters(3.92);
+		public static final double wheelDiameter = Units.inchesToMeters(3.93);
 		public static final double wheelCircumference = wheelDiameter * Math.PI;
 
 		public static final double theoreticalMaxSpeed = Motors.Kraken.freeSpinRPM / 60 / driveGearRatio * wheelCircumference; // 5.13 mps way more resonable
 		public static final double theoreticalMaxAcceleration = (4 * Motors.Kraken.stallTorqueNm * driveGearRatio) / (massKgs * wheelDiameter / 2);  // 66 mps^2 wtf
-		public static final double maxSpeed = 5.16; //MPS
+		public static final double maxSpeed = 5.13; //MPS
 		public static final double maxAngularVelocity = 8; //MPS^2
 
 		private static final SwerveModule frontLeft = new SwerveModule(0, Constants.CONFIGS.Mod0);

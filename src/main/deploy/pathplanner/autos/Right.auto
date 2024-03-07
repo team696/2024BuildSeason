@@ -8,7 +8,7 @@
         {
           "type": "named",
           "data": {
-            "name": "Shoot"
+            "name": "Shoot Target"
           }
         },
         {
@@ -20,7 +20,31 @@
         {
           "type": "named",
           "data": {
-            "name": "Shoot"
+            "name": "Shoot Target"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Right2"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Shoot Target"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "rihght "
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Shoot Target"
           }
         }
       ]
