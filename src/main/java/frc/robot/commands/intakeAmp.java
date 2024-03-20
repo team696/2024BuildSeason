@@ -13,7 +13,15 @@ public class intakeAmp extends Command {
     double on = Double.MAX_VALUE;
     double off = Double.MAX_VALUE;
 
+    boolean finish = false;
+
     public intakeAmp() {
+        finish = false;
+        addRequirements(Intake.get(), Shooter.get());
+    }
+
+    public intakeAmp(boolean finish) {
+        this.finish = finish;
         addRequirements(Intake.get(), Shooter.get());
     }
 
@@ -32,7 +40,9 @@ public class intakeAmp extends Command {
             Shooter.get().setAngle(30);
             if (Intake.get().getBeamBreak()) {
                 if (Intake.get().mainAngle() > 15) {
-                    Intake.get().setRollersOutput(0.65);
+                    Intake.get().setRollersOutput(0.40);
+                } else {
+                    Intake.get().setRollersOutput(0);
                 }
                 Intake.get().positionAngle(Position.down);
                 LED.get().setOverride(255, 0, 0);
@@ -52,7 +62,7 @@ public class intakeAmp extends Command {
             }
 
             if (on != Double.MAX_VALUE){
-                Intake.get().setRollersOutput(0.65);
+                Intake.get().setRollersOutput(0.40);
                 spitBack = false;
             } else {
                 Intake.get().positionAngle(Position.passback);
@@ -82,6 +92,8 @@ public class intakeAmp extends Command {
 
     @Override
     public boolean isFinished() {
-      return false;
+        if (finish && !Intake.get().getBeamBreak())
+            return true;
+        return false;
     }
 }

@@ -19,9 +19,10 @@ public class Shoot extends Command {
     Supplier<Boolean> button;
     double start = 0;
     double unbroken = 0;
+    double broken = 0;
     boolean feed = false;
 
-    static DoubleSubscriber dblTopic = NetworkTableInstance.getDefault().getDoubleTopic("Smart Dashboard/Shooter Offset").subscribe(0);
+    static DoubleSubscriber dblTopic; 
 
     public Shoot(Supplier<Double> distSupplier, Supplier<Boolean> button) {
         this.distSupplier = distSupplier;
@@ -41,14 +42,19 @@ public class Shoot extends Command {
   @Override
   public void initialize() {
     unbroken = Double.MAX_VALUE;
-    start = Timer.getFPGATimestamp();
+    broken = Double.MAX_VALUE;
+    start = Double.MAX_VALUE;//Timer.getFPGATimestamp();
     feed = false;
+    dblTopic = NetworkTableInstance.getDefault().getDoubleTopic("Shooter Offset").subscribe(0);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {
-    if (unbroken == Double.MAX_VALUE && Shooter.get().getBeamBreak()) {
+  public void execute() {   
+    if (broken == Double.MAX_VALUE && !Shooter.get().getBeamBreak()) {
+        broken = Timer.getFPGATimestamp();
+    }
+    if (feed && unbroken == Double.MAX_VALUE && Shooter.get().getBeamBreak()) {
         unbroken = Timer.getFPGATimestamp();
     }
 
@@ -58,6 +64,7 @@ public class Shoot extends Command {
     Shooter.State desiredState = desiredStateStationary;
     desiredState.angle += (actualDist * ChassisX * -.525);
     desiredState.angle += dblTopic.get();
+    desiredState.angle += 2;
 
     Shooter.get().setAngle(desiredState.angle);
     Shooter.get().setSpeed(desiredState.topSpeed, desiredState.bottomSpeed);
@@ -66,6 +73,8 @@ public class Shoot extends Command {
       feed = true;
     } 
     if (feed){
+        if (start == Double.MAX_VALUE)
+            start = Timer.getFPGATimestamp();
         Shooter.get().setSerializerSpeedPercent(1);
     } else {
         Shooter.get().stopSerializer();
@@ -78,15 +87,16 @@ public class Shoot extends Command {
     Shooter.get().stopShooter();
     Shooter.get().stopSerializer();
     Shooter.get().stopAngle();
+    dblTopic.close();
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if (finish && Timer.getFPGATimestamp() - start > 2.0) 
+    if (finish && Timer.getFPGATimestamp() - start > 0.6f)
         return true;
-    if (finish && Timer.getFPGATimestamp() - unbroken > 0.02) 
-        return true;
+    //if (finish && Timer.getFPGATimestamp() - unbroken > 0.03) 
+    //    return true;
     return false;
   }
 }

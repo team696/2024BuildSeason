@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import com.ctre.phoenix6.hardware.Pigeon2;
 import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.math.VecBuilder;
@@ -28,8 +29,9 @@ import frc.robot.util.SwerveModule;
 public class Swerve extends SubsystemHandler {
   
   private static Swerve m_Swerve;
-  private AHRS m_Gyro;
-  //private Pigeon2 m_Pigeon;
+  //private AHRS m_Gyro;
+
+  private Pigeon2 m_Pigeon; 
 
   private SwerveModulePosition[] m_swervePositions = new SwerveModulePosition[4];
   private SwerveDrivePoseEstimator m_poseEstimator;
@@ -54,10 +56,9 @@ public class Swerve extends SubsystemHandler {
       m_swervePositions[i] = Constants.swerve.swerveMods[i].getPosition();
     }
 
-    m_Gyro = new AHRS(SPI.Port.kMXP);
-
-    //m_Pigeon = new Pigeon2(0);
-    //m_Pigeon.getConfigurator().apply(Constants.CONFIGS.swerve_Pigeon);
+    //m_Gyro = new AHRS(SPI.Port.kMXP);
+    m_Pigeon = new Pigeon2(0);
+    m_Pigeon.getConfigurator().apply(Constants.CONFIGS.swerve_Pigeon);
 
     m_poseEstimator = new SwerveDrivePoseEstimator(Constants.swerve.swerveKinematics, getYaw(), m_swervePositions, new Pose2d(0,0,new Rotation2d(0)), VecBuilder.fill(0.1, 0.1, 0.03), VecBuilder.fill(0.3, 0.3, 0.6)); 
   
@@ -67,7 +68,7 @@ public class Swerve extends SubsystemHandler {
 
  /**  -180 , 180 */ @Log
   public Rotation2d getYaw() {
-    return Rotation2d.fromDegrees(-1 * m_Gyro.getYaw()); 
+    return Rotation2d.fromDegrees(-1 * m_Pigeon.getAngle()); 
   }
 
   @Debug
@@ -76,10 +77,11 @@ public class Swerve extends SubsystemHandler {
   }
 
   public void zeroYaw() {
-    m_Gyro.zeroYaw();
+    m_Pigeon.reset();
+    //m_Gyro.zeroYaw();
     resetPose(new Pose2d(getPose().getTranslation(), Rotation2d.fromDegrees((DriverStation.getAlliance().isPresent() ? (DriverStation.getAlliance().get() == DriverStation.Alliance.Red ? 180 : 0) : 0))));
   }
-//SHIT IN THE ASS
+
   public void resetPose(Pose2d pose) {
     m_poseEstimator.resetPosition(getYaw(), m_swervePositions, pose);
   }
@@ -117,8 +119,8 @@ public class Swerve extends SubsystemHandler {
     for(SwerveModule mod : Constants.swerve.swerveMods){
         mod.setDesiredState(swerveModuleStates[mod.moduleNumber], isOpenLoop);
     }
-  }  
-//HEHEHEHEHEHEHE
+  }
+
   public void Drive(ChassisSpeeds c) {
     SwerveModuleState[] swerveModuleStates = Constants.swerve.swerveKinematics.toSwerveModuleStates(c);
     SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, Constants.swerve.maxSpeed);
@@ -161,8 +163,8 @@ public class Swerve extends SubsystemHandler {
   @Override
   public void periodic() {
 
-    if (!m_Gyro.isConnected())
-      PLog.unusual("Swerve", "Gyro Not Found");
+    //if (!m_Gyro.isConnected())
+    //  PLog.unusual("Swerve", "Gyro Not Found");
 
     for (int i = 0; i < 4; ++i) {
       m_swervePositions[i] = Constants.swerve.swerveMods[i].getPosition();
@@ -199,6 +201,8 @@ public class Swerve extends SubsystemHandler {
     builder.addDoubleProperty("angle for speaker", ()->AngleForSpeaker().getDegrees(), null);
     builder.addDoubleProperty("AccelerationX", ()->accelerationX, null); 
     builder.addDoubleProperty("AccelerationY", ()->accelerationY, null); 
+
+    builder.addStringProperty("Chassis Speeds", ()->getRobotRelativeSpeeds().toString(), null);
 
     SmartDashboard.putData("Field", Constants.Field.sim);
   }

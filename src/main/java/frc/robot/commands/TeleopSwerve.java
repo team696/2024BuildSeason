@@ -106,7 +106,7 @@ public class TeleopSwerve extends Command {
         if (rightJoy != null && rightJoy.getAsBoolean()){
             double pid = pidController.calculate(Swerve.get().getPose().getRotation().getDegrees(), goalRotation.getAsDouble());
             if (Math.abs(pidController.getPositionError()) > 1)
-                rAxis = Math.abs(Math.pow(pid, 2)) * 0.7 * Math.signum(pid) + pid * 2;
+                rAxis = Math.abs(Math.pow(pid, 2)) * 0.7 * Math.signum(pid) + pid * 2.2;
             else    
                 rAxis = 0;
             //magnitude *= 0.75;

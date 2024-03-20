@@ -62,16 +62,16 @@ public final class Constants {
 		public static final TreeMap<Double, Shooter.State> distToState = new TreeMap<Double, Shooter.State>(){{
 			put(1.5 ,new Shooter.State(60,2500,2000));
             put(2.2 ,new Shooter.State(50, 3000,2500));
-            put(2.8 ,new Shooter.State(41, 3000,2500));
-            put(3.6 ,new Shooter.State(39, 3000,2500));
+            put(2.8 ,new Shooter.State(40.5, 3000,2500));
+            put(3.6 ,new Shooter.State(37.5, 3000,2500));
             put(4.3 ,new Shooter.State(35, 3000,2500));
-            put(4.8, new Shooter.State(33 , 3200,2900));
-            put(5.2, new Shooter.State(32.5, 3200, 2900));
-            put(5.4 ,new Shooter.State(32, 3200,2900));
-            put(5.6, new Shooter.State(31, 3200,2900));
-            put(5.7, new Shooter.State(32.5, 3200, 2900));
-            put(6.2, new Shooter.State(30.5, 3200, 2900));
-			put(12., new Shooter.State(31, 3200,2900));
+            put(4.8, new Shooter.State(33, 3200,2900));
+            put(5.2, new Shooter.State(33, 3200, 2900));
+            put(5.4 ,new Shooter.State(32.5, 3200,2900));
+            put(5.6, new Shooter.State(32, 3200,2900));
+            put(5.7, new Shooter.State(31.5, 3200, 2900));
+            put(6.2, new Shooter.State(30, 3200, 2900));
+			put(12., new Shooter.State(29, 3200,2900));
          /*
             put(1., new Shooter.State(60, 3000, 3000));
             put(1.5, new Shooter.State(60, 3000, 3000));
@@ -101,7 +101,7 @@ public final class Constants {
 
 		public static final double wheelX = Units.inchesToMeters(21.75);
 		public static final double wheelY = Units.inchesToMeters(21.75);
-		public static final double wheelDiameter = Units.inchesToMeters(3.93);
+		public static final double wheelDiameter = Units.inchesToMeters(3.89);
 		public static final double wheelCircumference = wheelDiameter * Math.PI;
 
 		public static final double theoreticalMaxSpeed = Motors.Kraken.freeSpinRPM / 60 / driveGearRatio * wheelCircumference; // 5.13 mps way more resonable

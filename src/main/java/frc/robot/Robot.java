@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.commands.Amp;
 import frc.robot.commands.Drop;
+import frc.robot.commands.ManualShoot;
 import frc.robot.commands.Shoot;
 import frc.robot.commands.ShootIntakeAmp;
 import frc.robot.commands.ShooterDefault;
@@ -56,6 +57,7 @@ public class Robot extends TimedRobot {
 
         Controls.ExtraC.whileTrue(new intakeAmp());
         Controls.ExtraA.whileTrue(new ShootIntakeAmp(Controls.Rollers::getAsBoolean));
+        Controls.Rightest.whileTrue(new ManualShoot());
     }
 
     private void configureControllerBinds() { 
@@ -100,6 +102,7 @@ public class Robot extends TimedRobot {
         
         SmartDashboard.putData(Swerve.get());
         SmartDashboard.putData(Intake.get());
+        SmartDashboard.putData(Shooter.get());
         SmartDashboard.putNumber("Shooter Offset", 0);
 
         Shooter.get().setDefaultCommand(new ShooterDefault());
@@ -142,8 +145,6 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     Intake.get().setDefaultCommand(Intake.get().goToAngle(Position.down));
-    Shooter.get().setDefaultCommand(Shooter.get().defaultAutoCom());
-
     m_autonomousCommand = Auto.Selected();
 
     // schedule the autonomous command (example)
@@ -159,7 +160,6 @@ public class Robot extends TimedRobot {
 
   @Override 
   public void autonomousExit() {
-        Shooter.get().setDefaultCommand(Shooter.get().defaultCom());
         Intake.get().setDefaultCommand(Intake.get().goToAngle(Position.stowed));
   }
 

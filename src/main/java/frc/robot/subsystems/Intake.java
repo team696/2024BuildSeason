@@ -25,10 +25,10 @@ public class Intake extends SubsystemHandler {
                               
     public enum Position { 
         stowed(0), 
-        down(19.6), 
+        down(20.5), 
         passback(14),
         spit(4),
-        amp(3);
+        amp(5);
 
         public double pos;
         Position(double p) {

@@ -4,6 +4,7 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Shooter;
 
@@ -23,12 +24,18 @@ public class ShooterDefault extends Command {
     public void execute() {
         Shooter.get().setAngle(30);
         Shooter.get().serializerPosition(goal);
+        if (DriverStation.isAutonomousEnabled()) {
+            Shooter.get().setShooterSpeedPercent(0);
+        } else {
+            Shooter.get().setShooterSpeedPercent(0.1);
+        }
     }
 
     @Override
     public void end(boolean interrupted) {
         Shooter.get().stopAngle();
         Shooter.get().stopSerializer();
+        Shooter.get().stopShooter();
     }
 
   // Returns true when the command should end.

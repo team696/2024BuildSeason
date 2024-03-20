@@ -53,23 +53,29 @@ public class Configs {
         swerve_Angle.CurrentLimits.SupplyTimeThreshold = 0.1;
         swerve_Angle.Slot0.kP = 128.0;
         swerve_Angle.Slot0.kI = 0.0;
-        swerve_Angle.Slot0.kD = 6.0;
+        swerve_Angle.Slot0.kD = 0.0;
 
         /** Swerve Drive Motor Configuration */
         swerve_Drive.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
         swerve_Drive.MotorOutput.NeutralMode = NeutralModeValue.Brake;
         swerve_Drive.Feedback.SensorToMechanismRatio = Constants.swerve.driveGearRatio;
         swerve_Drive.CurrentLimits.SupplyCurrentLimitEnable = true;
-        swerve_Drive.CurrentLimits.SupplyCurrentLimit = 35;
+        swerve_Drive.CurrentLimits.SupplyCurrentLimit = 25;
         swerve_Drive.CurrentLimits.SupplyCurrentThreshold = 60;
-        swerve_Drive.CurrentLimits.SupplyTimeThreshold = 0.1;
+        swerve_Drive.CurrentLimits.SupplyTimeThreshold = 0.2;
+        swerve_Drive.CurrentLimits.StatorCurrentLimitEnable = true;
+        swerve_Drive.CurrentLimits.StatorCurrentLimit = 60;
+
+        swerve_Drive.Voltage.PeakForwardVoltage = 12.;
+        swerve_Drive.Voltage.PeakReverseVoltage = -12.;
+
         swerve_Drive.Slot0.kP = 2.;
         swerve_Drive.Slot0.kI = 0.0;
         swerve_Drive.Slot0.kD = 0.0;
-        swerve_Drive.OpenLoopRamps.DutyCycleOpenLoopRampPeriod = 0.2;
-        swerve_Drive.OpenLoopRamps.VoltageOpenLoopRampPeriod = 0.2;
-        swerve_Drive.ClosedLoopRamps.DutyCycleClosedLoopRampPeriod = 0.1;
-        swerve_Drive.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.1;
+        swerve_Drive.OpenLoopRamps.DutyCycleOpenLoopRampPeriod = 0.25;
+        swerve_Drive.OpenLoopRamps.VoltageOpenLoopRampPeriod = 0.25;
+        swerve_Drive.ClosedLoopRamps.DutyCycleClosedLoopRampPeriod = 0.02;
+        swerve_Drive.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.02;
 
         /** Individual Swerve Module Configurations -> frontLeft, frontRight, backLeft, backRight */ 
         Mod0.CANcoderId = 0;  
@@ -98,20 +104,19 @@ public class Configs {
         shooter_Top.Slot0.kP = 1;
         shooter_Top.CurrentLimits.SupplyCurrentLimitEnable = true;
         shooter_Top.CurrentLimits.SupplyCurrentLimit = 35;
-        shooter_Top.CurrentLimits.SupplyCurrentThreshold = 50;
-        shooter_Top.CurrentLimits.SupplyTimeThreshold = 0.1;
-        
+        shooter_Top.CurrentLimits.SupplyCurrentThreshold = 60;
+        shooter_Top.CurrentLimits.SupplyTimeThreshold = 0.3;
     
         shooter_Bottom.MotorOutput.NeutralMode = NeutralModeValue.Coast;
         shooter_Bottom.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
         shooter_Bottom.Slot0.kP = 1;
         shooter_Bottom.CurrentLimits.SupplyCurrentLimitEnable = true;
         shooter_Bottom.CurrentLimits.SupplyCurrentLimit = 35;
-        shooter_Bottom.CurrentLimits.SupplyCurrentThreshold = 50;
-        shooter_Bottom.CurrentLimits.SupplyTimeThreshold = 0.1;
+        shooter_Bottom.CurrentLimits.SupplyCurrentThreshold = 60;
+        shooter_Bottom.CurrentLimits.SupplyTimeThreshold = 0.3;
         
         shooter_Serializer.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-        shooter_Serializer.Slot0.kP = 2.5;
+        shooter_Serializer.Slot0.kP = 1.5;
 
         shooter_Angle.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
         shooter_Angle.MotorOutput.NeutralMode = NeutralModeValue.Brake;
@@ -123,7 +128,7 @@ public class Configs {
         shooter_Angle.CurrentLimits.SupplyTimeThreshold = 0.1;
 
         /** Pigeon Configuration */ 
-        swerve_Pigeon.MountPose.MountPoseYaw = 0;
+        swerve_Pigeon.MountPose.MountPoseYaw = -90;
 
         /** Climber Motor Configuration */
         climber_Master.Slot0.kP = 1;

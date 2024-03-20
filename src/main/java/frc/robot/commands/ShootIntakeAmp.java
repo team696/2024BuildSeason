@@ -6,6 +6,7 @@ package frc.robot.commands;
 
 import java.util.function.BooleanSupplier;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
@@ -13,6 +14,7 @@ import frc.robot.subsystems.Intake.Position;
 
 public class ShootIntakeAmp extends Command {
     BooleanSupplier button;
+    double unbroken = 0;
   /** Creates a new ShootIntakeAmp. */
   public ShootIntakeAmp(BooleanSupplier button) {
     this.button = button;
@@ -22,18 +24,27 @@ public class ShootIntakeAmp extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-
+    unbroken = Double.MAX_VALUE;
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
     Shooter.get().setAngle(63);
-    Intake.get().positionAngle(Position.amp);
-    if (button.getAsBoolean() && Intake.get().mainAngle() > Position.amp.pos - 0.5) {
-        Intake.get().setRollersOutput(-0.46);
+    if (Timer.getFPGATimestamp() - unbroken > 1.5) {
+        Intake.get().positionAngle(Position.stowed);
+    } else {
+        Intake.get().positionAngle(Position.amp);
+    }
+    if (button.getAsBoolean()) {
+        Intake.get().setRollersOutput(-0.41);
     } else {
         Intake.get().stopRollers();
+    }
+    Intake.get().setSerializerSpeedPercent(0);
+
+    if (unbroken == Double.MAX_VALUE && Intake.get().getBeamBreak()) {
+        unbroken = Timer.getFPGATimestamp();
     }
   }
 

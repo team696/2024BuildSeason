@@ -59,7 +59,7 @@ public class Auto {
             Constants.Field.sim.getObject("Path").setPoses(poses);
         });
 
-        NamedCommands.registerCommand("Shoot", new Shoot(()->m_swerve.DistToSpeaker(), true).asProxy());
+        NamedCommands.registerCommand("Shoot", new Shoot(()->m_swerve.DistToSpeaker(), true).asProxy()); //.deadlineWith(new suck()).
         NamedCommands.registerCommand("Intake", new intake(true).asProxy());
         NamedCommands.registerCommand("Rotate", new Rotate());
         NamedCommands.registerCommand("Shoot Target", new ParallelCommandGroup(new Shoot(()->m_swerve.DistToSpeaker(), true).asProxy(), new Rotate()));

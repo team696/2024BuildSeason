@@ -200,14 +200,6 @@ public class Shooter extends SubsystemHandler {
         m_AngleMotor.PercentOutput(percent);
     }
 
-    public Command defaultCom() { 
-        return this.runEnd(()->{setAngle(30);}, ()->{stopAngle();});
-    }
-
-    public Command defaultAutoCom() { 
-        return this.runEnd(()->{setAngle(30); setShooterSpeedPercent(0.6);}, ()->{stopAngle(); stopShooter(); stopSerializer();});
-    }
-
     @Override
     public void periodic() {
         if (!m_Encoder.isConnected()) {
@@ -239,5 +231,7 @@ public class Shooter extends SubsystemHandler {
     }
 
     @Override
-    public void initSendable(SendableBuilder builder) {    } 
+    public void initSendable(SendableBuilder builder) {  
+        builder.addDoubleProperty("Encoder", this::getAngle, null);
+      } 
 }

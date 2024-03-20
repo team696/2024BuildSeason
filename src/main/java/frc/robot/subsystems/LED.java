@@ -59,6 +59,7 @@ public class LED extends SubsystemHandler {
 
     @Override
     public void periodic() {
+        /* 
         if (override) {
             setLeds(r,g,b);
         } else if (DriverStation.isTeleopEnabled()) {
@@ -70,5 +71,6 @@ public class LED extends SubsystemHandler {
         } else {
             defaultAnimate();
         }
+        */
     }
 }
