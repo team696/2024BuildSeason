@@ -64,6 +64,10 @@ public class Robot extends TimedRobot {
         TeleopSwerve controllerTeleop=new TeleopSwerve(()->(-Controls.controller.getRawAxis(1)), ()->(-Controls.controller.getRawAxis(0)), ()->Controls.controller.getRawAxis(4), ()->false, ()->Swerve.get().AngleForSpeaker().getDegrees(), 0, true, true);
         controllerTeleop.setAim(()->Controls.controller.button(10).getAsBoolean());
         Swerve.get().setDefaultCommand(controllerTeleop);
+
+        // B - PASS
+        Controls.controller.b().whileTrue(new Pass());
+        // HOME - ZERO YAW
         Controls.controller.button(9).onTrue(new InstantCommand(()->Swerve.get().zeroYaw()));
         // A - SHOOT
         Controls.controller.a().whileTrue(new Shoot(()->Swerve.get().DistToSpeaker(), ()->true));
