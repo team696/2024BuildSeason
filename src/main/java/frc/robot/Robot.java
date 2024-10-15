@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.commands.Amp;
 import frc.robot.commands.Drop;
 import frc.robot.commands.ManualShoot;
+import frc.robot.commands.Pass;
 import frc.robot.commands.Shoot;
 import frc.robot.commands.ShootIntakeAmp;
 import frc.robot.commands.ShooterDefault;

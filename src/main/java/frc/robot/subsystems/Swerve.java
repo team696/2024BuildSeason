@@ -118,9 +118,16 @@ public class Swerve extends SubsystemHandler {
     return rot;
   }
   public double getDistToCorner(){
-    return DriverStation.getAlliance().get()==Alliance.Red?distTo(Constants.Field.RED.Speaker):distTo(Constants.Field.BLUE.Speaker);
+    return DriverStation.getAlliance().get()==Alliance.Red?distTo(Constants.Field.RED.Corner):distTo(Constants.Field.BLUE.Corner);
     
   }
+  public Rotation2d getAngleToCorner() {
+    if (DriverStation.getAlliance().get() == Alliance.Red) 
+      return getVelocityAdjustedAngleToPos(Constants.Field.RED.Corner);
+
+    return getVelocityAdjustedAngleToPos(Constants.Field.BLUE.Corner);
+  }
+
 
   public ChassisSpeeds getRobotRelativeSpeeds() {
     return Constants.swerve.swerveKinematics.toChassisSpeeds(getStates());

@@ -32,12 +32,14 @@ public final class Constants {
             public static final Pose2d Amp = new Pose2d(12, 8, new Rotation2d(Math.PI/2));
             public static final Pose2d Source = new Pose2d(1, 0.5, Rotation2d.fromDegrees(-135));
             public static final Pose2d Trap = new Pose2d(11.754, 5.12, Rotation2d.fromDegrees(60));
-        }
+			public static final Translation2d Corner = new Translation2d(14.57, 7.);      
+		}
         public static final class BLUE {
             public static final Translation2d Speaker = new Translation2d(0, 5.55);
             public static final Pose2d Amp = new Pose2d(4, 8, new Rotation2d(Math.PI/2));
             public static final Pose2d Source = new Pose2d(15.15, 1.5, Rotation2d.fromDegrees(135)); 
-        }
+			public static final Translation2d Corner = new Translation2d(2., 7.);      
+		}
 	}
 	public static class Motors {
         public static final class Falcon {

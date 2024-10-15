@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.GenericHID;
 
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
+import java.util.function.Supplier;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -87,7 +88,7 @@ public class TeleopSwerve extends Command {
         addRequirements(Swerve.get());
     }
     public TeleopSwerve(Supplier<Rotation2d> rotation){
-        TeleopSwerve(()->0, ()->0, ()->0, ()->true, ()->rotation.get().getDegrees(), 0, true, false);
+        TeleopSwerve(()->(0.0), ()->(0.0), ()->0.0, ()->true, ()->rotation.get().getDegrees(), 0.0, true, false);
     }
     @Override
     public void initialize() {

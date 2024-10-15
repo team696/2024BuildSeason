@@ -7,6 +7,7 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Swerve;
+import frc.robot.util.Constants;
 import frc.robot.util.Constants.shooter;
 
 public class Pass extends Command {
@@ -33,8 +34,9 @@ public class Pass extends Command {
   public void execute() {
     double dist=Swerve.get().getDistToCorner();
     // Check if all the mechanisms are in the right place to shoot 
-    Shooter.state goalState=constants.shooter.distToState(dist);
-    if(Math.abs(Swerve.get().getRobotRelativeSpeeds().omegaRadiansPerSecond) < 0.3)&&Shooter.get.upToSpeed(goalState.topSpeed, goalState.bottomSpeed, 200)&&Math.abs(Swerve.get().getPose().getRotation().getDegrees() - Swerve.get().getAngleToCorner().getDegrees()) < 5){
+    Shooter.State goalState=Constants.shooter.distToState.compute(dist, null);
+    if(Math.abs(Swerve.get().getRobotRelativeSpeeds().omegaRadiansPerSecond) < 0.3&&Shooter.get().upToSpeed(goalState.topSpeed, goalState.bottomSpeed, 200)&&
+    Math.abs(Swerve.get().getPose().getRotation().getDegrees() - Swerve.get().getAngleToCorner().getDegrees()) < 5){
       feed=true;
     }
 
