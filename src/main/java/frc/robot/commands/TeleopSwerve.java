@@ -86,7 +86,9 @@ public class TeleopSwerve extends Command {
 
         addRequirements(Swerve.get());
     }
-
+    public TeleopSwerve(Supplier<Rotation2d> rotation){
+        TeleopSwerve(()->0, ()->0, ()->0, ()->true, ()->rotation.get().getDegrees(), 0, true, false);
+    }
     @Override
     public void initialize() {
     }
