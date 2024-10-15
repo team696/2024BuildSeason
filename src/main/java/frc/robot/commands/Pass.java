@@ -31,7 +31,19 @@ public class Pass extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    //double dist=Swerve.get().
+    double dist=Swerve.get().getDistToCorner();
+    // Check if all the mechanisms are in the right place to shoot 
+    Shooter.state goalState=constants.shooter.distToState(dist);
+    if(Math.abs(Swerve.get().getRobotRelativeSpeeds().omegaRadiansPerSecond) < 0.3)&&Shooter.get.upToSpeed(goalState.topSpeed, goalState.bottomSpeed, 200)){
+      feed=true;
+    }
+
+    
+    if(feed){
+      Shooter.get().setSerializerSpeedPercent(1);
+    }else{
+      Shooter.get().setSerializerSpeedPercent(1);
+    }
   }
 
   // Called once the command ends or is interrupted.
