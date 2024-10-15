@@ -90,6 +90,14 @@ public final class Constants {
             put(12., new Shooter.State(32, 3000, 3000));
    */
 		}};
+		public static final TreeMap<double, Shooter.State> passDistToState=new TreeMap<Double, Shooter.State>(){{
+			put(1.5, new Shooter.State(24, 1500, 1500));
+			put(3.0, new Shooter.State(26, 1800, 1800));
+			put(4.5, new Shooter.State(28, 1950, 1950));
+			put(7.5, new Shooter.State(29, 2100, 2100);
+			put(11, new Shooter.State(30, 2200, 2200);
+			
+		}};
 	}
 	public static class swerve {
 		public static final double drivekS = (0.667 / 12); 
