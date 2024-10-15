@@ -60,16 +60,17 @@ public class Robot extends TimedRobot {
 
     private void configureControllerBinds() { 
 
-        Controls.controller.y().whileTrue(new ShooterIntake());
 
         TeleopSwerve controllerTeleop=new TeleopSwerve(()->(-Controls.controller.getRawAxis(1)), ()->(-Controls.controller.getRawAxis(0)), ()->Controls.controller.getRawAxis(4), ()->false, ()->Swerve.get().AngleForSpeaker().getDegrees(), 0, true, true);
         controllerTeleop.setAim(()->Controls.controller.button(10).getAsBoolean());
         Swerve.get().setDefaultCommand(controllerTeleop);
         Controls.controller.button(9).onTrue(new InstantCommand(()->Swerve.get().zeroYaw()));
+        // A - SHOOT
         Controls.controller.a().whileTrue(new Shoot(()->Swerve.get().DistToSpeaker(), ()->true));
+        // X - AMP
         Controls.controller.x().whileTrue(new Amp(Controls.controller.b()::getAsBoolean));
-        //Controls.controller.y().whileTrue(new ShooterIntake());
-
+        // Y - PERFORM SOURCE INTAKE
+        Controls.controller.y().whileTrue(new ShooterIntake());
     }
 
     @Override

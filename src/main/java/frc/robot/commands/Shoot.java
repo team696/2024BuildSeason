@@ -69,7 +69,7 @@ public class Shoot extends Command {
     Shooter.get().setAngle(desiredState.angle);
     Shooter.get().setSpeed(desiredState.topSpeed, desiredState.bottomSpeed);
     boolean aimed = Math.abs(Swerve.get().getPose().getRotation().getDegrees() - Swerve.get().AngleForSpeaker().getDegrees()) < 4;
-    if(/*aimed &&*/ button.get() /*&& Shooter.get().upToSpeed(desiredState.topSpeed, desiredState.bottomSpeed, 50) && Shooter.get().atAngle(desiredState.angle, 1)*/) {
+    if(/*aimed &&*/ button.get() && Shooter.get().upToSpeed(desiredState.topSpeed, desiredState.bottomSpeed, 50) && Shooter.get().atAngle(desiredState.angle, 1)) {
       feed = true;
     } 
     //feed=button.get();
