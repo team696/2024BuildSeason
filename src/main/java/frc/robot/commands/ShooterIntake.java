@@ -23,7 +23,7 @@ public class ShooterIntake extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    Shooter.get().setAngle(63);
+    Shooter.get().setAngle(/*63*/61);
     if (Shooter.get().getBeamBreak()) {
       Shooter.get().setShooterSpeedPercent(-0.17);
       Shooter.get().setSerializerSpeedPercent(-0.07);

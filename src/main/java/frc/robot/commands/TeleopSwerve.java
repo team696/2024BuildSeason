@@ -87,8 +87,19 @@ public class TeleopSwerve extends Command {
 
         addRequirements(Swerve.get());
     }
-    public TeleopSwerve(Supplier<Rotation2d> rotation){
-        TeleopSwerve(()->(0.0), ()->(0.0), ()->0.0, ()->true, ()->rotation.get().getDegrees(), 0.0, true, false);
+    public TeleopSwerve(final Supplier<Rotation2d> goalRotation){
+        translation=()->0;
+        strafe=()->0;
+        this.rotation=()->0;
+        this.openLoop=false;
+        this.deadband=0;
+        this.rightJoy=()->true;
+        this.goalRotation=()->goalRotation.get().getDegrees();
+        pidController = new PIDController(0.0056, 0.00, 0);
+        pidController.enableContinuousInput(-180, 180);
+
+        addRequirements(Swerve.get());
+
     }
     @Override
     public void initialize() {
