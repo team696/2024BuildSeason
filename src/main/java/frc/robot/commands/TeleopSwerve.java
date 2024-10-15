@@ -49,6 +49,9 @@ public class TeleopSwerve extends Command {
 
         addRequirements(Swerve.get());
     }
+    public TeleopSwerve(Supplier<Rotation2d> rotation){
+        TeleopSwerve(()->0, ()->0, ()->0, ()->true, rotation, 0, true, false);
+    }
 
     public TeleopSwerve(GenericHID controller, int translationAxis, int strafeAxis, int rotationAxis, double deadband,boolean fieldRelative, boolean openLoop) {
         this.fieldRelative = fieldRelative;
