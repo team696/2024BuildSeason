@@ -58,7 +58,7 @@ public final class Constants {
 		public static final Transform3d position =  new Transform3d(new Translation3d(Units.inchesToMeters(-11.441), Units.inchesToMeters(-7.051), Units.inchesToMeters(8.5)), new Rotation3d(0, Units.degreesToRadians(-27.8), Units.degreesToRadians(180)));
 	}
 	public static class shooter {
-	    public static final double AngleOffset = /*111.5*/109;
+	    public static final double AngleOffset = /*111.5*//*109*/174.7;
 		public static final TreeMap<Double, Shooter.State> distToState = new TreeMap<Double, Shooter.State>(){{
 			put(1.5 ,new Shooter.State(60,2500,2000));
             put(2.2 ,new Shooter.State(50, 3000,2500));

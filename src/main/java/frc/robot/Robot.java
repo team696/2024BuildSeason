@@ -19,7 +19,6 @@ import frc.robot.commands.ShooterDefault;
 import frc.robot.commands.ShooterIntake;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.commands.Trap;
-import frc.robot.commands.intake;
 import frc.robot.commands.intakeAmp;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.LED;
@@ -48,7 +47,6 @@ public class Robot extends TimedRobot {
 
     private void configureOperatorBinds() {
         Controls.Shoot.whileTrue(new Shoot(()->Swerve.get().DistToSpeaker(), ()->true));
-        Controls.Ground.whileTrue(new intake());
         Controls.Source.whileTrue(new ShooterIntake().alongWith(new TeleopSwerve(Controls.joystickPanel, 1, 0, 2, ()->135, Constants.deadBand, true, true)));
         Controls.Amp.whileTrue(new Amp(Controls.Rollers::getAsBoolean).alongWith(new TeleopSwerve(Controls.joystickPanel, 1, 0, 2, ()->-90, Constants.deadBand, true, true)));
         Controls.Trap.whileTrue(Auto.PathFind(Constants.Field.RED.Trap).andThen(new Trap(()->true)));
@@ -61,21 +59,16 @@ public class Robot extends TimedRobot {
     }
 
     private void configureControllerBinds() { 
-        Controls.controller.rightBumper().whileTrue(new intake());
 
         Controls.controller.y().whileTrue(new ShooterIntake());
 
-      //Swerve.get().setDefaultCommand(new TeleopSwerve(Controls.controller.getHID(), 1, 0, 4, Constants.deadBand,true, true));
-      TeleopSwerve controllerTeleop=new TeleopSwerve(()->(-Controls.controller.getRawAxis(1)/2), ()->(-Controls.controller.getRawAxis(0)/2), ()->Controls.controller.getRawAxis(4), ()->false, ()->Swerve.get().AngleForSpeaker().getDegrees(), 0, true, true);
-      controllerTeleop.setAim(()->Controls.controller.button(10).getAsBoolean());
+        TeleopSwerve controllerTeleop=new TeleopSwerve(()->(-Controls.controller.getRawAxis(1)), ()->(-Controls.controller.getRawAxis(0)), ()->Controls.controller.getRawAxis(4), ()->false, ()->Swerve.get().AngleForSpeaker().getDegrees(), 0, true, true);
+        controllerTeleop.setAim(()->Controls.controller.button(10).getAsBoolean());
         Swerve.get().setDefaultCommand(controllerTeleop);
         Controls.controller.button(9).onTrue(new InstantCommand(()->Swerve.get().zeroYaw()));
         Controls.controller.a().whileTrue(new Shoot(()->Swerve.get().DistToSpeaker(), ()->true));
-        //Controls.controller.button(9).
         Controls.controller.x().whileTrue(new Amp(Controls.controller.b()::getAsBoolean));
-        Controls.controller.leftTrigger().whileTrue(new intake());
-        //Controls.controller.leftTrigger(0.9).whileTrue(Intake.get().goToAngle(Position.down));
-        //Controls.controller.rightTrigger(0.9).whileTrue(Intake.get().goToAngle(Position.stowed));
+        //Controls.controller.y().whileTrue(new ShooterIntake());
 
     }
 

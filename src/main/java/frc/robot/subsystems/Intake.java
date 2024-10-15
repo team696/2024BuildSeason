@@ -67,7 +67,6 @@ public class Intake extends SubsystemHandler {
         m_Rollers = new TalonFactory(20, Constants.canivoreName, Constants.CONFIGS.intake_Rollers, "Intake Rollers");
 
         m_Serializer = new TalonFactory(19, Constants.canivoreName, Constants.CONFIGS.intake_Serializer, "Intake Serializer");
-
         m_Angle.setPosition(0);
         m_AngleControl = new MotionMagicDutyCycle(0);
         m_ArmFeedforward = new ArmFeedforward(0, 0.07, 0);

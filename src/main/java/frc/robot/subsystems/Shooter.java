@@ -3,6 +3,7 @@ package frc.robot.subsystems;
 import java.util.Map;
 
 import com.ctre.phoenix6.controls.PositionDutyCycle;
+import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
@@ -32,6 +33,8 @@ public class Shooter extends SubsystemHandler {
 
     private TalonFactory m_AngleMotor;
 
+    private TalonFactory m_SerializerFollower;
+
     private DutyCycleEncoder m_Encoder;
 
     private BangBangController m_shooterController;
@@ -43,6 +46,7 @@ public class Shooter extends SubsystemHandler {
     private ProfiledPIDController m_AngleTrapPID;
     private ArmFeedforward m_AngleFeedForward;
 
+    private PositionVoltage angleVoltage;
     private DigitalInput m_BeamBreak;
 
     public static class State {
@@ -68,15 +72,16 @@ public class Shooter extends SubsystemHandler {
         m_Bottom = new TalonFactory(11, Constants.canivoreName, Constants.CONFIGS.shooter_Bottom, "Shooter Bottom Roller");
         m_AngleMotor = new TalonFactory(12, Constants.canivoreName, Constants.CONFIGS.shooter_Angle, "Shooter Angle");
         m_Serializer = new TalonFactory(13, Constants.canivoreName, Constants.CONFIGS.shooter_Serializer, "Shooter Serializer");
-
+        //m_SerializerFollower=new TalonFactory(25, Constants.canivoreName, Constants.CONFIGS.shooter_Serializer, "Shooter Serializer Follower");
+        //m_SerializerFollower.Follow(m_Serializer, false);
         m_Encoder = new DutyCycleEncoder(7);
-        
         m_shooterController = new BangBangController();
 
-        m_AngleTrapPID = new ProfiledPIDController(1/40.0, 0, 0, new TrapezoidProfile.Constraints(3000, 2000));
+        m_AngleTrapPID = new ProfiledPIDController(1/70.0, 0, 0, new TrapezoidProfile.Constraints(3000, 2000));
         m_AngleTrapPID.reset(0);
         m_AngleFeedForward = new ArmFeedforward(0.05, 1/48.0, 0, 0);
 
+        angleVoltage=new PositionVoltage(0);
         m_serializerPositionDutyCycle = new PositionDutyCycle(0);
 
         m_BeamBreak = new DigitalInput(9);

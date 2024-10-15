@@ -17,6 +17,7 @@ import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.interfaces.Gyro;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.lib.SubsystemHandler;
@@ -90,6 +91,35 @@ public class Swerve extends SubsystemHandler {
 
   public void resetPose(){
     resetPose(new Pose2d());
+  }
+      public double distTo(Translation2d position) {
+        return getPose().getTranslation().getDistance(position);
+    }
+
+    public double distTo(Pose2d position) {
+        return distTo(position.getTranslation());
+    }
+
+    public Rotation2d angleTo(Translation2d position) {
+        Translation2d delta = getPose().getTranslation().minus(position);
+        Rotation2d rot = Rotation2d.fromRadians(Math.atan2(delta.getY(), delta.getX()));
+        return rot;
+    }
+
+    public Rotation2d angleTo(Pose2d position) {
+        return angleTo(position.getTranslation());
+    }
+
+  public Rotation2d getVelocityAdjustedAngleToPos(Translation2d position) {
+    double dist = distTo(position);
+    Translation2d adjustment = (new Translation2d(0, 1.0/11.0 * getRobotRelativeSpeeds().vyMetersPerSecond * dist)).rotateBy(angleTo(position)).plus(getPose().getTranslation()).minus(position);
+    Rotation2d rot = Rotation2d.fromRadians(Math.atan2(adjustment.getY(), adjustment.getX()));
+
+    return rot;
+  }
+  public double getDistToCorner(){
+    return DriverStation.getAlliance().get()==Alliance.Red?distTo(Constants.Field.RED.Speaker):distTo(Constants.Field.BLUE.Speaker);
+    
   }
 
   public ChassisSpeeds getRobotRelativeSpeeds() {

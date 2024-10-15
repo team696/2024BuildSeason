@@ -1,0 +1,31 @@
+{
+  "version": 1.0,
+  "startingPose": {
+    "position": {
+      "x": 0.7878249089831516,
+      "y": 4.403945474557616
+    },
+    "rotation": -60.4612177404419
+  },
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "named",
+          "data": {
+            "name": "Shoot Target"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "fuck up the notes source"
+          }
+        }
+      ]
+    }
+  },
+  "folder": null,
+  "choreoAuto": false
+}

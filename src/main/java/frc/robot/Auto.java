@@ -21,7 +21,6 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.lib.Log.PLog;
 import frc.robot.commands.Rotate;
 import frc.robot.commands.Shoot;
-import frc.robot.commands.intake;
 import frc.robot.subsystems.Swerve;
 import frc.robot.util.Constants;
 import frc.robot.util.Dashboard;
@@ -60,7 +59,6 @@ public class Auto {
         });
 
         NamedCommands.registerCommand("Shoot", new Shoot(()->m_swerve.DistToSpeaker(), true).asProxy()); //.deadlineWith(new suck()).
-        NamedCommands.registerCommand("Intake", new intake(true).asProxy());
         NamedCommands.registerCommand("Rotate", new Rotate());
         NamedCommands.registerCommand("Shoot Target", new ParallelCommandGroup(new Shoot(()->m_swerve.DistToSpeaker(), true).asProxy(), new Rotate()));
 
