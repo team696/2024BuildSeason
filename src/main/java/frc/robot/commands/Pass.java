@@ -34,7 +34,7 @@ public class Pass extends Command {
     double dist=Swerve.get().getDistToCorner();
     // Check if all the mechanisms are in the right place to shoot 
     Shooter.state goalState=constants.shooter.distToState(dist);
-    if(Math.abs(Swerve.get().getRobotRelativeSpeeds().omegaRadiansPerSecond) < 0.3)&&Shooter.get.upToSpeed(goalState.topSpeed, goalState.bottomSpeed, 200)){
+    if(Math.abs(Swerve.get().getRobotRelativeSpeeds().omegaRadiansPerSecond) < 0.3)&&Shooter.get.upToSpeed(goalState.topSpeed, goalState.bottomSpeed, 200)&&Math.abs(Swerve.get().getPose().getRotation().getDegrees() - Swerve.get().getAngleToCorner().getDegrees()) < 5){
       feed=true;
     }
 
