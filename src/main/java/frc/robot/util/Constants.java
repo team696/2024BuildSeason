@@ -65,16 +65,16 @@ public final class Constants {
 		public static final TreeMap<Double, Shooter.State> distToState = new TreeMap<Double, Shooter.State>(){{
 			put(1.5 ,new Shooter.State(60,2500,2000));
             put(2.2 ,new Shooter.State(50, 3000,2500));
-            put(2.8 ,new Shooter.State(43.5, 3000,2500));
-            put(3.6 ,new Shooter.State(42, 3000,2500));
-            put(4.3 ,new Shooter.State(41, 3000,2500));
-            put(4.8, new Shooter.State(37.5, 3200,2900));
-            put(5.2, new Shooter.State(36, 3200, 2900));
-            put(5.4 ,new Shooter.State(34.5, 3200,2900));
-            put(5.6, new Shooter.State(33.5, 3200,2900));
-            put(5.7, new Shooter.State(27, 3200, 2900));
-            put(6.2, new Shooter.State(26, 3200, 2900));
-			put(12., new Shooter.State(25, 3200,2900));
+            put(2.8 ,new Shooter.State(41., 3000,2500));
+            put(3.6 ,new Shooter.State(40, 3000,2500));
+            put(4.3 ,new Shooter.State(38, 3000,2500));
+            put(4.8, new Shooter.State(34., 3200,2900));
+            put(5.2, new Shooter.State(32, 3200, 2900));
+            put(5.4 ,new Shooter.State(31, 3200,2900));
+            put(5.6, new Shooter.State(30, 3200,2900));
+            put(5.7, new Shooter.State(24, 3200, 2900));
+            put(6.2, new Shooter.State(23, 3200, 2900));
+			put(12., new Shooter.State(18, 3200,2900));
          /*
             put(1., new Shooter.State(60, 3000, 3000));
             put(1.5, new Shooter.State(60, 3000, 3000));
@@ -92,11 +92,10 @@ public final class Constants {
    */
 		}};
 		public static final TreeMap<Double, Shooter.State> passDistToState=new TreeMap<Double, Shooter.State>(){{
-			put(1.5, new Shooter.State(24, 1500, 1500));
-			put(3.0, new Shooter.State(26, 1800, 1800));
-			put(4.5, new Shooter.State(28, 1950, 1950));
-			put(7.5, new Shooter.State(29, 2100, 2100));
-			put(11.0, new Shooter.State(30, 2200, 2200));
+			put(1.5, new Shooter.State(5., 1500, 1500));
+			put(5., new Shooter.State(5., 1950, 1950));
+			put(6., new Shooter.State(50., 2300, 2300));
+			put(12.0, new Shooter.State(50., 2300, 2300));
 			
 		}};
 	    public static Shooter.State passStateFromDist(double dist) {

@@ -23,7 +23,7 @@ import frc.robot.commands.Rotate;
 import frc.robot.commands.Shoot;
 import frc.robot.subsystems.Swerve;
 import frc.robot.util.Constants;
-import frc.robot.util.Dashboard;
+
 
 public class Auto {
     public static Auto m_instance;
@@ -66,7 +66,6 @@ public class Auto {
         autoChooser = AutoBuilder.buildAutoChooser();
         SmartDashboard.putData("Auto Chooser", autoChooser);
 
-        Dashboard.push("selected_auto", ()->m_instance.autoChooser.getSelected().getName());
         autoChooser.onChange((command)-> {
             visualize();
         });

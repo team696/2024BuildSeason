@@ -55,7 +55,7 @@ public class Robot extends TimedRobot {
     private void configureControllerBinds() { 
 
 
-        TeleopSwerve controllerTeleop=new TeleopSwerve(()->(-Controls.controller.getRawAxis(1)), ()->(-Controls.controller.getRawAxis(0)), ()->Controls.controller.getRawAxis(4), ()->false, ()->Swerve.get().AngleForSpeaker().getDegrees(), 0, true, true);
+        TeleopSwerve controllerTeleop=new TeleopSwerve(()->(-Controls.controller.getRawAxis(1)), ()->(-Controls.controller.getRawAxis(0)), ()->-Controls.controller.getRawAxis(4), ()->false, ()->Swerve.get().AngleForSpeaker().getDegrees(), 0, true, true);
         controllerTeleop.setAim(()->Controls.controller.button(10).getAsBoolean());
         Swerve.get().setDefaultCommand(controllerTeleop);
 
@@ -101,17 +101,13 @@ public class Robot extends TimedRobot {
         SmartDashboard.putNumber("Shooter Offset", 0);
 
         Shooter.get().setDefaultCommand(new ShooterDefault());
-
-
-        Logger.registerLoggable(type.debug, "PDH Voltage",m_PDH::getVoltage);
-        Logger.registerLoggable(type.debug, "Periodic Time Delta", ()->lastPeriodTimeDelta);
     }
 
     @Override
     public void robotPeriodic() {
         CommandScheduler.getInstance().run();
-        if (Constants.DEBUG) 
-            SmartDashboard.putData(m_PDH);
+        //if (Constants.DEBUG) 
+            //SmartDashboard.putData(m_PDH);
     /** Used to update network tables faster (causes lag!) */
         //NetworkTableInstance.getDefault().flush();
 
