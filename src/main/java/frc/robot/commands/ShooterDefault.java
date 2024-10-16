@@ -27,7 +27,7 @@ public class ShooterDefault extends Command {
         if (DriverStation.isAutonomousEnabled()) {
             Shooter.get().setShooterSpeedPercent(0);
         } else {
-            Shooter.get().setShooterSpeedPercent(0.1);
+            Shooter.get().setShooterSpeedPercent(0.03);
         }
     }
 

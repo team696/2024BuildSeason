@@ -1,5 +1,6 @@
 package frc.robot.util;
 
+import java.util.Map;
 import java.util.TreeMap;
 
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
@@ -90,14 +91,21 @@ public final class Constants {
             put(12., new Shooter.State(32, 3000, 3000));
    */
 		}};
-		public static final TreeMap<double, Shooter.State> passDistToState=new TreeMap<Double, Shooter.State>(){{
+		public static final TreeMap<Double, Shooter.State> passDistToState=new TreeMap<Double, Shooter.State>(){{
 			put(1.5, new Shooter.State(24, 1500, 1500));
 			put(3.0, new Shooter.State(26, 1800, 1800));
 			put(4.5, new Shooter.State(28, 1950, 1950));
-			put(7.5, new Shooter.State(29, 2100, 2100);
-			put(11, new Shooter.State(30, 2200, 2200);
+			put(7.5, new Shooter.State(29, 2100, 2100));
+			put(11.0, new Shooter.State(30, 2200, 2200));
 			
 		}};
+	    public static Shooter.State passStateFromDist(double dist) {
+	        dist = Util.clamp(dist, Constants.shooter.passDistToState.firstKey() + 0.01,Constants.shooter.passDistToState.lastKey() - 0.01);
+	        Map.Entry<Double, Shooter.State> lower = Constants.shooter.passDistToState.floorEntry(dist);
+	        Map.Entry<Double, Shooter.State> higher = Constants.shooter.passDistToState.ceilingEntry(dist);
+
+	        return new Shooter.State(Util.lerp((dist - lower.getKey())/(higher.getKey() - lower.getKey()), lower.getValue().angle, higher.getValue().angle), higher.getValue().topSpeed, higher.getValue().bottomSpeed);
+ 	   }
 	}
 	public static class swerve {
 		public static final double drivekS = (0.667 / 12); 

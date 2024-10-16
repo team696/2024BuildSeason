@@ -34,9 +34,12 @@ public class Pass extends Command {
   public void execute() {
     double dist=Swerve.get().getDistToCorner();
     // Check if all the mechanisms are in the right place to shoot 
-    Shooter.State goalState=Shooter.get().getStateFromDist(dist);
-    if(Math.abs(Swerve.get().getRobotRelativeSpeeds().omegaRadiansPerSecond) < 0.3&&Shooter.get().upToSpeed(goalState.topSpeed, goalState.bottomSpeed, 200)&&
-    Math.abs(Swerve.get().getPose().getRotation().getDegrees() - Swerve.get().getAngleToCorner().getDegrees()) < 5){
+    Shooter.State goalState=Constants.shooter.passStateFromDist(dist);
+    Shooter.get().setAngle(goalState.angle);
+    Shooter.get().setVelocity(goalState.topSpeed, goalState.bottomSpeed);
+    /*if(Math.abs(Swerve.get().getRobotRelativeSpeeds().omegaRadiansPerSecond) < 0.3&&Shooter.get().upToSpeed(goalState.topSpeed, goalState.bottomSpeed, 200)&&
+    Math.abs(Swerve.get().getPose().getRotation().getDegrees() - Swerve.get().getAngleToCorner().getDegrees()) < 5){*/
+    if(Shooter.get().upToSpeed(goalState.topSpeed, goalState.bottomSpeed, 50) && Shooter.get().atAngle(goalState.angle, 1)){
       feed=true;
     }
 
@@ -44,7 +47,7 @@ public class Pass extends Command {
     if(feed){
       Shooter.get().setSerializerSpeedPercent(1);
     }else{
-      Shooter.get().setSerializerSpeedPercent(1);
+      Shooter.get().stopSerializer();
     }
   }
 

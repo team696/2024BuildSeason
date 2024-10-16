@@ -84,6 +84,9 @@ public class Shooter extends SubsystemHandler {
         angleVoltage=new PositionVoltage(0);
         m_serializerPositionDutyCycle = new PositionDutyCycle(0);
 
+        m_VelocityVoltageBottom= new VelocityVoltage(0);
+        m_VelocityVoltageTop= new VelocityVoltage(0);
+
         m_BeamBreak = new DigitalInput(9);
     }
 
