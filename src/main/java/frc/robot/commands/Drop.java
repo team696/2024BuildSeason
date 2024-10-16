@@ -6,17 +6,17 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.Intake;
+
 import frc.robot.subsystems.Shooter;
 
 public class Drop extends Command {
     double start = 0;
     public Drop() {
-        addRequirements(Shooter.get(), Intake.get());
+        addRequirements(Shooter.get());
     }
 
     public Drop(boolean finish) {
-        addRequirements(Shooter.get(), Intake.get());
+        addRequirements(Shooter.get());
     }
 
   // Called when the command is initially scheduled.
@@ -33,12 +33,6 @@ public class Drop extends Command {
     Shooter.get().setSerializerSpeedPercent(.65 * mult + 0.5); 
     Shooter.get().setShooterSpeedPercent(0.25 * mult + 0.5);
 
-    Intake.get().positionAngle(frc.robot.subsystems.Intake.Position.spit);
-
-    if (Intake.get().mainAngle() > frc.robot.subsystems.Intake.Position.spit.pos - 1) {
-        Intake.get().setRollersOutput(-0.4 * mult - 0.4);
-        Intake.get().setSerializerSpeedPercent(-0.4 * mult - 0.4);
-    }
   }
 
   // Called once the command ends or is interrupted.
@@ -48,8 +42,6 @@ public class Drop extends Command {
     Shooter.get().stopSerializer();
     Shooter.get().stopShooter();
 
-    Intake.get().stopRollers();
-    Intake.get().stopSerializer();
   }
 
   // Returns true when the command should end.

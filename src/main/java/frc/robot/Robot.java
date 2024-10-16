@@ -15,17 +15,12 @@ import frc.robot.commands.Drop;
 import frc.robot.commands.ManualShoot;
 import frc.robot.commands.Pass;
 import frc.robot.commands.Shoot;
-import frc.robot.commands.ShootIntakeAmp;
 import frc.robot.commands.ShooterDefault;
 import frc.robot.commands.ShooterIntake;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.commands.Trap;
-import frc.robot.commands.intakeAmp;
-import frc.robot.subsystems.Intake;
-import frc.robot.subsystems.LED;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Swerve;
-import frc.robot.subsystems.Intake.Position;
 import frc.robot.util.Constants;
 import frc.robot.util.Util;
 import frc.lib.TimedRobot;
@@ -54,8 +49,6 @@ public class Robot extends TimedRobot {
         Controls.Drop.whileTrue(new Drop());
         Controls.Gyro.onTrue(new InstantCommand(()->Swerve.get().zeroYaw())); 
 
-        Controls.ExtraC.whileTrue(new intakeAmp());
-        Controls.ExtraA.whileTrue(new ShootIntakeAmp(Controls.Rollers::getAsBoolean));
         Controls.Rightest.whileTrue(new ManualShoot());
     }
 
@@ -104,14 +97,11 @@ public class Robot extends TimedRobot {
         //configureOperatorBinds();
         
         SmartDashboard.putData(Swerve.get());
-        SmartDashboard.putData(Intake.get());
         SmartDashboard.putData(Shooter.get());
         SmartDashboard.putNumber("Shooter Offset", 0);
 
         Shooter.get().setDefaultCommand(new ShooterDefault());
-        Intake.get().setDefaultCommand(Intake.get().goToAngle(Position.stowed));
 
-        LED.get();
 
         Logger.registerLoggable(type.debug, "PDH Voltage",m_PDH::getVoltage);
         Logger.registerLoggable(type.debug, "Periodic Time Delta", ()->lastPeriodTimeDelta);
@@ -131,7 +121,6 @@ public class Robot extends TimedRobot {
 
   @Override
   public void disabledInit() {
-    Intake.get().disable();
     Shooter.get().disable();
     PLog.info("Robot", "Disabled");
   }
@@ -141,13 +130,11 @@ public class Robot extends TimedRobot {
 
   @Override
   public void disabledExit() {
-    Intake.get().enable();
     Shooter.get().enable();
   }
 
   @Override
   public void autonomousInit() {
-    Intake.get().setDefaultCommand(Intake.get().goToAngle(Position.down));
     m_autonomousCommand = Auto.Selected();
 
     // schedule the autonomous command (example)
@@ -163,7 +150,6 @@ public class Robot extends TimedRobot {
 
   @Override 
   public void autonomousExit() {
-        Intake.get().setDefaultCommand(Intake.get().goToAngle(Position.stowed));
   }
 
   @Override
@@ -176,7 +162,6 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
-    LED.get().intake = Controls.Climb.getAsBoolean();
   }
 
   @Override
