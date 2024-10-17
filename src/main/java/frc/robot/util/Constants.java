@@ -66,7 +66,7 @@ public final class Constants {
 			put(1.5 ,new Shooter.State(60.,2500,2000));
             put(2.2 ,new Shooter.State(50., 2700,2200));
             put(2.8 ,new Shooter.State(45.5, 2700,2200));
-            put(3.6 ,new Shooter.State(40., 2700,2200));
+            put(3.6 ,new Shooter.State(41., 2700,2200));
             put(4.3 ,new Shooter.State(37., 2700,2200));
             put(4.8, new Shooter.State(33.5, 3000,2500));
             //put(5.0 ,new Shooter.State(30., 3200,2900));
@@ -76,8 +76,8 @@ public final class Constants {
 		}};
 		public static final TreeMap<Double, Shooter.State> passDistToState=new TreeMap<Double, Shooter.State>(){{
 			put(1.5, new Shooter.State(5., 1500, 1500));
-			put(5., new Shooter.State(5., 1950, 1950));
-			put(6., new Shooter.State(50., 2300, 2300));
+			put(5., new Shooter.State(5., 1800, 1800));
+			put(6., new Shooter.State(40., 2000, 2000));
 			put(12.0, new Shooter.State(50., 2300, 2300));
 			
 		}};

@@ -7,9 +7,15 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Shooter;
 
+/**
+ * Shoots at a custom shooter state 
+ */
 public class CustomShoot extends Command {
+    Shooter.State desiredState;
     boolean feed = false;
-    public CustomShoot() {
+
+    public CustomShoot(Shooter.State desiredState) {
+        this.desiredState=desiredState;
         addRequirements(Shooter.get());
     }
 
@@ -22,7 +28,6 @@ public class CustomShoot extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {   
-    Shooter.State desiredState = Shooter.get().getStateFromDist(2);
 
     Shooter.get().setAngle(desiredState.angle);
     Shooter.get().setSpeed(desiredState.topSpeed, desiredState.bottomSpeed);

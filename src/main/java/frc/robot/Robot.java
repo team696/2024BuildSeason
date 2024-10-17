@@ -1,9 +1,11 @@
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -41,6 +43,9 @@ public class Robot extends TimedRobot {
   private void configureBinds() {
     //Swerve.get().setDefaultCommand(new TeleopSwerve(Controls.joystickPanel, 1, 0, 2, Constants.deadBand,true, true));
     //leftJoy.onTrue(new InstantCommand(()->Swerve.get().zeroYaw()));
+    TeleopSwerve controllerTeleop=new TeleopSwerve(()->1.0, ()->Swerve.get().AngleForSpeaker(), true, false);
+    TeleopSwerve.config(()->Controls.joystickPanel.getRawAxis(1), ()->Controls.joystickPanel.getRawAxis(0), ()->Controls.joystickPanel.getRawAxis(2), ()->Controls.rightJoy.getAsBoolean(), Constants.deadBand);
+    Controls.leftJoy.onTrue(new InstantCommand(()->Swerve.get().zeroYaw()));
   }
 
     private void configureOperatorBinds() {
@@ -58,12 +63,12 @@ public class Robot extends TimedRobot {
 
 
         TeleopSwerve controllerTeleop=new TeleopSwerve(()->1.0, ()->Swerve.get().AngleForSpeaker(), true, false);
-        TeleopSwerve.config(()->(Controls.controller.getRawAxis(1)), ()->(Controls.controller.getRawAxis(0)), ()->-Controls.controller.getRawAxis(4),Controls.controller.button(10)::getAsBoolean, 0.04);
+        TeleopSwerve.config(()->(-Controls.controller.getRawAxis(0)), ()->(-Controls.controller.getRawAxis(1)), ()->-Controls.controller.getRawAxis(4),Controls.controller.button(10)::getAsBoolean, 0.04);
         //controllerTeleop.setAim(()->Controls.controller.button(10).getAsBoolean());
         Swerve.get().setDefaultCommand(controllerTeleop);
 
         // B - PASS
-        Controls.controller.b().whileTrue(new Pass().alongWith(new TeleopSwerve(()->Swerve.get().getAngleToCorner())));
+        Controls.controller.b().whileTrue(new Pass().alongWith(new TeleopSwerve(()->Swerve.get().getAngleToCorner().rotateBy(Rotation2d.fromDegrees((10)) ))));
         // HOME - ZERO YAW
         Controls.controller.button(9).onTrue(new InstantCommand(()->Swerve.get().zeroYaw()));
         // RIGHT BUMPER - SHOOT
@@ -82,7 +87,7 @@ public class Robot extends TimedRobot {
 //      TeleopSwerve controllerTeleop=new TeleopSwerve(()->(-driver.getRawAxis(1)), ()->(-driver.getRawAxis(0)), ()->-driver.getRawAxis(4), ()->false, ()->Swerve.get().AngleForSpeaker().getDegrees(), 0, true, true);
 //      controllerTeleop.setAim(driver.button(10)::getAsBoolean);
          TeleopSwerve controllerTeleop=new TeleopSwerve(()->1.0, ()->Swerve.get().AngleForSpeaker(), true, false);
-        TeleopSwerve.config(()->(driver.getRawAxis(1)), ()->(driver.getRawAxis(0)), ()->-driver.getRawAxis(4),driver.button(10)::getAsBoolean, 0.04);
+        TeleopSwerve.config(()->(-driver.getRawAxis(0)), ()->(-driver.getRawAxis(1)), ()->-driver.getRawAxis(4),driver.button(10)::getAsBoolean, 0.03);
         Swerve.get().setDefaultCommand(controllerTeleop);
 
       // let other buttons do pathfinding
@@ -90,13 +95,13 @@ public class Robot extends TimedRobot {
 
       // Operator Buttons
       // B - PASS
-      operator.b().whileTrue(new Pass().alongWith(new TeleopSwerve(()->Swerve.get().getAngleToCorner())));
+      operator.b().whileTrue(new Pass().alongWith(new TeleopSwerve(()->Swerve.get().getAngleToCorner().rotateBy(Rotation2d.fromDegrees((10))))));
       // X - SHOOT
-      operator.x().whileTrue(new Shoot(()->Swerve.get().DistToSpeaker(), ()->true));
+      operator.rightBumper().whileTrue(new Shoot(()->Swerve.get().DistToSpeaker(), ()->true));
       // A - AMP
       operator.a().whileTrue(new Amp(Controls.controller.rightBumper()::getAsBoolean));
       // Y - PERFORM SOURCE INTAKE
-      operator.leftBumper().whileTrue(new ShooterIntake());
+      operator.leftBumper().whileTrue(new ShooterIntake().alongWith(new TeleopSwerve(()->(DriverStation.getAlliance().get()==Alliance.Red?Constants.Field.RED.Source.getRotation():Constants.Field.BLUE.Source.getRotation()))));
 
     }
 
@@ -120,7 +125,8 @@ public class Robot extends TimedRobot {
 
         Auto.Initialize();
 
-        configureControllerBinds();   
+        //configureControllerBinds();   
+        configureDualControllerBinds();
         //configureBinds(); 
         //configureOperatorBinds();
         

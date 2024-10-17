@@ -1,0 +1,31 @@
+{
+  "version": 1.0,
+  "startingPose": {
+    "position": {
+      "x": 0.7380178747124629,
+      "y": 6.795584885762838
+    },
+    "rotation": 60.04134302041364
+  },
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "named",
+          "data": {
+            "name": "Shoot Target"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Taxiamp"
+          }
+        }
+      ]
+    }
+  },
+  "folder": null,
+  "choreoAuto": false
+}
