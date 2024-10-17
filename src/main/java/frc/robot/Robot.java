@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.Amp;
@@ -38,14 +39,14 @@ public class Robot extends TimedRobot {
   private double lastPeriodTimeDelta = 0;
   
   private void configureBinds() {
-    Swerve.get().setDefaultCommand(new TeleopSwerve(Controls.joystickPanel, 1, 0, 2, Constants.deadBand,true, true));
+    //Swerve.get().setDefaultCommand(new TeleopSwerve(Controls.joystickPanel, 1, 0, 2, Constants.deadBand,true, true));
     //leftJoy.onTrue(new InstantCommand(()->Swerve.get().zeroYaw()));
   }
 
     private void configureOperatorBinds() {
         Controls.Shoot.whileTrue(new Shoot(()->Swerve.get().DistToSpeaker(), ()->true));
-        Controls.Source.whileTrue(new ShooterIntake().alongWith(new TeleopSwerve(Controls.joystickPanel, 1, 0, 2, ()->135, Constants.deadBand, true, true)));
-        Controls.Amp.whileTrue(new Amp(Controls.Rollers::getAsBoolean).alongWith(new TeleopSwerve(Controls.joystickPanel, 1, 0, 2, ()->-90, Constants.deadBand, true, true)));
+        //Controls.Source.whileTrue(new ShooterIntake().alongWith(new TeleopSwerve(Controls.joystickPanel, 1, 0, 2, ()->135, Constants.deadBand, true, true)));
+        //Controls.Amp.whileTrue(new Amp(Controls.Rollers::getAsBoolean).alongWith(new TeleopSwerve(Controls.joystickPanel, 1, 0, 2, ()->-90, Constants.deadBand, true, true)));
         Controls.Trap.whileTrue(Auto.PathFind(Constants.Field.RED.Trap).andThen(new Trap(()->true)));
         Controls.Drop.whileTrue(new Drop());
         Controls.Gyro.onTrue(new InstantCommand(()->Swerve.get().zeroYaw())); 
@@ -56,8 +57,9 @@ public class Robot extends TimedRobot {
     private void configureControllerBinds() { 
 
 
-        TeleopSwerve controllerTeleop=new TeleopSwerve(()->(Controls.controller.getRawAxis(1)), ()->(Controls.controller.getRawAxis(0)), ()->-Controls.controller.getRawAxis(4), ()->false, ()->Swerve.get().AngleForSpeaker().getDegrees(), 0, true, true);
-        controllerTeleop.setAim(()->Controls.controller.button(10).getAsBoolean());
+        TeleopSwerve controllerTeleop=new TeleopSwerve(()->1.0, ()->Swerve.get().AngleForSpeaker(), true, false);
+        TeleopSwerve.config(()->(Controls.controller.getRawAxis(1)), ()->(Controls.controller.getRawAxis(0)), ()->-Controls.controller.getRawAxis(4),Controls.controller.button(10)::getAsBoolean, 0.04);
+        //controllerTeleop.setAim(()->Controls.controller.button(10).getAsBoolean());
         Swerve.get().setDefaultCommand(controllerTeleop);
 
         // B - PASS
@@ -77,9 +79,11 @@ public class Robot extends TimedRobot {
       CommandXboxController operator= new CommandXboxController(1);
 
       driver.x().onTrue(new InstantCommand(()->Swerve.get().zeroYaw()));
-      TeleopSwerve controllerTeleop=new TeleopSwerve(()->(-driver.getRawAxis(1)), ()->(-driver.getRawAxis(0)), ()->-driver.getRawAxis(4), ()->false, ()->Swerve.get().AngleForSpeaker().getDegrees(), 0, true, true);
-      controllerTeleop.setAim(driver.button(10)::getAsBoolean);
-      
+//      TeleopSwerve controllerTeleop=new TeleopSwerve(()->(-driver.getRawAxis(1)), ()->(-driver.getRawAxis(0)), ()->-driver.getRawAxis(4), ()->false, ()->Swerve.get().AngleForSpeaker().getDegrees(), 0, true, true);
+//      controllerTeleop.setAim(driver.button(10)::getAsBoolean);
+         TeleopSwerve controllerTeleop=new TeleopSwerve(()->1.0, ()->Swerve.get().AngleForSpeaker(), true, false);
+        TeleopSwerve.config(()->(driver.getRawAxis(1)), ()->(driver.getRawAxis(0)), ()->-driver.getRawAxis(4),driver.button(10)::getAsBoolean, 0.04);
+        Swerve.get().setDefaultCommand(controllerTeleop);
 
       // let other buttons do pathfinding
 
