@@ -1,0 +1,31 @@
+{
+  "version": 1.0,
+  "startingPose": {
+    "position": {
+      "x": 0.6619978954243629,
+      "y": 4.236583330309518
+    },
+    "rotation": -56.309932474020215
+  },
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "named",
+          "data": {
+            "name": "Shoot Target"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Taxisource"
+          }
+        }
+      ]
+    }
+  },
+  "folder": null,
+  "choreoAuto": false
+}

@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.Amp;
 import frc.robot.commands.Drop;
 import frc.robot.commands.ManualShoot;
@@ -55,7 +56,7 @@ public class Robot extends TimedRobot {
     private void configureControllerBinds() { 
 
 
-        TeleopSwerve controllerTeleop=new TeleopSwerve(()->(-Controls.controller.getRawAxis(1)), ()->(-Controls.controller.getRawAxis(0)), ()->-Controls.controller.getRawAxis(4), ()->false, ()->Swerve.get().AngleForSpeaker().getDegrees(), 0, true, true);
+        TeleopSwerve controllerTeleop=new TeleopSwerve(()->(Controls.controller.getRawAxis(1)), ()->(Controls.controller.getRawAxis(0)), ()->-Controls.controller.getRawAxis(4), ()->false, ()->Swerve.get().AngleForSpeaker().getDegrees(), 0, true, true);
         controllerTeleop.setAim(()->Controls.controller.button(10).getAsBoolean());
         Swerve.get().setDefaultCommand(controllerTeleop);
 
@@ -63,13 +64,36 @@ public class Robot extends TimedRobot {
         Controls.controller.b().whileTrue(new Pass().alongWith(new TeleopSwerve(()->Swerve.get().getAngleToCorner())));
         // HOME - ZERO YAW
         Controls.controller.button(9).onTrue(new InstantCommand(()->Swerve.get().zeroYaw()));
-        // X - SHOOT
-        Controls.controller.x().whileTrue(new Shoot(()->Swerve.get().DistToSpeaker(), ()->true));
+        // RIGHT BUMPER - SHOOT
+        Controls.controller.rightBumper().whileTrue(new Shoot(()->Swerve.get().DistToSpeaker(), ()->true));
         // A - AMP
-        Controls.controller.a().whileTrue(new Amp(Controls.controller.b()::getAsBoolean));
-        // Y - PERFORM SOURCE INTAKE
-        Controls.controller.y().whileTrue(new ShooterIntake());
+        Controls.controller.a().whileTrue(new Amp(Controls.controller.rightBumper()::getAsBoolean));
+        // LEFT BUMPER - PERFORM SOURCE INTAKE
+        Controls.controller.leftBumper().whileTrue(new ShooterIntake());
         Controls.controller.start().onTrue(new InstantCommand(()->Swerve.get().zeroYaw()));
+    }
+    private void configureDualControllerBinds(){
+      CommandXboxController driver= new CommandXboxController(0);
+      CommandXboxController operator= new CommandXboxController(1);
+
+      driver.x().onTrue(new InstantCommand(()->Swerve.get().zeroYaw()));
+      TeleopSwerve controllerTeleop=new TeleopSwerve(()->(-driver.getRawAxis(1)), ()->(-driver.getRawAxis(0)), ()->-driver.getRawAxis(4), ()->false, ()->Swerve.get().AngleForSpeaker().getDegrees(), 0, true, true);
+      controllerTeleop.setAim(driver.button(10)::getAsBoolean);
+      
+
+      // let other buttons do pathfinding
+
+
+      // Operator Buttons
+      // B - PASS
+      operator.b().whileTrue(new Pass().alongWith(new TeleopSwerve(()->Swerve.get().getAngleToCorner())));
+      // X - SHOOT
+      operator.x().whileTrue(new Shoot(()->Swerve.get().DistToSpeaker(), ()->true));
+      // A - AMP
+      operator.a().whileTrue(new Amp(Controls.controller.rightBumper()::getAsBoolean));
+      // Y - PERFORM SOURCE INTAKE
+      operator.leftBumper().whileTrue(new ShooterIntake());
+
     }
 
     @Override

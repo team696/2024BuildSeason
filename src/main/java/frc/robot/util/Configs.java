@@ -101,7 +101,7 @@ public class Configs {
         /** Shooter Motor Configuration */
         shooter_Top.MotorOutput.NeutralMode = NeutralModeValue.Coast;
         shooter_Top.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
-        shooter_Top.Slot0.kP = 0;
+        shooter_Top.Slot0.kP = 0.2;
         shooter_Top.Slot0.kV= 0.15;
         shooter_Top.Slot0.kS= 0.15;
         shooter_Top.CurrentLimits.SupplyCurrentLimitEnable = true;

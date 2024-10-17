@@ -63,33 +63,16 @@ public final class Constants {
 	public static class shooter {
 	    public static final double AngleOffset = /*111.5*//*109*/174.7;
 		public static final TreeMap<Double, Shooter.State> distToState = new TreeMap<Double, Shooter.State>(){{
-			put(1.5 ,new Shooter.State(60,2500,2000));
-            put(2.2 ,new Shooter.State(50, 3000,2500));
-            put(2.8 ,new Shooter.State(41., 3000,2500));
-            put(3.6 ,new Shooter.State(40, 3000,2500));
-            put(4.3 ,new Shooter.State(38, 3000,2500));
-            put(4.8, new Shooter.State(34., 3200,2900));
-            put(5.2, new Shooter.State(32, 3200, 2900));
-            put(5.4 ,new Shooter.State(31, 3200,2900));
-            put(5.6, new Shooter.State(30, 3200,2900));
-            put(5.7, new Shooter.State(24, 3200, 2900));
-            put(6.2, new Shooter.State(23, 3200, 2900));
+			put(1.5 ,new Shooter.State(60.,2500,2000));
+            put(2.2 ,new Shooter.State(50., 2700,2200));
+            put(2.8 ,new Shooter.State(45.5, 2700,2200));
+            put(3.6 ,new Shooter.State(40., 2700,2200));
+            put(4.3 ,new Shooter.State(37., 2700,2200));
+            put(4.8, new Shooter.State(33.5, 3000,2500));
+            //put(5.0 ,new Shooter.State(30., 3200,2900));
+            put(5.6 ,new Shooter.State(28.5, 3200,2900));
+            put(6.2, new Shooter.State(24, 3200, 2900));
 			put(12., new Shooter.State(18, 3200,2900));
-         /*
-            put(1., new Shooter.State(60, 3000, 3000));
-            put(1.5, new Shooter.State(60, 3000, 3000));
-            put(2., new Shooter.State(50, 3000, 3000));
-            put(2.5, new Shooter.State(45, 3000, 3000));
-            put(3., new Shooter.State(42, 3000, 3000));
-            put(3.5, new Shooter.State(39, 3000, 3000));
-            put(4., new Shooter.State(36, 3000, 3000));
-            put(4.5, new Shooter.State(3 5, 3000, 3000));
-            put(5., new Shooter.State(33, 3000, 3000));
-            put(5.5, new Shooter.State(33, 3000, 3000));
-            put(6., new Shooter.State(31, 3000, 3000));
-
-            put(12., new Shooter.State(32, 3000, 3000));
-   */
 		}};
 		public static final TreeMap<Double, Shooter.State> passDistToState=new TreeMap<Double, Shooter.State>(){{
 			put(1.5, new Shooter.State(5., 1500, 1500));

@@ -4,33 +4,35 @@
 
 package frc.robot.commands;
 
-import java.util.function.Supplier;
-
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Shooter;
 
-public class Amp extends Command {
-  Shooter.State desiredState = new Shooter.State(/*60.5*/68., 650 , 500);
-    Supplier<Boolean> button;
-  public Amp(Supplier<Boolean> b) {
-    button = b;
-    addRequirements(Shooter.get());
-  }    // Use addRequirements() here to declare subsystem dependencies.
-
+public class CustomShoot extends Command {
+    boolean feed = false;
+    public CustomShoot() {
+        addRequirements(Shooter.get());
+    }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+    feed = false;
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {
+  public void execute() {   
+    Shooter.State desiredState = Shooter.get().getStateFromDist(2);
+
     Shooter.get().setAngle(desiredState.angle);
-    Shooter.get().setSpeed(desiredState.topSpeed,desiredState.bottomSpeed);
-    if(button.get() && Shooter.get().upToSpeed(desiredState.topSpeed,desiredState.bottomSpeed, 200) && Shooter.get().atAngle(desiredState.angle, 6)) {
-      Shooter.get().setSerializerSpeedPercent(1);
+    Shooter.get().setSpeed(desiredState.topSpeed, desiredState.bottomSpeed);
+    if(Shooter.get().upToSpeed(desiredState.topSpeed, desiredState.bottomSpeed, 50) && Shooter.get().atAngle(desiredState.angle, 1)) {
+      feed = true;
+    } 
+    if (feed){
+        Shooter.get().setSerializerSpeedPercent(1);
     } else {
-      Shooter.get().stopSerializer();
+        Shooter.get().stopSerializer();
     }
   }
 
