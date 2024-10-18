@@ -78,13 +78,12 @@ public final class Constants {
 			put(1.5, new Shooter.State(5., 1500, 1500));
 			put(5., new Shooter.State(5., 1800, 1800));
 			put(6., new Shooter.State(40., 2000, 2000));
-			put(12.0, new Shooter.State(50., 2300, 2300));
+			put(14.0, new Shooter.State(50., 2300, 2300));
 			
 		}};
 	    public static Shooter.State passStateFromDist(double dist) {
 	        dist = Util.clamp(dist, Constants.shooter.passDistToState.firstKey() + 0.01,Constants.shooter.passDistToState.lastKey() - 0.01);
-	        Map.Entry<Double, Shooter.State> lower = Constants.shooter.passDistToState.floorEntry(dist);
-	        Map.Entry<Double, Shooter.State> higher = Constants.shooter.passDistToState.ceilingEntry(dist);
+	        Map.Entry<Double, Shooter.State> lower = Constants.shooter.passDistToState.floorEntry(dist); Map.Entry<Double, Shooter.State> higher = Constants.shooter.passDistToState.ceilingEntry(dist);
 
 	        return new Shooter.State(Util.lerp((dist - lower.getKey())/(higher.getKey() - lower.getKey()), lower.getValue().angle, higher.getValue().angle), higher.getValue().topSpeed, higher.getValue().bottomSpeed);
  	   }

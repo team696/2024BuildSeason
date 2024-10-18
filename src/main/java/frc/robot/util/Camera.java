@@ -107,7 +107,7 @@ public class Camera {
                 }
             }
             PhotonTrackedTarget bestTarget = targets.get(0);
-            if (bestTarget.getPoseAmbiguity() > 0.13) return; // Too Ambiguous, Ignore
+            if (bestTarget.getPoseAmbiguity() > 0.08) return; // Too Ambiguous, Ignore
             //if (bestTarget.getBestCameraToTarget().getTranslation().getNorm() > 4) return; // Tag Too far, Ignore
             double deviationRatio; 
             if (bestTarget.getPoseAmbiguity() < 1/100.0) {

@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 0.7878249089831516,
-      "y": 4.403945474557616
+      "x": 0.9698465111215943,
+      "y": 3.840777967270221
     },
-    "rotation": -60.4612177404419
+    "rotation": -49.39870535499551
   },
   "command": {
     "type": "sequential",
@@ -20,7 +20,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "fuck up the notes source"
+            "pathName": "fuck up the notes source 2"
           }
         }
       ]

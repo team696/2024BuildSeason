@@ -5,6 +5,7 @@
 package frc.robot.commands;
 
 import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Swerve;
@@ -43,7 +44,7 @@ public class Pass extends Command {
     if(Shooter.get().upToSpeed(goalState.topSpeed, goalState.bottomSpeed, 200) && Shooter.get().atAngle(goalState.angle, 6)){
       feed=true;
     }
-
+    SmartDashboard.putNumberArray("Pass goal state", new Double[]{goalState.topSpeed, goalState.bottomSpeed, goalState.angle});
     
     if(feed){
       Shooter.get().setSerializerSpeedPercent(1);

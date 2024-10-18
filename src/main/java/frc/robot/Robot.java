@@ -86,11 +86,11 @@ public class Robot extends TimedRobot {
       driver.x().onTrue(new InstantCommand(()->Swerve.get().zeroYaw()));
 //      TeleopSwerve controllerTeleop=new TeleopSwerve(()->(-driver.getRawAxis(1)), ()->(-driver.getRawAxis(0)), ()->-driver.getRawAxis(4), ()->false, ()->Swerve.get().AngleForSpeaker().getDegrees(), 0, true, true);
 //      controllerTeleop.setAim(driver.button(10)::getAsBoolean);
-         TeleopSwerve controllerTeleop=new TeleopSwerve(()->1.0, ()->Swerve.get().AngleForSpeaker(), true, false);
-        TeleopSwerve.config(()->(-driver.getRawAxis(0)), ()->(-driver.getRawAxis(1)), ()->-driver.getRawAxis(4),()->driver.leftBumper().getAsBoolean(), 0.03);
+         TeleopSwerve controllerTeleop=new TeleopSwerve(()->1.0, ()->Swerve.get().AngleForSpeaker().rotateBy(Rotation2d.fromDegrees(4)), true, false);
+        TeleopSwerve.config(()->(-driver.getRawAxis(0)), ()->(-driver.getRawAxis(1)), ()->-driver.getRawAxis(4),()->driver.y().getAsBoolean(), 0.03);
         Swerve.get().setDefaultCommand(controllerTeleop);
 
-        
+
       // let other buttons do pathfinding
 
 
@@ -103,7 +103,7 @@ public class Robot extends TimedRobot {
       operator.a().whileTrue(new Amp(Controls.controller.rightBumper()::getAsBoolean));
       // Y - PERFORM SOURCE INTAKE
       operator.leftBumper().whileTrue(new ShooterIntake().alongWith(new TeleopSwerve(()->(DriverStation.getAlliance().get()==Alliance.Red?Constants.Field.RED.Source.getRotation():Constants.Field.BLUE.Source.getRotation()))));
-
+      operator.y().whileTrue(new Drop());
     }
 
     @Override
