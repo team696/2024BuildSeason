@@ -1,12 +1,6 @@
 {
   "version": 1.0,
-  "startingPose": {
-    "position": {
-      "x": 0.8020771597098753,
-      "y": 6.769819095193746
-    },
-    "rotation": 62.78388844269251
-  },
+  "startingPose": null,
   "command": {
     "type": "sequential",
     "data": {
@@ -20,7 +14,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "fuck up the notes amp"
+            "pathName": "fuck up the notes amp 2"
           }
         }
       ]

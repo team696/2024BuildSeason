@@ -244,6 +244,7 @@ public class Shooter extends SubsystemHandler {
 
     @Override
     public void initSendable(SendableBuilder builder) {  
+        builder.addBooleanProperty("BeamBreak", this::getBeamBreak, null);
         builder.addDoubleProperty("Encoder", this::getAngle, null);
         if(Constants.DEBUG){
             builder.addDoubleProperty("Top Roller Velocity", ()->m_Top.getVelocity()*60, null);

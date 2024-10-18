@@ -87,9 +87,10 @@ public class Robot extends TimedRobot {
 //      TeleopSwerve controllerTeleop=new TeleopSwerve(()->(-driver.getRawAxis(1)), ()->(-driver.getRawAxis(0)), ()->-driver.getRawAxis(4), ()->false, ()->Swerve.get().AngleForSpeaker().getDegrees(), 0, true, true);
 //      controllerTeleop.setAim(driver.button(10)::getAsBoolean);
          TeleopSwerve controllerTeleop=new TeleopSwerve(()->1.0, ()->Swerve.get().AngleForSpeaker(), true, false);
-        TeleopSwerve.config(()->(-driver.getRawAxis(0)), ()->(-driver.getRawAxis(1)), ()->-driver.getRawAxis(4),driver.button(10)::getAsBoolean, 0.03);
+        TeleopSwerve.config(()->(-driver.getRawAxis(0)), ()->(-driver.getRawAxis(1)), ()->-driver.getRawAxis(4),()->driver.leftBumper().getAsBoolean(), 0.03);
         Swerve.get().setDefaultCommand(controllerTeleop);
 
+        
       // let other buttons do pathfinding
 
 

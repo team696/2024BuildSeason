@@ -68,9 +68,9 @@ public final class Constants {
             put(2.8 ,new Shooter.State(45.5, 2700,2200));
             put(3.6 ,new Shooter.State(41., 2700,2200));
             put(4.3 ,new Shooter.State(37., 2700,2200));
-            put(4.8, new Shooter.State(33.5, 3000,2500));
+            put(4.8, new Shooter.State(33, 3000,2500));
             //put(5.0 ,new Shooter.State(30., 3200,2900));
-            put(5.6 ,new Shooter.State(28.5, 3200,2900));
+            put(5.6 ,new Shooter.State(28, 3200,2900));
             put(6.2, new Shooter.State(24, 3200, 2900));
 			put(12., new Shooter.State(18, 3200,2900));
 		}};
