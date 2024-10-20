@@ -62,17 +62,18 @@ public final class Constants {
 	}
 	public static class shooter {
 	    public static final double AngleOffset = /*111.5*//*109*/174.7;
+		public static final double shootOffset=-5.5;
 		public static final TreeMap<Double, Shooter.State> distToState = new TreeMap<Double, Shooter.State>(){{
-			put(1.5 ,new Shooter.State(60.,2500,2000));
-            put(2.2 ,new Shooter.State(50., 2700,2200));
-            put(2.8 ,new Shooter.State(45.5, 2700,2200));
-            put(3.6 ,new Shooter.State(41., 2700,2200));
-            put(4.3 ,new Shooter.State(37., 2700,2200));
-            put(4.8, new Shooter.State(33, 3000,2500));
+			put(1.5 ,new Shooter.State(64.+shootOffset,2500,2000));
+            put(2.2 ,new Shooter.State(53.+shootOffset, 2700,2200));
+            put(2.8 ,new Shooter.State(46.5+shootOffset, 2700,2200));
+            put(3.6 ,new Shooter.State(43+shootOffset, 2700,2200));
+            put(4.3 ,new Shooter.State(37.+shootOffset, 2700,2200));
+            put(4.8, new Shooter.State(33+shootOffset, 3000,2500));
             //put(5.0 ,new Shooter.State(30., 3200,2900));
-            put(5.6 ,new Shooter.State(28, 3200,2900));
-            put(6.2, new Shooter.State(24, 3200, 2900));
-			put(12., new Shooter.State(18, 3200,2900));
+            put(5.6 ,new Shooter.State(28+shootOffset, 3200,2900));
+            put(6.2, new Shooter.State(24+shootOffset, 3200, 2900));
+			put(12., new Shooter.State(18+shootOffset, 3200,2900));
 		}};
 		public static final TreeMap<Double, Shooter.State> passDistToState=new TreeMap<Double, Shooter.State>(){{
 			put(1.5, new Shooter.State(5., 1500, 1500));
@@ -100,7 +101,7 @@ public final class Constants {
 
 		public static final double wheelX = Units.inchesToMeters(21.75);
 		public static final double wheelY = Units.inchesToMeters(21.75);
-		public static final double wheelDiameter = Units.inchesToMeters(3.89);
+		public static final double wheelDiameter = Units.inchesToMeters(3.9);
 		public static final double wheelCircumference = wheelDiameter * Math.PI;
 
 		public static final double theoreticalMaxSpeed = Motors.Kraken.freeSpinRPM / 60 / driveGearRatio * wheelCircumference; // 5.13 mps way more resonable

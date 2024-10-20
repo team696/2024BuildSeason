@@ -105,7 +105,11 @@ public class Swerve extends SubsystemHandler {
         Rotation2d rot = Rotation2d.fromRadians(Math.atan2(delta.getY(), delta.getX()));
         return rot;
     }
-
+    public Rotation2d angleTo(Translation2d position, Translation2d pose) {
+        Translation2d delta = pose.minus(position);
+        Rotation2d rot = Rotation2d.fromRadians(Math.atan2(delta.getY(), delta.getX()));
+        return rot;
+    }
     public Rotation2d angleTo(Pose2d position) {
         return angleTo(position.getTranslation());
     }

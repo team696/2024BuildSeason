@@ -1,5 +1,7 @@
 package frc.robot;
 
+import java.sql.Driver;
+
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PowerDistribution;
@@ -15,6 +17,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.Amp;
+import frc.robot.commands.CustomShoot;
 import frc.robot.commands.Drop;
 import frc.robot.commands.ManualShoot;
 import frc.robot.commands.Pass;
@@ -90,13 +93,14 @@ public class Robot extends TimedRobot {
         TeleopSwerve.config(()->(-driver.getRawAxis(0)), ()->(-driver.getRawAxis(1)), ()->-driver.getRawAxis(4),()->driver.y().getAsBoolean(), 0.03);
         Swerve.get().setDefaultCommand(controllerTeleop);
 
-
       // let other buttons do pathfinding
 
 
       // Operator Buttons
       // B - PASS
-      operator.b().whileTrue(new Pass().alongWith(new TeleopSwerve(()->Swerve.get().getAngleToCorner().rotateBy(Rotation2d.fromDegrees((10))))));
+      operator.b().whileTrue(new Pass().alongWith(new TeleopSwerve(()->Swerve.get().getAngleToCorner().rotateBy(Rotation2d.fromDegrees((0))))));
+      operator.x().whileTrue(new CustomShoot(Constants.shooter.passStateFromDist(9.5)).alongWith(new TeleopSwerve(()->DriverStation.getAlliance().get()==Alliance.Red?Rotation2d.fromDegrees(-170):Rotation2d.fromDegrees(10))));
+
       // X - SHOOT
       operator.rightBumper().whileTrue(new Shoot(()->Swerve.get().DistToSpeaker(), ()->true));
       // A - AMP
