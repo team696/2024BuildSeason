@@ -26,6 +26,7 @@ import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.lib.Log.PLog;
 import frc.robot.subsystems.Swerve;
 
@@ -108,7 +109,7 @@ public class Camera {
             }
             PhotonTrackedTarget bestTarget = targets.get(0);
             if (bestTarget.getPoseAmbiguity() > 0.06) return; // Too Ambiguous, Ignore
-            //if (bestTarget.getBestCameraToTarget().getTranslation().getNorm() > 4) return; // Tag Too far, Ignore
+            if (bestTarget.getBestCameraToTarget().getTranslation().getNorm() > 3.2) return; // Tag Too far, Ignore
             double deviationRatio; 
             if (bestTarget.getPoseAmbiguity() < 1/100.0) {
                 deviationRatio = 1/100.0; // Tag estimation very good -> Use it
@@ -118,6 +119,8 @@ public class Camera {
             Matrix<N3, N1> deviation = VecBuilder.fill(deviationRatio, deviationRatio, 5 * deviationRatio);
             estimator.setVisionMeasurementStdDevs(deviation);
             estimator.addVisionMeasurement(estimation.get().estimatedPose.toPose2d(), estimation.get().timestampSeconds);
+            SmartDashboard.putNumberArray("Camera Estimated vs Real", new Double[]{estimation.get().estimatedPose.toPose2d().getX(), estimation.get().estimatedPose.toPose2d().getY(), Swerve.get().getPose().getX(), Swerve.get().getPose().getY()});
         }
+        
     }
 }

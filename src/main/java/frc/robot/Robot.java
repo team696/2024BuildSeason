@@ -2,6 +2,7 @@ package frc.robot;
 
 import java.sql.Driver;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PowerDistribution;
@@ -89,24 +90,24 @@ public class Robot extends TimedRobot {
       driver.x().onTrue(new InstantCommand(()->Swerve.get().zeroYaw()));
 //      TeleopSwerve controllerTeleop=new TeleopSwerve(()->(-driver.getRawAxis(1)), ()->(-driver.getRawAxis(0)), ()->-driver.getRawAxis(4), ()->false, ()->Swerve.get().AngleForSpeaker().getDegrees(), 0, true, true);
 //      controllerTeleop.setAim(driver.button(10)::getAsBoolean);
-         TeleopSwerve controllerTeleop=new TeleopSwerve(()->1.0, ()->Swerve.get().AngleForSpeaker().rotateBy(Rotation2d.fromDegrees(4)), true, false);
+         TeleopSwerve controllerTeleop=new TeleopSwerve(()->1.0, ()->Swerve.get().AngleForSpeaker().rotateBy(Rotation2d.fromDegrees(-2)), true, false);
         TeleopSwerve.config(()->(-driver.getRawAxis(0)), ()->(-driver.getRawAxis(1)), ()->-driver.getRawAxis(4),()->driver.y().getAsBoolean(), 0.03);
         Swerve.get().setDefaultCommand(controllerTeleop);
 
       // let other buttons do pathfinding
 
-
+      driver.a().onTrue(Auto.PathFind(new Pose2d(.71, 3.64, Rotation2d.fromDegrees(0))));
       // Operator Buttons
       // B - PASS
-      operator.b().whileTrue(new Pass().alongWith(new TeleopSwerve(()->Swerve.get().getAngleToCorner().rotateBy(Rotation2d.fromDegrees((0))))));
-      operator.x().whileTrue(new CustomShoot(Constants.shooter.passStateFromDist(9.5)).alongWith(new TeleopSwerve(()->DriverStation.getAlliance().get()==Alliance.Red?Rotation2d.fromDegrees(-170):Rotation2d.fromDegrees(10))));
+      operator.b().whileTrue(new Pass().alongWith(new TeleopSwerve(()->Swerve.get().getAngleToCorner())));
+      operator.x().whileTrue(new CustomShoot(Constants.shooter.passStateFromDist(9.5)).alongWith(new TeleopSwerve(()->DriverStation.getAlliance().get()==Alliance.Red?Rotation2d.fromDegrees(-160):Rotation2d.fromDegrees(20))));
 
       // X - SHOOT
       operator.rightBumper().whileTrue(new Shoot(()->Swerve.get().DistToSpeaker(), ()->true));
       // A - AMP
       operator.a().whileTrue(new Amp(Controls.controller.rightBumper()::getAsBoolean));
       // Y - PERFORM SOURCE INTAKE
-      operator.leftBumper().whileTrue(new ShooterIntake().alongWith(new TeleopSwerve(()->(DriverStation.getAlliance().get()==Alliance.Red?Constants.Field.RED.Source.getRotation():Constants.Field.BLUE.Source.getRotation()))));
+      operator.leftBumper().whileTrue(new ShooterIntake().alongWith(new TeleopSwerve(()->(DriverStation.getAlliance().get()==Alliance.Red?Constants.Field.RED.Source.getRotation().rotateBy(Rotation2d.fromDegrees(180)):Constants.Field.BLUE.Source.getRotation().rotateBy(Rotation2d.fromDegrees(180))))));
       operator.y().whileTrue(new Drop());
     }
 
@@ -152,6 +153,7 @@ public class Robot extends TimedRobot {
 
         lastPeriodTimeDelta = Timer.getFPGATimestamp() - lastPeriodicTime;
         lastPeriodicTime = Timer.getFPGATimestamp();
+        SmartDashboard.putNumber("Angle to corner", Swerve.get().getAngleToCorner().getDegrees());
   }
 
   @Override

@@ -62,8 +62,7 @@ public class Swerve extends SubsystemHandler {
     //m_Pigeon = new Pigeon2(0);
     //m_Pigeon.getConfigurator().apply(Constants.CONFIGS.swerve_Pigeon);
 
-    m_poseEstimator = new SwerveDrivePoseEstimator(Constants.swerve.swerveKinematics, getYaw(), m_swervePositions, new Pose2d(0,0,new Rotation2d(0)), VecBuilder.fill(0.1, 0.1, 0.03), VecBuilder.fill(0.3, 0.3, 0.6)); 
-  
+    m_poseEstimator = new SwerveDrivePoseEstimator(Constants.swerve.swerveKinematics, getYaw(), m_swervePositions, new Pose2d(0,0,new Rotation2d(0)), VecBuilder.fill(0.07, 0.07, 0.03), VecBuilder.fill(0.3, 0.3, 0.6)); 
     zeroYaw();
     }
 
@@ -127,9 +126,9 @@ public class Swerve extends SubsystemHandler {
   }
   public Rotation2d getAngleToCorner() {
     if (DriverStation.getAlliance().get() == Alliance.Red) 
-      return getVelocityAdjustedAngleToPos(Constants.Field.RED.Corner);
+      return angleTo(Constants.Field.RED.Corner);
 
-    return getVelocityAdjustedAngleToPos(Constants.Field.BLUE.Corner);
+    return angleTo(Constants.Field.BLUE.Corner);
   }
  // public Rotation2d getAngleToSource(){
   //  return DriverStation.getAlliance().get()==Alliance.Red?getVelocityAdjustedAngleToPos(Constants.Field.BLUE.Source):getVelocityAdjustedAngleToPos(Constants.Field.RED.Source);
