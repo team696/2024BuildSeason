@@ -110,11 +110,17 @@ public class Camera {
             PhotonTrackedTarget bestTarget = targets.get(0);
             if (bestTarget.getPoseAmbiguity() > 0.06) return; // Too Ambiguous, Ignore
             if (bestTarget.getBestCameraToTarget().getTranslation().getNorm() > 3.2) return; // Tag Too far, Ignore
+            if (estimation.get().estimatedPose.getX()<0||
+                estimation.get().estimatedPose.getX()>8.3||
+                estimation.get().estimatedPose.getX()<0||
+                estimation.get().estimatedPose.getY()>16.6) return; // the robot ain't on the field
+
             double deviationRatio; 
             if (bestTarget.getPoseAmbiguity() < 1/100.0) {
                 deviationRatio = 1/100.0; // Tag estimation very good -> Use it
             } else {
-                deviationRatio = Math.pow(bestTarget.getBestCameraToTarget().getTranslation().getNorm(),2) / 2; // Trust Less With Distance
+                //deviationRatio = Math.pow(bestTarget.getBestCameraToTarget().getTranslation().getNorm(),2) / 2; // Trust Less With Distance
+                deviationRatio=0.15*(1/bestTarget.getArea());
             }
             Matrix<N3, N1> deviation = VecBuilder.fill(deviationRatio, deviationRatio, 5 * deviationRatio);
             estimator.setVisionMeasurementStdDevs(deviation);
